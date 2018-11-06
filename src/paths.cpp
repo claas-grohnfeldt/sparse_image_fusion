@@ -22,15 +22,20 @@ void getPaths(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOParallelSetting
 	}
 	string maindir_path;
 	switch(dSetting->platformID){
-	    case 1:{ //SuperMUC - pr45ne - ga39yoz2
+        case 0:{ // generic
+                   maindir_path = "data";
+		           paths->dir_out = "results";
+                   paths->dir_tmp = "tmp";
+                   break;
+        }case 1:{ //SuperMUC - pr45ne - ga39yoz2
                 maindir_path = "/gpfs/work/pr45ne/ga39yoz2/data/links_for_fusion";
 		paths->dir_out = "/gpfs/work/pr45ne/ga39yoz2/recResults";
                 paths->dir_tmp = "/gpfs/scratch/pr45ne/ga39yoz2/JSparseFI/tmp";
 		break;
-	   }case 2:{ // CG local
-		maindir_path = "./data";
-		paths->dir_out = "results";
-		paths->dir_tmp = "tmp";
+	    }case 2:{ // CG local
+		    maindir_path = "./data";
+		    paths->dir_out = "results";
+		    paths->dir_tmp = "tmp";
                 break;
            }default:{
 		cout << "UNKNOWN platformID!" << endl << endl;
@@ -124,87 +129,72 @@ void getPaths(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOParallelSetting
 	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
 
-        ////*****************************************************************************************************////
-        ////                                                                                                     ////
-        ////                                      Platform independent                                           ////
-        ////                                                                                                     ////
-        ////*****************************************************************************************************////
+    ////*****************************************************************************************************////
+    ////                                                                                                     ////
+    ////                                      Platform independent                                           ////
+    ////                                                                                                     ////
+    ////*****************************************************************************************************////
 
-        // Hyperspectral-Multispectral (J-SparseFI-HM)
-        if(      paths->dataSetID_str == "11119211105350"){ paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "11119211105350_2013IEEEGRSSDFC_Sentinel2_Univ"   + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "11119212105350"){ paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "11119212105350_2013IEEEGRSSDFC_Sentinel2_cloud"  + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "109211103990"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "109211103990_EnMAP_Sentinel2"                    + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "3313211304350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3313211304350_Aviris_IndianPines_WV3_VNIR"       + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "3313212405350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3313212405350_Aviris_Cuprite_sc03_WV3_VNIR"      + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "3314211304350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3314211304350_Aviris_IndianPines_WV3_SWIR"       + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "3314212405350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3314212405350_Aviris_Cuprite_sc03_WV3_SWIR"      + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "3315211304350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3315211304350_Aviris_IndianPines_WV3_VNIR_SWIR"  + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "3315212405350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3315212405350_Aviris_Cuprite_sc03_WV3_VNIR_SWIR" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "334211304350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "334211304350_Aviris_IndianPines"                 + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "334212404350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "334212404350_Aviris_Cuprite_sc03_fDS4"           + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "334212405350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "334212405350_Aviris_Cuprite_sc03_fDS5"           + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "335213304350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "335213304350_Aviris_Moffett_Field"               + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "665211108350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "665211108350_ROSIS_Pavia_Univeristy"             + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "665211108990"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "665211108990_ROSIS_Pavia_University_SNRinf"      + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "774211106350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "774211106350_Headwall_Chikusei_urban"            + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "774212106350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "774212106350_Headwall_Chikusei_nonUrban"         + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "885211404350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "885211404350_HYDICE_WashDC_Mall"                 + "/" + "InputData" + "/" + "links";
-        }
-        // Multispectral-Panchromatic (Pan-sharpening: SparseFI & J-SparseFI)
-        else if(paths->dataSetID_str == "155111203350"){         paths->dir_in = maindir_path + "/" + "MS_PAN"  + "/" + "155111203350_HySpex_Olymp_3600x1200"            + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "2444101104000"){  paths->dir_in = maindir_path + "/" + "MS_PAN" + "/" + "2444101104000_WV2_REAL_scene"                    + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "2444102104000"){  paths->dir_in = maindir_path + "/" + "MS_PAN" + "/" + "2444102104000_WV2_REAL_HongKong_from_Naoto"      + "/" + "InputData" + "/" + "links";
-        }else{ 
-		if(my_rank==0){
-			cout << endl << "ERROR: Undefined dataset: " << paths->dataSetID_str << "! " << endl << endl;
-		}
-		MPI_Barrier(MPI_COMM_WORLD);
-		cerr << endl << "ERROR: Undefined dataset: " << paths->dataSetID_str << "! " << endl << endl;
-		exit(2);
-	}
-
-	paths->fname_ImZ_ref                   = paths->dir_in + "/" + "slink_to_ImZ_ref.dat";
-	paths->fname_ImZ_init_rec              = paths->dir_in + "/" + "slink_to_ImZ_init_rec.dat";
-	paths->fname_ImZ_init_ImY_US           = paths->dir_in + "/" + "slink_to_ImZ_init_ImY_US.dat";
-	paths->fname_ImY                       = paths->dir_in + "/" + "slink_to_ImY.dat";
-	paths->fname_ImX                       = paths->dir_in + "/" + "slink_to_ImX.dat";
-	paths->fname_SRF                       = paths->dir_in + "/" + "slink_to_SRF.csv";
-	//paths->fname_SRF_estimated             = paths->dir_in + "/" + "slink_to_SRF_estimated.csv";
-	//paths->fname_ImX_shifted               = paths->dir_in + "/" + "slink_to_ImX_shifted.dat";
-	paths->fname_SRF_for_Spectral_Grouping = paths->dir_in + "/" + "slink_to_SRF_for_Spectral_Grouping.csv";
-	paths->fname_SubspaceTransformMat      = paths->dir_in + "/" + "slink_to_HySure_output" + "/" + "EndmemberMat.csv";
-	paths->fname_DictLR                    = paths->dir_in + "/" + "slink_to_DictLR.csv";
-	paths->fname_DictHR                    = paths->dir_in + "/" + "slink_to_DictHR.csv";
-	
-	paths->fname_ImZ                       = paths->dataSetID_str + "_rec";
+    // Hyperspectral-Multispectral (J-SparseFI-HM)
+    if(      paths->dataSetID_str == "11119211105350"){ paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "11119211105350_2013IEEEGRSSDFC_Sentinel2_Univ"   + "/" + "InputData" + "/" + "links";
+    }else if(paths->dataSetID_str == "109211103990"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "109211103990_EnMAP_Sentinel2"                    + "/" + "InputData" + "/" + "links";
+    }else if(paths->dataSetID_str == "3315211304350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3315211304350_Aviris_IndianPines_WV3_VNIR_SWIR"  + "/" + "InputData" + "/" + "links";
+    }else if(paths->dataSetID_str == "3315212405350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3315212405350_Aviris_Cuprite_sc03_WV3_VNIR_SWIR" + "/" + "InputData" + "/" + "links";
+    }else if(paths->dataSetID_str == "335213304350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "335213304350_Aviris_Moffett_Field"               + "/" + "InputData" + "/" + "links";
+    }else if(paths->dataSetID_str == "665211108350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "665211108350_ROSIS_Pavia_Univeristy"             + "/" + "InputData" + "/" + "links";
+    }else if(paths->dataSetID_str == "774212106350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "774212106350_Headwall_Chikusei_nonUrban"         + "/" + "InputData" + "/" + "links";
+    }else if(paths->dataSetID_str == "885211404350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "885211404350_HYDICE_WashDC_Mall"                 + "/" + "InputData" + "/" + "links";
+    }
+    // Multispectral-Panchromatic (Pan-sharpening: SparseFI & J-SparseFI)
+    else if(paths->dataSetID_str == "155111203350"){         paths->dir_in = maindir_path + "/" + "MS_PAN"  + "/" + "155111203350_HySpex_Olymp_3600x1200"       + "/" + "InputData" + "/" + "links";
+    }else if(paths->dataSetID_str == "2444101104000"){  paths->dir_in = maindir_path + "/" + "MS_PAN" + "/" + "2444101104000_WV2_REAL_scene"                    + "/" + "InputData" + "/" + "links";
+    }else{ 
+    	if(my_rank==0){
+    		cout << endl << "ERROR: Undefined dataset: " << paths->dataSetID_str << "! " << endl << endl;
+    	}
+    	MPI_Barrier(MPI_COMM_WORLD);
+    	cerr << endl << "ERROR: Undefined dataset: " << paths->dataSetID_str << "! " << endl << endl;
+    	exit(2);
+    }
+    
+    paths->fname_ImZ_ref                   = paths->dir_in + "/" + "slink_to_ImZ_ref.dat";
+    paths->fname_ImZ_init_rec              = paths->dir_in + "/" + "slink_to_ImZ_init_rec.dat";
+    paths->fname_ImZ_init_ImY_US           = paths->dir_in + "/" + "slink_to_ImZ_init_ImY_US.dat";
+    paths->fname_ImY                       = paths->dir_in + "/" + "slink_to_ImY.dat";
+    paths->fname_ImX                       = paths->dir_in + "/" + "slink_to_ImX.dat";
+    paths->fname_SRF                       = paths->dir_in + "/" + "slink_to_SRF.csv";
+    paths->fname_SRF_for_Spectral_Grouping = paths->dir_in + "/" + "slink_to_SRF_for_Spectral_Grouping.csv";
+    paths->fname_SubspaceTransformMat      = paths->dir_in + "/" + "slink_to_HySure_output" + "/" + "EndmemberMat.csv";
+    paths->fname_DictLR                    = paths->dir_in + "/" + "slink_to_DictLR.csv";
+    paths->fname_DictHR                    = paths->dir_in + "/" + "slink_to_DictHR.csv";
+    paths->fname_ImZ                       = paths->dataSetID_str + "_rec";
 
 
 
 
-//########## DO NOT MODIFY BEYOND THIS LINE ##########
-  
-          // get current time and broadcast to all processes
-  
-          char buf[15]="";
-          if(my_rank==0){
-                  time_t t = time(0);
-                  struct tm  tstruct;
-                  tstruct = *localtime(&t);
-                  strftime(buf, sizeof(buf), "%y%m%d_%H%M%S", &tstruct);
-          }
-          MPI_Bcast(&buf, sizeof(buf), MPI_CHAR, 0,MPI_COMM_WORLD);
-          string mystringstr(buf);
-          if(pSetting->store_patches_tmp_on_drive){
-                  paths->dir_tmp_patches = paths->dir_tmp + "/patches/" + mystringstr + "_" + dSetting->jobID;
-                  if(my_rank==0){
-                          string tmpp(paths->dir_tmp);
-                          tmpp += "/patches";
-                          mkdir(paths->dir_tmp.c_str(), 0777);
-                          chmod(paths->dir_tmp.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-                          mkdir(tmpp.c_str(), 0777);
-                          chmod(tmpp.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-                          mkdir(paths->dir_tmp_patches.c_str(), 0777);
-                          chmod(paths->dir_tmp_patches.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-                  }
-          }
+
+     // get current time and broadcast to all processes
+
+     char buf[15]="";
+     if(my_rank==0){
+             time_t t = time(0);
+             struct tm  tstruct;
+             tstruct = *localtime(&t);
+             strftime(buf, sizeof(buf), "%y%m%d_%H%M%S", &tstruct);
+     }
+     MPI_Bcast(&buf, sizeof(buf), MPI_CHAR, 0,MPI_COMM_WORLD);
+     string mystringstr(buf);
+     if(pSetting->store_patches_tmp_on_drive){
+             paths->dir_tmp_patches = paths->dir_tmp + "/patches/" + mystringstr + "_" + dSetting->jobID;
+             if(my_rank==0){
+                     string tmpp(paths->dir_tmp);
+                     tmpp += "/patches";
+                     mkdir(paths->dir_tmp.c_str(), 0777);
+                     chmod(paths->dir_tmp.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+                     mkdir(tmpp.c_str(), 0777);
+                     chmod(tmpp.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+                     mkdir(paths->dir_tmp_patches.c_str(), 0777);
+                     chmod(paths->dir_tmp_patches.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+             }
+     }
 }
