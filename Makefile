@@ -32,7 +32,7 @@ SRC = $(SRCDIR)/dataIO.cpp \
 SRCMAIN = $(SRCDIR)/JSparseFI.cpp
 EXE = $(BINDIR)/JSparseFIHM
 
-SUB = $(SUBDIR)/JSparseFI
+SUB = $(SUBDIR)/JSparseFIHM
 
 HDR = $(wildcard ${SRCDIR}/*.h)
 OBJ = $(addprefix $(OBJDIR)/,$(notdir $(SRC:.cpp=.o)))
@@ -60,12 +60,12 @@ RUNFLAGS = -n 8
 ###        program arguments         ###
 ########################################
 #######################  1: job name (string roughly describing this job)
-THIS_JOB_NAME=11119211105350_9_iter0_T_subspaceDim
+THIS_JOB_NAME=demo_665211108350_iter0_T_subspaceDim
 #######################  2: job ID (6 digit integer - on the SuperMUC this number will be automatically set. On a local machine it is set manually to an arbitrary string)
 THIS_JOB_ID=xxxxxx
 #######################  3: dataset ID (int) 
 datasetID=DEFINEDBELOW
-LIST_datasetID = 2444102104000
+LIST_datasetID = 665211108350 # 2444102104000
 # 155111203350 HySpex 3600x1200 QB MS-Pan pan-sharpening
 # 109211103990_EnMAP_Sentinel2
 # 11119211105350_2013IEEEGRSSDFC_Sentinel2_Univ
@@ -136,9 +136,9 @@ LIST_datasetID = 2444102104000
 #   211119211105350 <= | 2 (CG-PC)    - 11 (GRSSDFC2013)- 11 (GRSSDFC2013)- 9 (Sentinel2)   - 2 (HS-MS)   - 1 (gauss)     - 1 (Housten Univ.)- 1 (320x540)   - 05 (fDS=5)  - 35 (SNR=inf) - 0                                            #
 
 #######################  4: regularization parameter trading the weighting of the l_2,1 norm term in the joint sparsity optimization problem (float)
-lambda=0.316
+lambda=1000 # 1
 #######################  5: number of dictionary atoms/patches (int)
-NDP=900
+NDP=300 # 900
 #######################  6: two_step_estimation [default=0] (bool)
 twoStep=0
 #######################  7: number of jointly processed channels, i.e. number of channels per bundle / per optimization problem (int)
@@ -146,13 +146,13 @@ Nc=1
 #######################  8: number of overlapping channels, i.e. number of adjacent channels in which adjacend channel bundles overlap (int)
 No=0
 #######################  9: patchsize, measured in low resolution pixels (int)
-psz=4
+psz=3
 #######################  10: overlap, measured in low resolution pixels (int)
-ovrlp=3
+ovrlp=2
 #######################  11: fusion method (either of SparseFI, JSparseFI, GroupedJSparseFI or JJSparseFIHM) (string)
 alg=JJSparseFIHM
 #######################  12: evaluate.. (1: evaluation will be done immetiately after the reconstruction during the same job; 0: evaluation will have to be done in a separate after processing step) (bool)
-eval=0
+eval=1
 #######################  13: relative tolerace [double between 0 and 0.5] for the decision matrix / spectral response functions (float)
 tol_SRF=0.7
 #######################  14: (bool)
@@ -169,7 +169,7 @@ pLastAlpha=9999999
 saveDicts=0
 #######################  20: first patch which of you want the local dictionary coordinates to be saved #### [applicable ONLY IF (saveDicts==TRUE)] (int)
 pFirstDict=0
-#######################  21: last patch which of you want the local dictionary coordinates to be saved  #### [applicable ONLY IF (saveDicts==TRUE)] (int)
+#######################  21: last patch of which you want the local dictionary coordinates to be saved  #### [applicable ONLY IF (saveDicts==TRUE)] (int)
 pLastDict=9999999
 #######################  22: first Y band to be processed (int)
 chBundleFirst=0
@@ -178,11 +178,11 @@ chBundleLast=999
 #######################  24: low resolution vertival pixel coordinate from where the reconstruction should start (default: 0) (int)
 uLFirst=0
 #######################  25: low resolution vertival pixel coordinate from where the reconstruction should end (default: 9999999) (int)
-uLLast=999 #15 ###500 ###214
+uLLast=99999
 #######################  26: low resolution horizontal pixel coordinate from where the reconstruction should start (default: 0) (int)
 vLFirst=0 # 
 #######################  27: low resolution horizontal pixel coordinate from where the reconstruction should end (default: 9999999) (int)
-vLLast=999 #20#11 ###200 ###131
+vLLast=99999
 #######################  28: number of processes working on one patch. 1 <= numProcPerPatch <= numProbPerPatch, where numProbPerPatch is the number of reconstruction problems per patch (only greater than 1 for hyperspectral image enhancement) (default: 9999999) (int)
 numProcPerPatch=1
 #######################  29: parallelization strategy (<0 no work stealing, =0 work stealing only for the spare patches, = 1,2,3,4, ...  work stealing for the spare patches plus number of turns (multiples of concurrently processed patches) before end to start work stealing)) (default: 0) (int)
@@ -210,7 +210,7 @@ imageConstructionOnly=0
 contUnfinishedRec=0
 #######################  35: path to .csv file that contains the list of linear patch IDs (iP numbers) which remain to be processed in oder to finish incomplete reconstruction
                              #### [applicable ONLY IF (contUnfinishedRec==TRUE)] (string)
-PathToIncompletePatchSetCSV=/data/Matlab/MyFunctions/ListsOfUnfinishedPatches/tests/150402_10_processes_patches_inv.csv
+PathToIncompletePatchSetCSV=./tmp.csv
 #######################  36: number of additional directories that contain previously processed tmp patches needed to reconstruct full image (int)
                              #### !! Must be the number of strings that are specified as last program arguments
 dir_tmp_patches_additional_num=0
@@ -256,10 +256,10 @@ LQ_post_opt_im=1
 #######################  49: regularization parameter trading the relative weighting of the high resolution input image I_X (double)
 lambdaX_im=DEFINEDBELOW
 #LIST_lambdaX_im= 0.0562 0.178 0.562 1.78 5.62 17.8 100  
-LIST_lambdaX_im= 0.562 #0.01 0.0316 0.1 0.316 1 3.16 10 31.6  
+LIST_lambdaX_im= 1.0 #0.01 0.0316 0.1 0.316 1 3.16 10 31.6  
 #######################  50: regularization parameter trading the relative weighting of the low resolution input image I_Y (double)
 lambdaY_im=DEFINEDBELOW
-LIST_lambdaY_im=0.316 #SameAsLambdaX #100 #10 31.6 100 178 316 1000 3160 10000 #1 1.78 3.16 5.62 10 17.8 31.6 56.2 100 #3.16 10 31.6 100 # 0.57 #0.0316 0.1 0.316 0.57 1 1.7 3.16 10 31.6 # 0.01 0.0316 0.1 0.316 1 3.16 10 31.6 #1e0 1.7e0 3.16e0 1e1 3.16e1 1e2 3.16e2 1e3 #  1e-1 1.7e-1 3.16e-1 5.7e-1 1e0 1.7e0 3.16e0 #  1 # 1e-1 3.16e-1 5.7e-1 1e0 1.7e0 3.16e0 5.7e0 #  1e-3 3.16e-2 1e-1 3.16e-1 1e0 3.16e0 1e1 3.16e1 1e2 1e3 # 5.7e0 1.7e1 # 1e-2 3.16e-2 1e-1 3.16e-1 1e0 3.16e0 1e1 3.16e1 1e2        # 1e0 3.16e0 1e1 3.16e1 1e2 #  1e-2 3.16e-2 1e-1 3.16e-1 1e0 3.16e0 1e1 3.16e1 1e2        # 3.16e-3 1e-2 3.16e-2 1e-1 3.16e-1 5.7e-1 1e0 1.7e0 3.16e0 1e1 3.16e1 1e2 3.16e2 # 1e-3 3.16e-3 1e-2 3.16e-2 1e-1 3.16e-1 5.7e-1 1e0 1.7e0 3.16e0 1e1 3.16e1 1e2 3.16e2 1e3 #5.7e-1 1e0 1.6e0 3.16e0 5.7e0 1e1 1.6e1 3.16e1 5.7e1 1e2 3.16e2 1e3 3.16e3 1e4
+LIST_lambdaY_im=1.0 #SameAsLambdaX #100 #10 31.6 100 178 316 1000 3160 10000 #1 1.78 3.16 5.62 10 17.8 31.6 56.2 100 #3.16 10 31.6 100 # 0.57 #0.0316 0.1 0.316 0.57 1 1.7 3.16 10 31.6 # 0.01 0.0316 0.1 0.316 1 3.16 10 31.6 #1e0 1.7e0 3.16e0 1e1 3.16e1 1e2 3.16e2 1e3 #  1e-1 1.7e-1 3.16e-1 5.7e-1 1e0 1.7e0 3.16e0 #  1 # 1e-1 3.16e-1 5.7e-1 1e0 1.7e0 3.16e0 5.7e0 #  1e-3 3.16e-2 1e-1 3.16e-1 1e0 3.16e0 1e1 3.16e1 1e2 1e3 # 5.7e0 1.7e1 # 1e-2 3.16e-2 1e-1 3.16e-1 1e0 3.16e0 1e1 3.16e1 1e2        # 1e0 3.16e0 1e1 3.16e1 1e2 #  1e-2 3.16e-2 1e-1 3.16e-1 1e0 3.16e0 1e1 3.16e1 1e2        # 3.16e-3 1e-2 3.16e-2 1e-1 3.16e-1 5.7e-1 1e0 1.7e0 3.16e0 1e1 3.16e1 1e2 3.16e2 # 1e-3 3.16e-3 1e-2 3.16e-2 1e-1 3.16e-1 5.7e-1 1e0 1.7e0 3.16e0 1e1 3.16e1 1e2 3.16e2 1e3 #5.7e-1 1e0 1.6e0 3.16e0 5.7e0 1e1 1.6e1 3.16e1 5.7e1 1e2 3.16e2 1e3 3.16e3 1e4
 #######################  51: maximum number of iterations in the GS step to solve the least squares problem on the final image level (int)
 maxiter_CGLS_im=1500
 #######################  52: error tolerance (double)
@@ -272,7 +272,7 @@ useNewMethodForCalculatingZ=1
 ########################  54: use simulated high resolution image X for dictionary learning [added in October 2015] (bool)
 useSimulatedImXforDictLearn=1
 ########################  55~57: regularization parameters for new coefficient estimation [added in October 2015] (double)
-lambdaX_ABC=0.562
+lambdaX_ABC=316
 lambdaY_ABC=0.316
 lambdaZ_ABC=1
 ####################### 58 set lambdaZ_ABC to this number only in the first iteration. A low value can be helpful e.g. if the initial image ImZ_init is not very good/trustworthy (double)
@@ -287,9 +287,9 @@ doFullImOptWithoutPatRec=0
 ####################### 61 number of coupled ImZ calculations/iterations (int)
 iterMain=3
 ####################### 62 maximum size of spectral group above groups will be double-checked and perhaps split into subgoups (int) 
-Nc_max=5
+Nc_max=25
 ####################### 63 minimum cross-correlation within spectral goups (double)
-CC_min=0.9
+CC_min=0.96
 ####################### 64 size of window around patch: Must be odd if patchsize is odd and even if patchsize is even, in order to have both centers matched; Used for correlation calculations (int)
 winSize=6
 ####################### 65 evaluate initial image (bool)
@@ -314,7 +314,7 @@ subspace_transform_type_LIST=SVD
 #                           =VCA
 #                           =none
 ####################### 6: subspace dimension
-subspace_dim_LIST=7 #1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 24 26 28 30 32 34 36 38 40 43 46 50 54 60 68 79 89 100 113 127 142 #60 # 4 5 6 7 8 9 10 11 12 13 14 15 16 18 20 22 24 27 30 35 40 45 50 50 60 65 72 80 89 98 108 118 128#4 5 6 7 8 10 12 15 18 21 25 30 36 42 50 60 72 85 100 120  #4 5 6 7 8 9 10 11 12 13 14 15 17 20 22 26 30 35 40 48 60 75 95 128
+subspace_dim_LIST=10 #1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 24 26 28 30 32 34 36 38 40 43 46 50 54 60 68 79 89 100 113 127 142 #60 # 4 5 6 7 8 9 10 11 12 13 14 15 16 18 20 22 24 27 30 35 40 45 50 50 60 65 72 80 89 98 108 118 128#4 5 6 7 8 10 12 15 18 21 25 30 36 42 50 60 72 85 100 120  #4 5 6 7 8 9 10 11 12 13 14 15 17 20 22 26 30 35 40 48 60 75 95 128
 ####################### 73: ImX simulation mode: 0: correlation based; 1: unconstrained LS based; 2: NNLS based
 ImX_sim_mode=2
 ####################### 74: calc. coeff. in full image opt. eq. via SNR calc. of ImX and ImY (bool)

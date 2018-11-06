@@ -1,5 +1,9 @@
 ###########################################
-# make.inc for personal settings
+# make.inc 
+# 
+# settings of local paths to
+# libraries (eigen and gdal)
+#
 # Author: Claas Grohnfeldt
 ###########################################
 
