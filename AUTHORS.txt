@@ -1,4 +1,5 @@
 main author: Claas Grohnfeldt
 
 contributers:
-Steffen Peter (implemented JS.cpp/.h which includes J-P-FISTA and other solvers used in J-SparseFI-HM)
+- Xiaoxiang Zhu: Initiated projects SparseFI and J-SparseFI; Provided advise throughout during development 
+- Steffen Peter: Implemented most of JS.cpp and JS.h which includes J-P-FISTA and other solvers used in J-SparseFI-HM
