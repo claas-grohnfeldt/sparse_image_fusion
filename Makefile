@@ -146,9 +146,9 @@ Nc=1
 #######################  8: number of overlapping channels, i.e. number of adjacent channels in which adjacend channel bundles overlap (int)
 No=0
 #######################  9: patchsize, measured in low resolution pixels (int)
-psz=3
+psz=4
 #######################  10: overlap, measured in low resolution pixels (int)
-ovrlp=2
+ovrlp=0
 #######################  11: fusion method (either of SparseFI, JSparseFI, GroupedJSparseFI or JJSparseFIHM) (string)
 alg=JJSparseFIHM
 #######################  12: evaluate.. (1: evaluation will be done immetiately after the reconstruction during the same job; 0: evaluation will have to be done in a separate after processing step) (bool)
@@ -198,7 +198,7 @@ workStealingTurns=-1
 # PanHR uncorrelation, including current patch as first atom                                      (7)
 # Random, including current patch as first atom                                                   (8)
 # PanHR self uncorrelated basis approximation, including current patch as first atom              (9)
-dictselect = 8
+dictselect=8
 #######################  31: write fused image in file (1: create file and write resulting image in file; 0: to not write image in file (useful for analyses only)) (bool)
 writeImageFile=1
 #######################  32: delete tmp patch folders after the fusion process? (bool, default=1)
@@ -210,7 +210,7 @@ imageConstructionOnly=0
 contUnfinishedRec=0
 #######################  35: path to .csv file that contains the list of linear patch IDs (iP numbers) which remain to be processed in oder to finish incomplete reconstruction
                              #### [applicable ONLY IF (contUnfinishedRec==TRUE)] (string)
-PathToIncompletePatchSetCSV=./tmp.csv
+PathToIncompletePatchSetCSV=path_to_csv_file #./tmp.csv
 #######################  36: number of additional directories that contain previously processed tmp patches needed to reconstruct full image (int)
                              #### !! Must be the number of strings that are specified as last program arguments
 dir_tmp_patches_additional_num=0

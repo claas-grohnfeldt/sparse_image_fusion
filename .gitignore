@@ -1,4 +1,9 @@
-bin/*
-obj/*
-lib/*
-archive/*
+/data/*
+/bin/*
+/results/*
+/obj/*
+/lib/eigen/*
+/lib/gdal/lib/*
+/lib/gdal/inc/*
+/archive/*
+/supermuc_jobs/job_output

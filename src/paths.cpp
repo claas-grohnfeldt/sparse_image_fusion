@@ -28,7 +28,7 @@ void getPaths(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOParallelSetting
                 paths->dir_tmp = "/gpfs/scratch/pr45ne/ga39yoz2/JSparseFI/tmp";
 		break;
 	   }case 2:{ // CG local
-		maindir_path = "/mnt/ssd2/data/links_for_fusion";
+		maindir_path = "./data";
 		paths->dir_out = "results";
 		paths->dir_tmp = "tmp";
                 break;
@@ -130,32 +130,31 @@ void getPaths(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOParallelSetting
         ////                                                                                                     ////
         ////*****************************************************************************************************////
 
-	//####################################################################################################################################################################################################################
-	//#  orig. sensor    - LR sensor       - HR sensor       - fusion type - filter kernel - scene            - size ID       - fDS         - SNR          - redundant digit (>0 for non-regular datasets #
-	//#  3 (Aviris)      - 3 (Aviris)      - 5 (Quickbird)   - 2 (HS-MS)   - 1 (gauss)     - 3 (Moffett Field)- 3 (360x360)   - 04 (fDS=4)  - 35 (SNR=35db)- 0                                            #
-	//####################################################################################################################################################################################################################
-        if(paths->dataSetID_str == "11119211105350"){       paths->dir_in = maindir_path + "/" + "11119211105350_2013IEEEGRSSDFC_Sentinel2_Univ" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "11119212105350"){ paths->dir_in = maindir_path + "/" + "11119212105350_2013IEEEGRSSDFC_Sentinel2_cloud" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "109211103990"){   paths->dir_in = maindir_path + "/" + "109211103990_EnMAP_Sentinel2" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "3313211304350"){  paths->dir_in = maindir_path + "/" + "3313211304350_Aviris_IndianPines_WV3_VNIR" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "3313212405350"){  paths->dir_in = maindir_path + "/" + "3313212405350_Aviris_Cuprite_sc03_WV3_VNIR" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "3314211304350"){  paths->dir_in = maindir_path + "/" + "3314211304350_Aviris_IndianPines_WV3_SWIR" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "3314212405350"){  paths->dir_in = maindir_path + "/" + "3314212405350_Aviris_Cuprite_sc03_WV3_SWIR" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "3315211304350"){  paths->dir_in = maindir_path + "/" + "3315211304350_Aviris_IndianPines_WV3_VNIR_SWIR" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "3315212405350"){  paths->dir_in = maindir_path + "/" + "3315212405350_Aviris_Cuprite_sc03_WV3_VNIR_SWIR" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "334211304350"){   paths->dir_in = maindir_path + "/" + "334211304350_Aviris_IndianPines" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "334212404350"){   paths->dir_in = maindir_path + "/" + "334212404350_Aviris_Cuprite_sc03_fDS4" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "334212405350"){   paths->dir_in = maindir_path + "/" + "334212405350_Aviris_Cuprite_sc03_fDS5" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "335213304350"){   paths->dir_in = maindir_path + "/" + "335213304350_Aviris_Moffett_Field" + "/" + "InputData" + "/" + "links_SNR35";
-        }else if(paths->dataSetID_str == "335213304990"){   paths->dir_in = maindir_path + "/" + "335213304350_Aviris_Moffett_Field" + "/" + "InputData" + "/" + "links_SNRinf";
-        }else if(paths->dataSetID_str == "665211108350"){   paths->dir_in = maindir_path + "/" + "665211108350_ROSIS_Pavia_Univeristy" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "665211108990"){   paths->dir_in = maindir_path + "/" + "665211108990_ROSIS_Pavia_University_SNRinf" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "774211106350"){   paths->dir_in = maindir_path + "/" + "774211106350_Headwall_Chikusei_urban" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "774212106350"){   paths->dir_in = maindir_path + "/" + "774212106350_Headwall_Chikusei_nonUrban" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "885211404350"){   paths->dir_in = maindir_path + "/" + "885211404350_HYDICE_WashDC_Mall" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "155111203350"){   paths->dir_in = maindir_path + "/" + "155111203350_HySpex_Olymp_3600x1200" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "2444101104000"){  paths->dir_in = maindir_path + "/" + "2444101104000_WV2_REAL_scene" + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "2444102104000"){  paths->dir_in = maindir_path + "/" + "2444102104000_WV2_REAL_HongKong_from_Naoto" + "/" + "InputData" + "/" + "links";
+        // Hyperspectral-Multispectral (J-SparseFI-HM)
+        if(      paths->dataSetID_str == "11119211105350"){ paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "11119211105350_2013IEEEGRSSDFC_Sentinel2_Univ"   + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "11119212105350"){ paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "11119212105350_2013IEEEGRSSDFC_Sentinel2_cloud"  + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "109211103990"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "109211103990_EnMAP_Sentinel2"                    + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "3313211304350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3313211304350_Aviris_IndianPines_WV3_VNIR"       + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "3313212405350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3313212405350_Aviris_Cuprite_sc03_WV3_VNIR"      + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "3314211304350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3314211304350_Aviris_IndianPines_WV3_SWIR"       + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "3314212405350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3314212405350_Aviris_Cuprite_sc03_WV3_SWIR"      + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "3315211304350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3315211304350_Aviris_IndianPines_WV3_VNIR_SWIR"  + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "3315212405350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3315212405350_Aviris_Cuprite_sc03_WV3_VNIR_SWIR" + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "334211304350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "334211304350_Aviris_IndianPines"                 + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "334212404350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "334212404350_Aviris_Cuprite_sc03_fDS4"           + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "334212405350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "334212405350_Aviris_Cuprite_sc03_fDS5"           + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "335213304350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "335213304350_Aviris_Moffett_Field"               + "/" + "InputData" + "/" + "links_SNR35";
+        }else if(paths->dataSetID_str == "335213304990"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "335213304350_Aviris_Moffett_Field"               + "/" + "InputData" + "/" + "links_SNRinf";
+        }else if(paths->dataSetID_str == "665211108350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "665211108350_ROSIS_Pavia_Univeristy"             + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "665211108990"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "665211108990_ROSIS_Pavia_University_SNRinf"      + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "774211106350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "774211106350_Headwall_Chikusei_urban"            + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "774212106350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "774212106350_Headwall_Chikusei_nonUrban"         + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "885211404350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "885211404350_HYDICE_WashDC_Mall"                 + "/" + "InputData" + "/" + "links";
+        }
+        // Multispectral-Panchromatic (Pan-sharpening: SparseFI & J-SparseFI)
+        else if(paths->dataSetID_str == "155111203350"){         paths->dir_in = maindir_path + "/" + "MS_PAN"  + "/" + "155111203350_HySpex_Olymp_3600x1200"            + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "2444101104000"){  paths->dir_in = maindir_path + "/" + "MS_PAN" + "/" + "2444101104000_WV2_REAL_scene"                    + "/" + "InputData" + "/" + "links";
+        }else if(paths->dataSetID_str == "2444102104000"){  paths->dir_in = maindir_path + "/" + "MS_PAN" + "/" + "2444102104000_WV2_REAL_HongKong_from_Naoto"      + "/" + "InputData" + "/" + "links";
         }else{ 
 		if(my_rank==0){
 			cout << endl << "ERROR: Undefined dataset: " << paths->dataSetID_str << "! " << endl << endl;

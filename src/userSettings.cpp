@@ -26,31 +26,26 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
 	MPI_Comm_size(MPI_COMM_WORLD, &my_processes);
 	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
+    //**********************************
+    // default parameters
+    //**********************************
 	// MPI / parallelization settings
 	// total number of processes
 	pSetting->numProcTot = my_processes;
 	// number of processes to work on one sparse reconstruction problem (solver parallelization)
 	pSetting->numProcGrp          = 1;
-
 	// Choose if input images should be normalized before calculation
 	fSetting->nrmlIm              = false; // to be set to false
-
 	// Choose if the columns of the dictionaries should be normalized for calc.
 	fSetting->nrmlDicts           = true;
-
 	// Choose if the dictionary's columns should have zero means.
 	fSetting->substrMean          = true;
-
 	// Specify whether or not original high resolution MS image is available.
 	// If so, the fusion results will be evaluated.
 	fSetting->ImZ_ref_avlbl       = true;
-
 	oSetting->prec                = 10;
-
-	dSetting->jobName             = argv[1];//atoi(argv[1]);
-
-	dSetting->jobID               = argv[2];//atoi(argv[1]);
-        // don't modify beyond this line. lambda and NDP are set in makefile / job script
+	dSetting->jobName             = argv[1];
+	dSetting->jobID               = argv[2];
 	// Set Lagrangian multiplier
 	fSetting->lambda              = atof(argv[4]);
 

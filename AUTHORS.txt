@@ -1,0 +1,4 @@
+main author: Claas Grohnfeldt
+
+contributers:
+Steffen Peter (implemented JS.cpp/.h which includes J-P-FISTA and other solvers used in J-SparseFI-HM)

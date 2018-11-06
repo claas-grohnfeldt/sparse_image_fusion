@@ -2255,13 +2255,13 @@ for (iChY=0; iChY<N_Y; iChY++){
     if (numProcEq1 == 1) {
 
 	  if(!fSetting->fullImOptOnSubspace){
-	      // calculate LAMBDA_X LAMBDA_Y and LAMBDA_Z   TBD: calculation of LAMBDA_X and LAMBDA_Y can be oursource to JSparseFI.cpp
+	      // calculate LAMBDA_X LAMBDA_Y and LAMBDA_Z  (can be oursource to JSparseFI.cpp)
 		  SpEOVectorD LAMBDA_X(N_X);
 		  SpEOVectorD LAMBDA_Y(N_Y);
 		  SpEOVectorD LAMBDA_Z(N_Y);
-		  SpEOVectorD SNR_X_db = 35.0*SpEOVectorD::Ones(N_X); // TBD: can be estimated band-wise easily from the image ImX
-		  SpEOVectorD SNR_Y_db = 35.0*SpEOVectorD::Ones(N_Y); // TBD: can be estimated band-wise easily from the image ImY
-		  SpEOVectorD SNR_Z_db = 35.0*SpEOVectorD::Ones(N_Y); // TBD: can be estimated band-wise easily from the image ImZ_init
+		  SpEOVectorD SNR_X_db = 35.0*SpEOVectorD::Ones(N_X); // estimated band-wise from the image ImX
+		  SpEOVectorD SNR_Y_db = 35.0*SpEOVectorD::Ones(N_Y); // estimated band-wise from the image ImY
+		  SpEOVectorD SNR_Z_db = 35.0*SpEOVectorD::Ones(N_Y); // estimated band-wise from the image ImZ_init
 		  if(SNR_normalization){
 		  	for(iChX=0; iChX<N_X; iChX++){
 		  	      LAMBDA_X(iChX) = sqrt(pow(10.0, 0.1*SNR_X_db(iChX))) / (I_X[iChX].norm()); 
@@ -2272,9 +2272,9 @@ for (iChY=0; iChY<N_Y; iChY++){
 		  	for(iChY=0; iChY<N_Y; iChY++){
 		  	      LAMBDA_Z(iChY) = sqrt(pow(10.0, 0.1*SNR_Z_db(iChY))) / (I_Z_tilde[iChY].norm()); 
 		  	}
-		  	if(my_rank==0){cout << "LAMBDA_X=" << endl << LAMBDA_X.transpose() << endl << endl;}
-		  	if(my_rank==0){cout << "LAMBDA_Y=" << endl << LAMBDA_Y.transpose() << endl << endl;}
-		  	if(my_rank==0){cout << "LAMBDA_Z=" << endl << LAMBDA_Z.transpose() << endl << endl;}
+		  	// if(my_rank==0){cout << "LAMBDA_X=" << endl << LAMBDA_X.transpose() << endl << endl;}
+		  	// if(my_rank==0){cout << "LAMBDA_Y=" << endl << LAMBDA_Y.transpose() << endl << endl;}
+		  	// if(my_rank==0){cout << "LAMBDA_Z=" << endl << LAMBDA_Z.transpose() << endl << endl;}
 
 		        // Z_tilde = LAMBDA_Z * Z
 		        // Y_tilde = LAMBDA_Y * Y
@@ -2319,9 +2319,9 @@ for (iChY=0; iChY<N_Y; iChY++){
 		  SpEOVectorD LAMBDA_Y(N_Y);
 		  SpEOVectorD LAMBDA_Z(N_Y);
 		  SpEOVectorD LAMBDA_ZY(N_Y);
-		  SpEOVectorD SNR_X_db = 35.0*SpEOVectorD::Ones(N_X); // TBD: can be estimated band-wise easily from the image ImX
-		  SpEOVectorD SNR_Y_db = 35.0*SpEOVectorD::Ones(N_Y); // TBD: can be estimated band-wise easily from the image ImY
-		  SpEOVectorD SNR_Z_db = 35.0*SpEOVectorD::Ones(N_Y); // TBD: can be estimated band-wise easily from the image ImZ_init
+		  SpEOVectorD SNR_X_db = 35.0*SpEOVectorD::Ones(N_X); // estimated band-wise from the image ImX
+		  SpEOVectorD SNR_Y_db = 35.0*SpEOVectorD::Ones(N_Y); // estimated band-wise from the image ImY
+		  SpEOVectorD SNR_Z_db = 35.0*SpEOVectorD::Ones(N_Y); // estimated band-wise from the image ImZ_init
 
 		  for(iChX=0; iChX<N_X; iChX++){
 			LAMBDA_X(iChX) = sqrt(pow(10.0, 0.1*SNR_X_db(iChX))) / (I_X[iChX].norm()); 
@@ -2331,10 +2331,10 @@ for (iChY=0; iChY<N_Y; iChY++){
 			LAMBDA_Z(iChY) = sqrt(pow(10.0, 0.1*SNR_Z_db(iChY))) / (I_Z_tilde[iChY].norm()); 
 			LAMBDA_ZY(iChY) = LAMBDA_Z(iChY)/LAMBDA_Y(iChY); 
 		  }
-		  if(my_rank==0){cout << "LAMBDA_X=" << endl << LAMBDA_X.transpose() << endl << endl;}
-		  if(my_rank==0){cout << "LAMBDA_Y=" << endl << LAMBDA_Y.transpose() << endl << endl;}
-		  if(my_rank==0){cout << "LAMBDA_Z=" << endl << LAMBDA_Z.transpose() << endl << endl;}
-		  if(my_rank==0){cout << "LAMBDA_ZY=" << endl << LAMBDA_ZY.transpose() << endl << endl;}
+		  // if(my_rank==0){cout << "LAMBDA_X=" << endl << LAMBDA_X.transpose() << endl << endl;}
+		  // if(my_rank==0){cout << "LAMBDA_Y=" << endl << LAMBDA_Y.transpose() << endl << endl;}
+		  // if(my_rank==0){cout << "LAMBDA_Z=" << endl << LAMBDA_Z.transpose() << endl << endl;}
+		  // if(my_rank==0){cout << "LAMBDA_ZY=" << endl << LAMBDA_ZY.transpose() << endl << endl;}
 
 		  if(SNR_normalization){
 		       // T_tilde = LAMBDA_Y * T
