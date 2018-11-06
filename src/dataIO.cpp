@@ -4244,7 +4244,7 @@ void calcDecisionMat(SpEOMatrixD *SRF, SpEODataIOSetting *dSet, SpEOFusionSettin
 	//}
 	
 	if (my_rank == 0) {
-		cout << ".. decision matrix successfully calculated!" << endl << "glPrms->decMat_C.transpose() = " << endl << glPrms->decMat_C.transpose() << endl;
+		cout << ".. decision matrix successfully calculated!" << endl; // << "glPrms->decMat_C.transpose() = " << endl << glPrms->decMat_C.transpose() << endl;
 	}
 
 	// ###################################

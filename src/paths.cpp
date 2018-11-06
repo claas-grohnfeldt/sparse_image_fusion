@@ -143,8 +143,7 @@ void getPaths(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOParallelSetting
         }else if(paths->dataSetID_str == "334211304350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "334211304350_Aviris_IndianPines"                 + "/" + "InputData" + "/" + "links";
         }else if(paths->dataSetID_str == "334212404350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "334212404350_Aviris_Cuprite_sc03_fDS4"           + "/" + "InputData" + "/" + "links";
         }else if(paths->dataSetID_str == "334212405350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "334212405350_Aviris_Cuprite_sc03_fDS5"           + "/" + "InputData" + "/" + "links";
-        }else if(paths->dataSetID_str == "335213304350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "335213304350_Aviris_Moffett_Field"               + "/" + "InputData" + "/" + "links_SNR35";
-        }else if(paths->dataSetID_str == "335213304990"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "335213304350_Aviris_Moffett_Field"               + "/" + "InputData" + "/" + "links_SNRinf";
+        }else if(paths->dataSetID_str == "335213304350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "335213304350_Aviris_Moffett_Field"               + "/" + "InputData" + "/" + "links";
         }else if(paths->dataSetID_str == "665211108350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "665211108350_ROSIS_Pavia_Univeristy"             + "/" + "InputData" + "/" + "links";
         }else if(paths->dataSetID_str == "665211108990"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "665211108990_ROSIS_Pavia_University_SNRinf"      + "/" + "InputData" + "/" + "links";
         }else if(paths->dataSetID_str == "774211106350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "774211106350_Headwall_Chikusei_urban"            + "/" + "InputData" + "/" + "links";
