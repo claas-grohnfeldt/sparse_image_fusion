@@ -14,8 +14,6 @@ SUBDIR = $(COREDIR)/archive
 BINDIR = $(COREDIR)/bin
 
 ### files
-#SRC = ${SRCDIR}/*.cpp
-#SRC = $(wildcard ${SRCDIR}/*.cpp)
 SRC = $(SRCDIR)/dataIO.cpp \
 	$(SRCDIR)/filter.cpp \
 	$(SRCDIR)/JS.cpp \
@@ -26,8 +24,6 @@ SRC = $(SRCDIR)/dataIO.cpp \
 	$(SRCDIR)/paths.cpp \
 	$(SRCDIR)/JSparseFI_alg.cpp \
 	$(SRCDIR)/nnls.cpp
-#	$(SRCDIR)/SparsEO.cpp \
-#	$(SRCDIR)/Evaluation_PanSharp.cpp \
 
 SRCMAIN = $(SRCDIR)/JSparseFI.cpp
 EXE = $(BINDIR)/JSparseFIHM
@@ -45,17 +41,15 @@ LIB_GDAL = -lgdal
 LIB_DIR  = -L $(GDAL_LIBRARY_PATH)
 
 ### compiler
-#CXX      = mpic++
-CXX      = mpiCC
-#CFLAGS = -O0 -g3 -Wall -c -fmessage-length=0
+CXX      = mpic++
+#CXX      = mpiCC
 CFLAGS   = -O3 -w 
-#CFLAGS   = -O3 -w -std=c++11
-#CFLAGS   = -O3 -Wall -openmp
 LDFLAGS=$(LIB_DIR) $(LIB_GDAL)
 
 ### exec
 RUN      = mpiexec
-RUNFLAGS = -n 256 
+RUNFLAGS = -n 8
+
 ########################################
 ###        program arguments         ###
 ########################################
@@ -65,27 +59,21 @@ THIS_JOB_NAME=demo_665211108350_iter0_T_subspaceDim
 THIS_JOB_ID=xxxxxx
 #######################  3: dataset ID (int) 
 datasetID=DEFINEDBELOW
-LIST_datasetID = 665211108350 # 2444102104000
-# 155111203350 HySpex 3600x1200 QB MS-Pan pan-sharpening
+LIST_datasetID = 665211108350
+# examples:
+# 
+# HS-MS:
 # 109211103990_EnMAP_Sentinel2
 # 11119211105350_2013IEEEGRSSDFC_Sentinel2_Univ
-# 11119212105350_2013IEEEGRSSDFC_Sentinel2_cloud
-# 3313211304350_Aviris_IndianPines_WV3_VNIR
-# 3313212405350_Aviris_Cuprite_sc03_WV3_VNIR
-# 3314211304350_Aviris_IndianPines_WV3_SWIR
-# 3314212405350_Aviris_Cuprite_sc03_WV3_SWIR
 # 3315211304350_Aviris_IndianPines_WV3_VNIR_SWIR
 # 3315212405350_Aviris_Cuprite_sc03_WV3_VNIR_SWIR
-# 334211304350_Aviris_IndianPines
-# 334212404350_Aviris_Cuprite_sc03_fDS4
-# 334212405350_Aviris_Cuprite_sc03_fDS5
 # 335213304350_Aviris_Moffett_Field
-#(335213304990 ---------"---------- SNR=inf)
 # 665211108350_ROSIS_Pavia_Univeristy
-# 665211108990_ROSIS_Pavia_University_SNRinf
-# 774211106350_Headwall_Chikusei_urban
 # 774212106350_Headwall_Chikusei_nonUrban
 # 885211404350_HYDICE_WashDC_Mall
+#
+# MS-PAN
+# 155111203350 HySpex 3600x1200 QB 
 # 2444101104000_Real_WV2_scene
 # 2444102104000_Real_WV2_HongKong_from_Naoto
 
@@ -146,7 +134,7 @@ Nc=1
 #######################  8: number of overlapping channels, i.e. number of adjacent channels in which adjacend channel bundles overlap (int)
 No=0
 #######################  9: patchsize, measured in low resolution pixels (int)
-psz=4
+psz=3
 #######################  10: overlap, measured in low resolution pixels (int)
 ovrlp=0
 #######################  11: fusion method (either of SparseFI, JSparseFI, GroupedJSparseFI or JJSparseFIHM) (string)
@@ -255,15 +243,14 @@ LIST_fix_delta_m = 1
 LQ_post_opt_im=1
 #######################  49: regularization parameter trading the relative weighting of the high resolution input image I_X (double)
 lambdaX_im=DEFINEDBELOW
-#LIST_lambdaX_im= 0.0562 0.178 0.562 1.78 5.62 17.8 100  
-LIST_lambdaX_im= 1.0 #0.01 0.0316 0.1 0.316 1 3.16 10 31.6  
+LIST_lambdaX_im= 1e-5
 #######################  50: regularization parameter trading the relative weighting of the low resolution input image I_Y (double)
 lambdaY_im=DEFINEDBELOW
-LIST_lambdaY_im=1.0 #SameAsLambdaX #100 #10 31.6 100 178 316 1000 3160 10000 #1 1.78 3.16 5.62 10 17.8 31.6 56.2 100 #3.16 10 31.6 100 # 0.57 #0.0316 0.1 0.316 0.57 1 1.7 3.16 10 31.6 # 0.01 0.0316 0.1 0.316 1 3.16 10 31.6 #1e0 1.7e0 3.16e0 1e1 3.16e1 1e2 3.16e2 1e3 #  1e-1 1.7e-1 3.16e-1 5.7e-1 1e0 1.7e0 3.16e0 #  1 # 1e-1 3.16e-1 5.7e-1 1e0 1.7e0 3.16e0 5.7e0 #  1e-3 3.16e-2 1e-1 3.16e-1 1e0 3.16e0 1e1 3.16e1 1e2 1e3 # 5.7e0 1.7e1 # 1e-2 3.16e-2 1e-1 3.16e-1 1e0 3.16e0 1e1 3.16e1 1e2        # 1e0 3.16e0 1e1 3.16e1 1e2 #  1e-2 3.16e-2 1e-1 3.16e-1 1e0 3.16e0 1e1 3.16e1 1e2        # 3.16e-3 1e-2 3.16e-2 1e-1 3.16e-1 5.7e-1 1e0 1.7e0 3.16e0 1e1 3.16e1 1e2 3.16e2 # 1e-3 3.16e-3 1e-2 3.16e-2 1e-1 3.16e-1 5.7e-1 1e0 1.7e0 3.16e0 1e1 3.16e1 1e2 3.16e2 1e3 #5.7e-1 1e0 1.6e0 3.16e0 5.7e0 1e1 1.6e1 3.16e1 5.7e1 1e2 3.16e2 1e3 3.16e3 1e4
+LIST_lambdaY_im=1e-5
 #######################  51: maximum number of iterations in the GS step to solve the least squares problem on the final image level (int)
 maxiter_CGLS_im=1500
 #######################  52: error tolerance (double)
-tol_r_CGLS_im=1e-12
+tol_r_CGLS_im=1e-8 # 1e-12
 #########################################################
 # for coefficient estimation
 #########################################################
@@ -272,8 +259,8 @@ useNewMethodForCalculatingZ=1
 ########################  54: use simulated high resolution image X for dictionary learning [added in October 2015] (bool)
 useSimulatedImXforDictLearn=1
 ########################  55~57: regularization parameters for new coefficient estimation [added in October 2015] (double)
-lambdaX_ABC=316
-lambdaY_ABC=0.316
+lambdaX_ABC=1e-5 # 316
+lambdaY_ABC=1e-5 # 0.316
 lambdaZ_ABC=1
 ####################### 58 set lambdaZ_ABC to this number only in the first iteration. A low value can be helpful e.g. if the initial image ImZ_init is not very good/trustworthy (double)
 lambdaZ_ABC_in_1st_iter=1 #Set_to_1
@@ -285,7 +272,7 @@ ImZ_init_type=2 # reconstruction result of another algorithm (e.g. HySure, Bayes
 ####################### 60 jump to the full image optimization (of the initial image) without doing the patch-wise imge reconstruction. (bool)
 doFullImOptWithoutPatRec=0
 ####################### 61 number of coupled ImZ calculations/iterations (int)
-iterMain=3
+iterMain=2
 ####################### 62 maximum size of spectral group above groups will be double-checked and perhaps split into subgoups (int) 
 Nc_max=25
 ####################### 63 minimum cross-correlation within spectral goups (double)
@@ -314,7 +301,7 @@ subspace_transform_type_LIST=SVD
 #                           =VCA
 #                           =none
 ####################### 6: subspace dimension
-subspace_dim_LIST=10 #1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 24 26 28 30 32 34 36 38 40 43 46 50 54 60 68 79 89 100 113 127 142 #60 # 4 5 6 7 8 9 10 11 12 13 14 15 16 18 20 22 24 27 30 35 40 45 50 50 60 65 72 80 89 98 108 118 128#4 5 6 7 8 10 12 15 18 21 25 30 36 42 50 60 72 85 100 120  #4 5 6 7 8 9 10 11 12 13 14 15 17 20 22 26 30 35 40 48 60 75 95 128
+subspace_dim_LIST=10
 ####################### 73: ImX simulation mode: 0: correlation based; 1: unconstrained LS based; 2: NNLS based
 ImX_sim_mode=2
 ####################### 74: calc. coeff. in full image opt. eq. via SNR calc. of ImX and ImY (bool)
@@ -341,7 +328,6 @@ dir_tmp_patches_additional_3=path_of_third_directory_to_be_searched_if_patch_not
 #                  DON'T MODIFY BEYOND THIS LINE                       #
 #                                                                      #
 ########################################################################
-#  $(RUN) $(RUNFLAGS) -x LD_LIBRARY_PATH=$(GDAL_LIBRARY_PATH) $(EXE) $(THIS_JOB_NAME) $(THIS_JOB_ID) $(datasetID) $(lambda) $(NDP) $(twoStep) $(Nc) $(No) $(psz) $(ovrlp) $(alg) $(eval) $(tol_SRF) $(store_patches_tmp_on_drive) $(parWrNumProc) $(saveAlphas) $(pFirstAlpha) $(pLastAlpha) $(saveDicts) $(pFirstDict) $(pLastDict) $(chBundleFirst) $(chBundleLast) $(uLFirst) $(uLLast) $(vLFirst) $(vLLast) $(numProcPerPatch) $(workStealingTurns) $(dictselect) $(writeImageFile) $(delete_tmp_patch_folders) $(imageConstructionOnly) $(contUnfinishedRec) $(PathToIncompletePatchSetCSV) $(dir_tmp_patches_additional_num) $(matrixNorm) $(addMeanPixelwise) $(maxiter_out) $(tol) $(LQ_post_opt) $(lambdaX) $(lambdaY) $(maxiter_CGLS) $(tol_r_CGLS) $(fix_Alpha) $(fix_delta_m) $(dir_tmp_patches_additional_1) $(dir_tmp_patches_additional_2) $(dir_tmp_patches_additional_3)
 .PHONY: clean all
  
 all: clean $(EXE)  
@@ -351,9 +337,6 @@ $(OBJ): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 
 $(EXE): $(OBJ)
 	$(CXX) $(SRCMAIN) $(CFLAGS) $(INCFLAGS) $(OBJ) $(LDFLAGS) -o $(EXE)
-
-valgrind_JSparseFI:
-	$(RUN) $(RUNFLAGS) -x LD_LIBRARY_PATH=$(GDAL_LIBRARY_PATH) -x LD_PRELOAD=/usr/local/lib/valgrind/libmpiwrap-amd64-linux.so valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --num-callers=40 --log-file=valgrind6.output $(EXE) $(datasetID) $(lambda) $(NDP) $(twoStep) $(Nc) $(No) $(psz) $(ovrlp) $(alg) $(pFirst) $(pLast) $(eval) $(tol_SRF) $(parWr) $(saveAlphas) $(pFirstAlpha) $(pLastAlpha) $(saveDicts) $(pFirstDict) $(pLastDict) $(chBundleFirst) $(chBundleLast)
 
 run_JSparseFI:
 		$(foreach datasetID, $(LIST_datasetID), \
