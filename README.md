@@ -27,3 +27,9 @@ Pay attention to the symbolic links in the directory "links" with generic names,
 5. use the data set ID as a program argument while calling the binary (running the program)
 
 #### platform-dependency
+1. Makefile: \ 
+   compiler: on the supermuc, the compiler should be set to ```CXX = mpiCC```, while on other platforms you might want to set ```CXX = mpic++```.
+   
+#### SuperMUC specifics
+- Preferred machine: haswell (hw.supermuc.lrz.de)
+- 
