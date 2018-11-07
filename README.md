@@ -32,4 +32,12 @@ Pay attention to the symbolic links in the directory "links" with generic names,
    
 #### SuperMUC specifics
 - Preferred machine: haswell (hw.supermuc.lrz.de)
-- 
+- LoadLeveler Scripts: modify the following lines: \ 
+``` #@ initialdir = <your absolut path to the main directory sparse_image_fusion> ```
+``` #@ notify_user = <your e-mail address> ```
+- compilation: Before compiling the code, make sure to load Intel's impementation of the MPI compiler instead of the standard IBM one. To do so, enter the following two command lines:
+```bash
+module unload mpi.ibm
+module load mpi.intel/2017
+```
+Note that those lines are also included in the demo LoadLeveler scripts and should be used in your LoadLeveler scripts as well.
