@@ -146,7 +146,7 @@ void getPaths(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOParallelSetting
     }else if(paths->dataSetID_str == "885211404350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "885211404350_HYDICE_WashDC_Mall"                 + "/" + "InputData" + "/" + "links";
     }
     // Multispectral-Panchromatic (Pan-sharpening: SparseFI & J-SparseFI)
-    else if(paths->dataSetID_str == "155111203350"){         paths->dir_in = maindir_path + "/" + "MS_PAN"  + "/" + "155111203350_HySpex_Olymp_3600x1200"       + "/" + "InputData" + "/" + "links";
+    else if(paths->dataSetID_str == "155111203350"){    paths->dir_in = maindir_path + "/" + "MS_PAN"  + "/" + "155111203350_HySpex_Olymp_3600x1200"       + "/" + "InputData" + "/" + "links";
     }else if(paths->dataSetID_str == "2444101104000"){  paths->dir_in = maindir_path + "/" + "MS_PAN" + "/" + "2444101104000_WV2_REAL_scene"                    + "/" + "InputData" + "/" + "links";
     }else{ 
     	if(my_rank==0){
@@ -159,15 +159,16 @@ void getPaths(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOParallelSetting
     
     paths->fname_ImZ_ref                   = paths->dir_in + "/" + "slink_to_ImZ_ref.dat";
     paths->fname_ImZ_init_rec              = paths->dir_in + "/" + "slink_to_ImZ_init_rec.dat";
-    paths->fname_ImZ_init_ImY_US           = paths->dir_in + "/" + "slink_to_ImZ_init_ImY_US.dat";
     paths->fname_ImY                       = paths->dir_in + "/" + "slink_to_ImY.dat";
     paths->fname_ImX                       = paths->dir_in + "/" + "slink_to_ImX.dat";
     paths->fname_SRF                       = paths->dir_in + "/" + "slink_to_SRF.csv";
     paths->fname_SRF_for_Spectral_Grouping = paths->dir_in + "/" + "slink_to_SRF_for_Spectral_Grouping.csv";
+    paths->fname_ImZ                       = paths->dataSetID_str + "_rec";
+    // obsolete:
+    paths->fname_ImZ_init_ImY_US           = paths->dir_in + "/" + "slink_to_ImZ_init_ImY_US.dat";
     paths->fname_SubspaceTransformMat      = paths->dir_in + "/" + "slink_to_HySure_output" + "/" + "EndmemberMat.csv";
     paths->fname_DictLR                    = paths->dir_in + "/" + "slink_to_DictLR.csv";
     paths->fname_DictHR                    = paths->dir_in + "/" + "slink_to_DictHR.csv";
-    paths->fname_ImZ                       = paths->dataSetID_str + "_rec";
 
 
 

@@ -41,14 +41,14 @@ LIB_GDAL = -lgdal
 LIB_DIR  = -L $(GDAL_LIBRARY_PATH)
 
 ### compiler
-CXX      = mpic++
-#CXX      = mpiCC
+#CXX      = mpic++
+CXX      = mpiCC
 CFLAGS   = -O3 -w 
 LDFLAGS=$(LIB_DIR) $(LIB_GDAL)
 
 ### exec
 RUN      = mpiexec
-RUNFLAGS = -n 8
+RUNFLAGS = -n 2
 
 ########################################
 ###        program arguments         ###
