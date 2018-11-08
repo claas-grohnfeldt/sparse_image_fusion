@@ -1,9 +1,12 @@
 # Sparse Image Fusion
 
-## The \[SparseFI / J-SparseFI / J-SparseFI-HM\] family of multi-sensor image super-resolution algorithms
+### Description
+This software suite comprises the \[SparseFI - J-SparseFI - J-SparseFI-HM\]-family of multi-sensor image super-resolution algorithms for multi- and hyperspectral image super-resolution based on sparse representations
 
-### Multi-sensor data fusion for multi- and hyperspectral image super-resolution based on sparse representations
-
+### Literature with detailed description
+A detailed description of the algotihms implemented in this software suite is provided in my dissertation:
+C. Grohnfeldt, "Multi-sensor Data Fusion for Multi- and Hyperspectral Resolution Enhancement Based on Sparse Representations ", Ph.D. Dissertation, Technical University of Munich, 2017:
+http://doi.org/10.14459/2017md1366768
 
 #### Link paths to directories with sufficient storage space
 The following 3 sub-directories should be placed at a location with sufficient storage space that is accessible from the repository's main directory:
@@ -18,6 +21,16 @@ ln -s <PATH_TO_your_input_data_dir/MS_PAN> <PATH_TO_sparse_image_fusion/data/MS_
 ln -s <PATH_TO_your_output_data_dir> <PATH_TO_sparse_image_fusion/results>
 ln -s <PATH_TO_your_temporary_data_dir> <PATH_TO_sparse_image_fusion/tmp>
 ```
+#### libraries
+This software suite depends on external libraries, which need to be linked to the repository's main directory:
+1. GDAL - Geospatial Data Abstraction Library (download and install from www.gdal.org)
+2. eigen - c++ template library for linear algebra (download and install from http://eigen.tuxfamily.org)
+
+links should be set to the following locations:
+```bash
+ln -s <PATH_TO_>
+```
+
 
 #### How to add a new data set
 1. give the data set a unique ID number (can be any string unique to this data set. One option is to use the 12-digit encription that is descriped in the file ```src/paths.cpp```, which corresponds to the sensors used, resolution ratio, SNR, etc.)
