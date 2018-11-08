@@ -4,7 +4,11 @@
 ############################################################################
 
 ### local settings
-include make.inc
+# path to eigen library (you might need to adapt the version number 'f562a193118d' in the path)
+EIGEN_HEADER_PATH = ./lib/eigen/eigen-eigen-f562a193118d/
+# path to GDAL library
+GDAL_INCLUDE_PATH = ./lib/gdal/inc
+GDAL_LIBRARY_PATH = ./lib/gdal/lib
 
 ### internal path variables
 COREDIR = .
@@ -26,7 +30,7 @@ SRC = $(SRCDIR)/dataIO.cpp \
 	$(SRCDIR)/nnls.cpp
 
 SRCMAIN = $(SRCDIR)/JSparseFI.cpp
-EXE = $(BINDIR)/JSparseFIHM
+EXE = $(BINDIR)/JSparseFIHM_supermuc
 
 SUB = $(SUBDIR)/JSparseFIHM
 
@@ -41,8 +45,9 @@ LIB_GDAL = -lgdal
 LIB_DIR  = -L $(GDAL_LIBRARY_PATH)
 
 ### compiler
-#CXX      = mpic++
 CXX      = mpiCC
+#        = mpiCC   <- on SuperMUC
+#        = mpic++  <- alternative
 CFLAGS   = -O3 -w 
 LDFLAGS=$(LIB_DIR) $(LIB_GDAL)
 
@@ -54,79 +59,38 @@ RUNFLAGS = -n 2
 ###        program arguments         ###
 ########################################
 #######################  1: job name (string roughly describing this job)
-THIS_JOB_NAME=demo_665211108350_iter0_T_subspaceDim
+LOADL_JOB_NAME=JSparseFIHM_demo_665211108350_Pavia_University
 #######################  2: job ID (6 digit integer - on the SuperMUC this number will be automatically set. On a local machine it is set manually to an arbitrary string)
-THIS_JOB_ID=xxxxxx
-#######################  3: dataset ID (int) 
-datasetID=DEFINEDBELOW
-LIST_datasetID = 665211108350
+LOADL_PID=xxxxxx
+#######################  3: dataset ID (string) 
+datasetID=665211108350
 # examples:
-# 
-# HS-MS:
-# 109211103990_EnMAP_Sentinel2
-# 11119211105350_2013IEEEGRSSDFC_Sentinel2_Univ
-# 3315211304350_Aviris_IndianPines_WV3_VNIR_SWIR
-# 3315212405350_Aviris_Cuprite_sc03_WV3_VNIR_SWIR
-# 335213304350_Aviris_Moffett_Field
-# 665211108350_ROSIS_Pavia_Univeristy
-# 774212106350_Headwall_Chikusei_nonUrban
-# 885211404350_HYDICE_WashDC_Mall
-#
-# MS-PAN
-# 155111203350 HySpex 3600x1200 QB 
+#__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+# data set ID           | orig. sensor    | LR sensor       | HR sensor       | fusion type | filter kernel | scene            | size ID       | fDS         | SNR          | redundant digit               #
+# (see src/paths.cpp)   |                 |                 |                 |             |               |                  |               |             |              | (>0 for non-regular datasets  # directory/link name
+# --------------------- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# HS-MS (J-SparseFI-HM) |                 |                 |                 |             |               |                  |               |             |              |                               # 
+#   665211108350    <=  | 6 (ROSIS)       - 6 (ROSIS)       - 5 (Quickbird)   - 2 (HS-MS)   - 1 (gauss)     - 1 (Pavia Univ.)  - 1 (560x320)   - 08 (fDS=8)  - 35 (SNR=35db)- 0                             # 665211108350_ROSIS_Pavia_Univeristy
+#   11119211105350  <=  | 11 (GRSSDFC2013)- 11 (GRSSDFC2013)- 9 (Sentinel2)   - 2 (HS-MS)   - 1 (gauss)     - 1 (Housten Univ.)- 1 (320x540)   - 05 (fDS=5)  - 35 (SNR=inf) - 0                             # 11119211105350_2013IEEEGRSSDFC_Sentinel2_Univ
+#   774212106350    <=  | 7 (Headwall)    - 7 (Headwall)    - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 2 (Chikusei n.u.)- 1 (540x420)   - 06 (fDS=6)  - 35 (SNR=35db)- 0                             # 774212106350_Headwall_Chikusei_nonUrban
+#   885211404350    <=  | 8 (HYDICE)      - 8 (HYDICE)      - 5 (Quickbird)   - 2 (HS-MS)   - 1 (gauss)     - 1 (Wash.DC Mall) - 4 (420x300)   - 04 (fDS=4)  - 35 (SNR=35db)- 0                             # 885211404350_HYDICE_WashDC_Mall
+#   335213304350    <=  | 3 (Aviris)      - 3 (Aviris)      - 5 (Quickbird)   - 2 (HS-MS)   - 1 (gauss)     - 3 (Moffett Field)- 3 (360x360)   - 04 (fDS=4)  - 35 (SNR=35db)- 0                             # 335213304350_Aviris_Moffett_Field
+#   3315211304350   <=  | 3 (Aviris)      - 3 (Aviris)     - 15 (WorldView-3) - 2 (HS-MS)   - 1 (gauss)     - 1 (Ind.Pines)    - 3 (360x360)   - 04 (fDS=4)  - 35 (SNR=35db)- 0                             # 3315211304350_Aviris_IndianPines_WV3_VNIR_SWIR
+#   3315212405350   <=  | 3 (Aviris)      - 3 (Aviris)     - 15 (WorldView-3) - 2 (HS-MS)   - 1 (gauss)     - 2 (Cuprite Sc03) - 4 (420x360)   - 05 (fDS=5)  - 35 (SNR=35db)- 0                             # 3315212405350_Aviris_Cuprite_sc03_WV3_VNIR_SWIR
+#   109211103990    <=  |   (HyMap)       - 10 (EnMAP)      - 9 (Sentinel2)   - 2 (HS-MS)   - 1 (gauss)     - 1 (Rodalquilar)  - 1 (261x867)   - 03 (fDS=3)  - 99 (SNR=inf) - 0                             # 109211103990_EnMAP_Sentinel2
+#                       |                 |                 |                 |             |               |                  |               |             |              |                               # 
+# MS-PAN (J-SparseFI)   |                 |                 |                 |             |               |                  |               |             |              |                               # 
+# 155111203350 HySpex 3600x1200 QB
 # 2444101104000_Real_WV2_scene
 # 2444102104000_Real_WV2_HongKong_from_Naoto
-
-#_______________________________________________________________________________________________________________________________________________________________________________________________________________
-#                     | platform     | orig. sensor    | LR sensor       | HR sensor       | fusion type | filter kernel | scene         | size ID       | fDS         | SNR          | redundant digit (>0 for non-regular datasets #
-# Test data           |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#   2114211004350     | 2 (CG-PC)    - 1 (HySpex)      - 1 (HySpex)      - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 1 (MUC_Oly)   - 0 (60x80)     - 04 (fDS=4)  - 35 (SNR=35)  - 0                                            #	
-#   2114211108000  <= | 2 (CG-PC)    - 1 (HySpex)      - 1 (HySpex)      - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 1 (MUC_Oly)   - 1 (240x120)   - 08 (fDS=8)  - 00 (SNR=inf) - 0                                            #
-#   2115211105000  <= | 2 (CG-PC)    - 1 (HySpex)      - 1 (HySpex)      - 5 (Quickbird)   - 2 (HS-MS)   - 1 (gauss)     - 1 (MUC_Oly)   - 1 (240x120)   - 05 (fDS=5)  - 00 (SNR=inf) - 0                                            #
-#   2144111104000  <= | 2 (CG-PC)    - 1 (HySpex)      - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC_Oly)   - 1 (240x120)   - 04 (fDS=4)  - 00 (SNR=inf) - 0                                            # 
-# JSpFI TGRS paper
-#
-#   2144111210000  <= | 2 (CG-PC)    - 1 (HySpex)      - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC_Oly)   - 2 (3600x1200) - 10 (fDS=10) - 00 (SNR=inf) - 0                                            #
-#
-#   2144111210100   <= | 2 (CG-PC)    - 1 (HySpex)      - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC_Oly)   - 2 (3600x1200) - 10 (fDS=10) - 10 (SNR=10)  - 0                                            #
-#   2144111210150   <= | 2 (CG-PC)    - 1 (HySpex)      - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC_Oly)   - 2 (3600x1200) - 10 (fDS=10) - 15 (SNR=15)  - 0                                            #
-#   2144111210200   <= | 2 (CG-PC)    - 1 (HySpex)      - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC_Oly)   - 2 (3600x1200) - 10 (fDS=10) - 20 (SNR=20)  - 0                                            #
-#   2144111210300   <= | 2 (CG-PC)    - 1 (HySpex)      - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC_Oly)   - 2 (3600x1200) - 10 (fDS=10) - 30 (SNR=30)  - 0                                            #
-#   2144111210400   <= | 2 (CG-PC)    - 1 (HySpex)      - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC_Oly)   - 2 (3600x1200) - 10 (fDS=10) - 40 (SNR=40)  - 0                                            #
-#
-#   2144111210002   <= | 2 (CG-PC)    - 1 (HySpex)      - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC_Oly)   - 2 (3600x1200) - 10 (fDS=10) - 00 (SNR=inf) - 2  (with Pan-band replaced by rec. band 2)   #
-#   2144111210006   <= | 2 (CG-PC)    - 1 (HySpex)      - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC_Oly)   - 2 (3600x1200) - 10 (fDS=10) - 00 (SNR=inf) - 6  (with Pan-band replaced by rec. band 6)   #
-#-----------------------
-#   2144111204000   <= | 2 (CG-PC)    - 1 (HySpex)      - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC_Oly)   - 2 (3600x1200) - 04 (fDS=4)  - 00 (SNR=inf) - 0                                            #
-#
-#   2144111204002   <= | 2 (CG-PC)    - 1 (HySpex)      - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC_Oly)   - 2 (3600x1200) - 04 (fDS=4)  - 00 (SNR=inf) - 2  (with Pan-band replaced by rec. band 2)   #
-#   2144111204006   <= | 2 (CG-PC)    - 1 (HySpex)      - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC_Oly)   - 2 (3600x1200) - 04 (fDS=4)  - 00 (SNR=inf) - 6  (with Pan-band replaced by rec. band 6)   #
-#-----------------------
-#   2444111104000   <= | 2 (CG-PC)    - 4 (WorldView-2) - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC)       - 1 (960x1320)  - 04 (fDS=4)  - 00 (SNR=inf) - 0                                            #
-#
-#   2444111104002   <= | 2 (CG-PC)    - 4 (WorldView-2) - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC)       - 1 (960x1320)  - 04 (fDS=4)  - 00 (SNR=inf) - 2 (with Pan-band replaced by rec. band 2)    #
-#   2444111104006   <= | 2 (CG-PC)    - 4 (WorldView-2) - 4 (WorldView-2) - 4 (WorldView-2) - 1 (MS-Pan)  - 1 (gauss)     - 1 (MUC)       - 1 (960x1320)  - 04 (fDS=4)  - 00 (SNR=inf) - 6 (with Pan-band replaced by rec. band 6)    #
-#-----------------------
-# Standard data (151105)
-#   2114211504350   <= | 2 (CG-PC)    - 1 (HySpex)      - 1 (HySpex)      - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 1 (MUC_Oly)      - 5 (540x540)   - 04 (fDS=4)  - 35 (SNR=35db)- 0                                            #
-#   2114211510350   <= | 2 (CG-PC)    - 1 (HySpex)      - 1 (HySpex)      - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 1 (MUC_Oly)      - 5 (540x540)   - 10 (fDS=10) - 35 (SNR=35db)- 0                                            #
-#   2114211515350   <= | 2 (CG-PC)    - 1 (HySpex)      - 1 (HySpex)      - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 1 (MUC_Oly)      - 5 (540x540)   - 15 (fDS=15) - 35 (SNR=35db)- 0                                            #
-#   2334211304350   <= | 2 (CG-PC)    - 3 (Aviris)      - 3 (Aviris)      - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 1 (Ind.Pines)    - 3 (360x360)   - 04 (fDS=4)  - 35 (SNR=35db)- 0                                            #
-#   2334212404350   <= | 2 (CG-PC)    - 3 (Aviris)      - 3 (Aviris)      - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 2 (Cuprite Sc03) - 4 (420x360)   - 04 (fDS=4)  - 35 (SNR=35db)- 0                                            #
-#   2334212405350   <= | 2 (CG-PC)    - 3 (Aviris)      - 3 (Aviris)      - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 2 (Cuprite Sc03) - 4 (420x360)   - 05 (fDS=5)  - 35 (SNR=35db)- 0                                            #
-#   2335213304350   <= | 2 (CG-PC)    - 3 (Aviris)      - 3 (Aviris)      - 5 (Quickbird)   - 2 (HS-MS)   - 1 (gauss)     - 3 (Moffett Field)- 3 (360x360)   - 04 (fDS=4)  - 35 (SNR=35db)- 0                                            #
-#   2665211108350   <= | 2 (CG-PC)    - 6 (ROSIS)       - 6 (ROSIS)       - 5 (Quickbird)   - 2 (HS-MS)   - 1 (gauss)     - 1 (Pavia Univ.)  - 1 (560x320)   - 08 (fDS=8)  - 35 (SNR=35db)- 0                                            #
-#   2665211108990   <= | 2 (CG-PC)    - 6 (ROSIS)       - 6 (ROSIS)       - 5 (Quickbird)   - 2 (HS-MS)   - 1 (gauss)     - 1 (Pavia Univ.)  - 1 (560x320)   - 08 (fDS=8)  - 99 (SNR=inf) - 0                                            #
-#   2774211106350   <= | 2 (CG-PC)    - 7 (Headwall)    - 7 (Headwall)    - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 1 (Chikusei)     - 1 (540x420)   - 06 (fDS=6)  - 35 (SNR=35db)- 0                                            #
-#   2774212106350   <= | 2 (CG-PC)    - 7 (Headwall)    - 7 (Headwall)    - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 2 (Chikusei n.u.)- 1 (540x420)   - 06 (fDS=6)  - 35 (SNR=35db)- 0                                            #
-#   2885211404350   <= | 2 (CG-PC)    - 8 (HYDICE)      - 8 (HYDICE)      - 5 (Quickbird)   - 2 (HS-MS)   - 1 (gauss)     - 1 (Wash.DC Mall) - 4 (420x300)   - 04 (fDS=4)  - 35 (SNR=35db)- 0                                            #
-#   22109211103990  <= | 2 (CG-PC)    - 2 (HyMap)       - 10 (EnMAP)      - 9 (Sentinel2)   - 2 (HS-MS)   - 1 (gauss)     - 1 (Rodalquilar)  - 1 (261x867)   - 03 (fDS=3)  - 99 (SNR=inf) - 0                                            #
-#   211119211105350 <= | 2 (CG-PC)    - 11 (GRSSDFC2013)- 11 (GRSSDFC2013)- 9 (Sentinel2)   - 2 (HS-MS)   - 1 (gauss)     - 1 (Housten Univ.)- 1 (320x540)   - 05 (fDS=5)  - 35 (SNR=inf) - 0                                            #
+#   114211504350    <=  | 1 (HySpex)      - 1 (HySpex)      - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 1 (MUC_Oly)      - 5 (540x540)   - 04 (fDS=4)  - 35 (SNR=35db)- 0                             #
+#   114211510350    <=  | 1 (HySpex)      - 1 (HySpex)      - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 1 (MUC_Oly)      - 5 (540x540)   - 10 (fDS=10) - 35 (SNR=35db)- 0                             #
+#   114211515350    <=  | 1 (HySpex)      - 1 (HySpex)      - 4 (WorldView-2) - 2 (HS-MS)   - 1 (gauss)     - 1 (MUC_Oly)      - 5 (540x540)   - 15 (fDS=15) - 35 (SNR=35db)- 0                             #
 
 #######################  4: regularization parameter trading the weighting of the l_2,1 norm term in the joint sparsity optimization problem (float)
-lambda=1000 # 1
+lambda=1e0
 #######################  5: number of dictionary atoms/patches (int)
-NDP=300 # 900
+NDP=900
 #######################  6: two_step_estimation [default=0] (bool)
 twoStep=0
 #######################  7: number of jointly processed channels, i.e. number of channels per bundle / per optimization problem (int)
@@ -198,7 +162,7 @@ imageConstructionOnly=0
 contUnfinishedRec=0
 #######################  35: path to .csv file that contains the list of linear patch IDs (iP numbers) which remain to be processed in oder to finish incomplete reconstruction
                              #### [applicable ONLY IF (contUnfinishedRec==TRUE)] (string)
-PathToIncompletePatchSetCSV=path_to_csv_file #./tmp.csv
+PathToIncompletePatchSetCSV=REDUNDANT
 #######################  36: number of additional directories that contain previously processed tmp patches needed to reconstruct full image (int)
                              #### !! Must be the number of strings that are specified as last program arguments
 dir_tmp_patches_additional_num=0
@@ -221,36 +185,30 @@ tol=1e-12
 #######################  41: flag used to decide whether or not the least square post-minimization is activated (bool) 
 LQ_post_opt=0
 #######################  42: regularization parameter trading the relative weighting of the high resolution input patch xHR (double) 
-lambdaX=DEFINEDBELOW
-LIST_lambdaX = 1e3
+lambdaX=1e0
 #######################  43: regularization parameter trading the relative weighting of the low resolution input patch yLR (double) 
-lambdaY=DEFINEDBELOW
-LIST_lambdaY = 0
+lambdaY=1e0
 #######################  44: maximum number of iterations in the GS step to solve the least squares problem (int) 
 maxiter_CGLS=1000
 #######################  45: error tolerance (double) 
 tol_r_CGLS=1e-12
 #######################  46: decides whether or not the coefficients get updates via least squares (bool) 
-fix_Alpha=DEFINEDBELOW
-LIST_fix_Alpha = 1
+fix_Alpha=1
 #######################  47: decides whether or not the mean values of Z are set to the same mean values as Y (i.e. either delta_m remains the initial zero vector or it gets updated via least squares) (bool) 
-fix_delta_m=DEFINEDBELOW
-LIST_fix_delta_m = 1
+fix_delta_m=1
 ########################################################
 # for Least squares post processing on the image level #
 ########################################################
 #######################  48: flag used to decide whether or not the least square post-minimization (of the final image) is activated (bool)
 LQ_post_opt_im=1
 #######################  49: regularization parameter trading the relative weighting of the high resolution input image I_X (double)
-lambdaX_im=DEFINEDBELOW
-LIST_lambdaX_im= 1e-5
+lambdaX_im=1e0
 #######################  50: regularization parameter trading the relative weighting of the low resolution input image I_Y (double)
-lambdaY_im=DEFINEDBELOW
-LIST_lambdaY_im=1e-5
+lambdaY_im=1e0
 #######################  51: maximum number of iterations in the GS step to solve the least squares problem on the final image level (int)
 maxiter_CGLS_im=1500
 #######################  52: error tolerance (double)
-tol_r_CGLS_im=1e-8 # 1e-12
+tol_r_CGLS_im=1e-12
 #########################################################
 # for coefficient estimation
 #########################################################
@@ -287,27 +245,27 @@ evaluate_ImZ_init=1
 # set_neg_to_0=2    # set negative values to zero only after full image optimization
 set_neg_to_0=3    # set negative values to zero both after patch reconstruction and after full image optimization
 ####################### 67 use estimated SRFs instead of apriori given ones (bool)
-use_estimated_SRFs_LIST=1
+use_estimated_SRFs=1
 ####################### 68: write all intermediate image fusion resulta (after every iteration) (1: create file and write resulting image in file; 0: to not write image in file (useful for analyses only)) (bool)
 writeImageFileAfterEveryIter=1
 ####################### 69: 0: do full image optimization on the full image space (not on a subspace); 1: in the full image optimization step, operate on a subspace (optimize for A, where  ImZ = E*A and E is known) (only effenctive if LQ_post_opt_im is set to 1 above)  (bool)
-fullImOptOnSubspace_LIST=1
-####################### 70: e.g. =1 for SuperMUC and =2 for CG local CP (int)
-platformID=2
+fullImOptOnSubspace=1
+####################### 70: e.g. =0 for generic; =1 for SuperMUC-ga39yoz2 and =2 for CG local CP (int)
+platformID=0
 ####################### 71: subspace transformation type
-subspace_transform_type_LIST=SVD
-#                           =PCA
-#                           =SVD
-#                           =VCA
-#                           =none
+subspace_transform_type=SVD
+#                      =PCA
+#                      =SVD
+#                      =VCA
+#                      =none
 ####################### 6: subspace dimension
-subspace_dim_LIST=10
+subspace_dim=10
 ####################### 73: ImX simulation mode: 0: correlation based; 1: unconstrained LS based; 2: NNLS based
 ImX_sim_mode=2
 ####################### 74: calc. coeff. in full image opt. eq. via SNR calc. of ImX and ImY (bool)
-SNR_normalization_LIST=1
+SNR_normalization=1
 ####################### 75: set the coeff. of |R*Z-X| in full image opt. eq. to NChY/NChX [only relevant if SNR_normalization==1 ] (bool)
-balance_ImX_term_coef_LIST=0
+balance_ImX_term_coef=0
 ####################### 76: save output in double format (64bit) instead of uint16 (bool)
 saveAsDouble=1
 ####################### 77: use LR (low resolution) patch norm for normalization of corresponding LR and HR patch in coupled dictionaries. If set to 0 the HR nor is used by default. (bool)
@@ -319,9 +277,9 @@ load_DictHR_and_DictLR=0
                              #### !!! This list of strings must be at least as long as specified by the argument 'dir_tmp_patches_additional_num'  !!!
                              ####     These MUST be the very last arguments !!!                             
 ####dir_tmp_patches_additional_1=path_of_first_directory_to_be_searched_if_patch_not_found
-dir_tmp_patches_additional_1=/users/groh_cl/supermuc/gpfs/work/ga39yoz2/tmp/patches/150710_150814_846510
-dir_tmp_patches_additional_2=path_of_second_directory_to_be_searched_if_patch_not_found
-dir_tmp_patches_additional_3=path_of_third_directory_to_be_searched_if_patch_not_found
+dir_tmp_patches_additional_1=REDUNDANT
+dir_tmp_patches_additional_2=REDUNDANT
+dir_tmp_patches_additional_3=REDUNDANT
 
 ########################################################################
 #                                                                      #
@@ -339,17 +297,7 @@ $(EXE): $(OBJ)
 	$(CXX) $(SRCMAIN) $(CFLAGS) $(INCFLAGS) $(OBJ) $(LDFLAGS) -o $(EXE)
 
 run_JSparseFI:
-		$(foreach datasetID, $(LIST_datasetID), \
-		$(foreach fix_delta_m, $(LIST_fix_delta_m), \
-		$(foreach lambdaX_im, $(LIST_lambdaX_im), \
-		$(foreach lambdaY_im, $(LIST_lambdaY_im), \
-		$(foreach use_estimated_SRFs, $(use_estimated_SRFs_LIST), \
-		$(foreach fullImOptOnSubspace, $(fullImOptOnSubspace_LIST), \
-		$(foreach subspace_transform_type, $(subspace_transform_type_LIST), \
-		$(foreach subspace_dim, $(subspace_dim_LIST), \
-		$(foreach balance_ImX_term_coef, $(balance_ImX_term_coef_LIST), \
-		$(foreach SNR_normalization, $(SNR_normalization_LIST), \
-		$(RUN) $(RUNFLAGS) -x LD_LIBRARY_PATH=$(GDAL_LIBRARY_PATH) $(EXE) $(THIS_JOB_NAME) $(THIS_JOB_ID) \
+		$(RUN) $(RUNFLAGS) -x LD_LIBRARY_PATH=$(GDAL_LIBRARY_PATH) $(EXE) $(LOADL_JOB_NAME) $(LOADL_PID) \
 		$(datasetID) $(lambda) $(NDP) $(twoStep) $(Nc) $(No) $(psz) $(ovrlp) $(alg) $(eval) \
 		$(tol_SRF) $(store_patches_tmp_on_drive) $(parWrNumProc) $(saveAlphas) $(pFirstAlpha) $(pLastAlpha) \
 		$(saveDicts) $(pFirstDict) $(pLastDict) $(chBundleFirst) $(chBundleLast) \
@@ -363,7 +311,7 @@ run_JSparseFI:
 		$(doFullImOptWithoutPatRec) $(iterMain) $(Nc_max) $(CC_min) $(winSize) \
 		$(evaluate_ImZ_init) $(set_neg_to_0) $(use_estimated_SRFs) $(writeImageFileAfterEveryIter) $(fullImOptOnSubspace) \
 		$(platformID) $(subspace_transform_type) $(subspace_dim) $(ImX_sim_mode) $(SNR_normalization) $(balance_ImX_term_coef) $(saveAsDouble) $(use_LRnorm_for_dic_normalization) $(load_DictHR_and_DictLR)\
-		$(dir_tmp_patches_additional_1) $(dir_tmp_patches_additional_2) $(dir_tmp_patches_additional_3);))))))))))
+		$(dir_tmp_patches_additional_1) $(dir_tmp_patches_additional_2) $(dir_tmp_patches_additional_3)
 
 clean:
 	rm -f $(OBJ) $(EXE) $(SUB).tar.gz *~ Depends
