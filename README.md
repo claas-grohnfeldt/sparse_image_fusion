@@ -4,9 +4,8 @@
 This software suite comprises the \[SparseFI - J-SparseFI - J-SparseFI-HM\]-family of multi-sensor image super-resolution algorithms for multi- and hyperspectral image super-resolution based on sparse representations
 
 ### Literature with detailed description
-A detailed description of the algotihms implemented in this software suite is provided in my dissertation:
-C. Grohnfeldt, "Multi-sensor Data Fusion for Multi- and Hyperspectral Resolution Enhancement Based on Sparse Representations ", Ph.D. Dissertation, Technical University of Munich, 2017:
-http://doi.org/10.14459/2017md1366768
+A detailed description of the algotihms implemented in this software suite is provided in my dissertation: \
+>   C. Grohnfeldt, "Multi-sensor Data Fusion for Multi- and Hyperspectral Resolution Enhancement Based on Sparse Representations ", Ph.D. Dissertation, Technical University of Munich, 2017; http://doi.org/10.14459/2017md1366768
 
 #### Link paths to directories with sufficient storage space
 The following 3 sub-directories should be placed at a location with sufficient storage space that is accessible from the repository's main directory:
