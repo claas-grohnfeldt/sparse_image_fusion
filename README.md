@@ -5,13 +5,21 @@
 ### Multi-sensor data fusion for multi- and hyperspectral image super-resolution based on sparse representations
 
 
-#### Set data paths
+#### Link paths to directories with sufficient storage space
+The following 3 sub-directories should be placed at a location with sufficient storage space that is accessible from the repository's main directory:
+- `sparse_image_fusion/data` (input data)
+- `sparse_image_fusion/results` (output data)
+- `sparse_image_fusion/tmp` (temporary data)
+
+In order to preserve the directories structure, which is partially hard-coded in the file `src/paths.cpp`, it is recommended to link those directories as follows:
 ```bash
-ln -s <PATH_TO_data_JSparseFIHM/HS_MS> <PATH_TO_sparse_image_fusion/data/HS_MS>
-ln -s <PATH_TO_data_JSparseFIHM/MS_PAN> <PATH_TO_sparse_image_fusion/data/MS_PAN>
+ln -s <PATH_TO_your_input_data_dir/HS_MS> <PATH_TO_sparse_image_fusion/data/HS_MS>
+ln -s <PATH_TO_your_input_data_dir/MS_PAN> <PATH_TO_sparse_image_fusion/data/MS_PAN>
+ln -s <PATH_TO_your_output_data_dir> <PATH_TO_sparse_image_fusion/results>
+ln -s <PATH_TO_your_temporary_data_dir> <PATH_TO_sparse_image_fusion/tmp>
 ```
 
-#### How to add new data set
+#### How to add a new data set
 1. give the data set a unique ID number (can be any string unique to this data set. One option is to use the 12-digit encription that is descriped in the file ```src/paths.cpp```, which corresponds to the sensors used, resolution ratio, SNR, etc.)
 
 2. The directory of the data set should be structured like the ones used in the demo.
