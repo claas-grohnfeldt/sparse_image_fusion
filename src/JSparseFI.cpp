@@ -5,17 +5,15 @@
 ##    Author:      Claas Grohnfeldt                                          ##
 ##                                                                           ##
 ##    Contributing co-authors:                                               ##
-##                 - Steffen Peter (implemented algorithms for most          ##
-##                   optimization problems involved in this program)         ##
+##                 - Steffen Peter                                           ##
+##                 - Xiaoxiang Zhu                                           ##
 ##                                                                           ##
 ##    Contact:     Claas Grohnfeldt                                          ##
 ##                 E-mail: claas.grohnfeldt@gmail.com                        ##
 ##                                                                           ##
-##    Version:     1.2.1 (02/2017)                                           ##
+##    Version:     1.2.2 (11/2018)                                           ##
 ##                                                                           ##
-##    Last modification: September 11, 2017                                  ##
-##                                                                           ##
-##    Security Classification: Confidential                                  ##
+##    Last modification: November 9, 2018                                    ##
 ##                                                                           ##
 ##    Copyright:   Claas Grohnfeldt                                          ##
 ##                                                                           ##

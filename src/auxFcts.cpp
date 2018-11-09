@@ -60,25 +60,25 @@ void calcGlobalParams(SpEOGlobalParams *glPrms,
 
 	if(dSetting->uLFirst<0){
 		if(my_rank==0){
-			cout << "\n WARNING: uLFirst got corrected from uLFirst=" << dSetting->uLFirst << " to uLFirst=0!" << endl;
+			cout << "\n uLFirst got corrected from uLFirst=" << dSetting->uLFirst << " to uLFirst=0!" << endl;
 		}
 		dSetting->uLFirst = 0;
 	}
 	if(dSetting->vLFirst<0){
 		if(my_rank==0){
-			cout << "\n WARNING: vLFirst got corrected from vLFirst=" << dSetting->vLFirst << " to vLFirst=0!" << endl;
+			cout << "\n vLFirst got corrected from vLFirst=" << dSetting->vLFirst << " to vLFirst=0!" << endl;
 		}
 		dSetting->vLFirst = 0;
 	}
 	if(dSetting->uLLast>=ImY->get_sizeU()){
 		if(my_rank==0){
-			cout << "\n WARNING: uLLast got corrected from uLLast=" << dSetting->uLLast << " to uLLast=" << ImY->get_sizeU()-1 << "=ImY->get_sizeU()-1!" << endl;
+			cout << "\n uLLast got corrected from uLLast=" << dSetting->uLLast << " to uLLast=" << ImY->get_sizeU()-1 << "=ImY->get_sizeU()-1!" << endl;
 		}
 		dSetting->uLLast = ImY->get_sizeU()-1;
 	}
 	if(dSetting->vLLast>=ImY->get_sizeV()){
 		if(my_rank==0){
-			cout << "\n WARNING: vLLast got corrected from vLLast=" << dSetting->vLLast << " to vLLast=" << ImY->get_sizeV()-1 << "=ImY->get_sizeV()-1!" << endl;
+			cout << "\n vLLast got corrected from vLLast=" << dSetting->vLLast << " to vLLast=" << ImY->get_sizeV()-1 << "=ImY->get_sizeV()-1!" << endl;
 		}
 		dSetting->vLLast = ImY->get_sizeV()-1;
 	}

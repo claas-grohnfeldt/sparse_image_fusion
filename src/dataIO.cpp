@@ -2466,7 +2466,7 @@ void cutRelevantInput(SpEODataset *ImX, SpEODataset *ImY, SpEODataIOSetting *dSe
 	}
 	if(dSet->chBundleFirst >= ImY->NCh){
 		if(my_rank==0) {
-			cout << "WARNING: chBundleFirst too great. It got corrected from " << dSet->chBundleFirst << " to " << ImY->NCh-1 << "=NChY-1," << endl;
+			cout << "chBundleFirst has been corrected from " << dSet->chBundleFirst << " to " << ImY->NCh-1 << "=NChY-1," << endl;
 		}
 		dSet->chBundleFirst = ImY->NCh-1;
 	}
@@ -2478,7 +2478,7 @@ void cutRelevantInput(SpEODataset *ImX, SpEODataset *ImY, SpEODataIOSetting *dSe
 	}
 	if(dSet->chBundleLast >= ImY->NCh){
 		if(my_rank==0) {
-			cout << "WARNING: chBundleLast too great. It got corrected from " << dSet->chBundleLast << " to " << ImY->NCh-1 << "=NChY-1." << endl;
+			cout << "chBundleLast has been corrected from " << dSet->chBundleLast << " to " << ImY->NCh-1 << "=NChY-1." << endl;
 		}
 		dSet->chBundleLast = ImY->NCh-1;
 	}
@@ -2486,7 +2486,7 @@ void cutRelevantInput(SpEODataset *ImX, SpEODataset *ImY, SpEODataIOSetting *dSe
 	short NCh_buf = ImY->NCh;
 	if(dSet->chBundleLast-dSet->chBundleFirst+1 < ImY->NCh){
 		if(my_rank==0) {
-			cout << "WARNING: NChY got corrected from " << ImY->NCh << " to " << dSet->chBundleLast-dSet->chBundleFirst+1 << "=chBundleLast-chBundleFirst+1." << endl;
+			cout << "NChY has been corrected from " << ImY->NCh << " to " << dSet->chBundleLast-dSet->chBundleFirst+1 << "=chBundleLast-chBundleFirst+1." << endl;
 		}
 		ImY->NCh = dSet->chBundleLast-dSet->chBundleFirst+1;
 	}

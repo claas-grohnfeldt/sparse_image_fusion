@@ -10,16 +10,6 @@
 void getPaths(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOParallelSetting *pSetting, int argc, char **argv){
 
 	paths->dataSetID_str = argv[3];
-	for(int i=0; i<dSetting->dir_tmp_patches_additional_num; i++){
-		if(i==0){
-			paths->dir_tmp_patches_additional = new string[dSetting->dir_tmp_patches_additional_num];
-		}
-		paths->dir_tmp_patches_additional[i] = argv[argc-dSetting->dir_tmp_patches_additional_num+i];
-	}
-
-	if(dSetting->contUnfinishedRec){
-		paths->PathToIncompletePatchSetCSV = argv[35];
-	}
 	string maindir_path;
 	switch(dSetting->platformID){
         case 0:{ // generic
@@ -32,12 +22,7 @@ void getPaths(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOParallelSetting
 		paths->dir_out = "/gpfs/work/pr45ne/ga39yoz2/recResults";
                 paths->dir_tmp = "/gpfs/scratch/pr45ne/ga39yoz2/JSparseFI/tmp";
 		break;
-	    }case 2:{ // CG local
-		    maindir_path = "./data";
-		    paths->dir_out = "results";
-		    paths->dir_tmp = "tmp";
-                break;
-           }default:{
+	    }default:{
 		cout << "UNKNOWN platformID!" << endl << endl;
 		cerr << "UNKNOWN platformID!" << endl << endl;
 	  }
@@ -170,10 +155,6 @@ void getPaths(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOParallelSetting
     paths->fname_DictLR                    = paths->dir_in + "/" + "slink_to_DictLR.csv";
     paths->fname_DictHR                    = paths->dir_in + "/" + "slink_to_DictHR.csv";
 
-
-
-
-
      // get current time and broadcast to all processes
 
      char buf[15]="";
@@ -198,4 +179,15 @@ void getPaths(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOParallelSetting
                      chmod(paths->dir_tmp_patches.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
              }
      }
+
+    // obsolete:
+	// for(int i=0; i<dSetting->dir_tmp_patches_additional_num; i++){
+	// 	if(i==0){
+	// 		paths->dir_tmp_patches_additional = new string[dSetting->dir_tmp_patches_additional_num];
+	// 	}
+	// 	paths->dir_tmp_patches_additional[i] = argv[argc-dSetting->dir_tmp_patches_additional_num+i];
+	// }
+	// if(dSetting->contUnfinishedRec){
+	// 	paths->PathToIncompletePatchSetCSV = "<path_to_csv_file>"; // formally set as program argument argv[37];
+	// }
 }
