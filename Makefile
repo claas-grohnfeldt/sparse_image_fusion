@@ -30,7 +30,7 @@ SRC = $(SRCDIR)/dataIO.cpp \
 	$(SRCDIR)/nnls.cpp
 
 SRCMAIN = $(SRCDIR)/JSparseFI.cpp
-EXE = $(BINDIR)/JSparseFIHM_supermuc
+EXE = $(BINDIR)/JSparseFIHM
 
 SUB = $(SUBDIR)/JSparseFIHM
 
@@ -264,7 +264,7 @@ $(OBJ): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 $(EXE): $(OBJ)
 	$(CXX) $(SRCMAIN) $(CFLAGS) $(INCFLAGS) $(OBJ) $(LDFLAGS) -o $(EXE)
 
-run_JSparseFI:
+run:
 		$(RUN) $(RUNFLAGS) -x LD_LIBRARY_PATH=$(GDAL_LIBRARY_PATH) $(EXE) $(LOADL_JOB_NAME) $(LOADL_PID) \
 		$(datasetID) $(alg) $(lambda) $(useSimulatedImXforDictLearn) $(ImX_sim_mode) \
 		$(dictselect) $(NDP) $(psz) $(ovrlp) $(mu_X) $(mu_Y) $(mu_Z) $(Nc_max) $(CC_min) \
@@ -272,21 +272,6 @@ run_JSparseFI:
 		$(fullImOptOnSubspace) $(subspace_transform_type) $(subspace_dim) $(SNR_normalization) \
 		$(use_estimated_SRFs) $(ImZ_init_type) $(use_global_proc_module) $(use_ONLY_global_proc_module) \
 		$(iterMain) $(eval) $(evaluate_ImZ_init) $(writeImageFile) $(writeImageFileAfterEveryIter) $(saveAsDouble) 
-		
-		# $(datasetID) $(lambda) $(NDP) $(twoStep) $(Nc) $(No) $(psz) $(ovrlp) $(alg) $(eval) \
-		# $(tol_SRF) $(store_patches_tmp_on_drive) $(parWrNumProc) $(saveAlphas) $(pFirstAlpha) $(pLastAlpha) \
-		# $(saveDicts) $(pFirstDict) $(pLastDict) $(chBundleFirst) $(chBundleLast) \
-		# $(uLFirst) $(uLLast) $(vLFirst) $(vLLast) \
-		# $(numProcPerPatch) $(workStealingTurns) $(dictselect) \
-		# $(writeImageFile) $(delete_tmp_patch_folders) $(imageConstructionOnly) $(contUnfinishedRec) \
-		# $(PathToIncompletePatchSetCSV) $(dir_tmp_patches_additional_num) $(matrixNorm) $(addMeanPixelwise) \
-		# $(maxiter_out) $(tol) $(LQ_post_opt) $(lambdaX) $(lambdaY) $(maxiter_CGLS) $(tol_r_CGLS) $(fix_Alpha) $(fix_delta_m) \
-		# $(LQ_post_opt_im) $(lambdaX_im) $(lambdaY_im) $(maxiter_CGLS_im) $(tol_r_CGLS_im) \
-		# $(useNewMethodForCalculatingZ) $(useSimulatedImXforDictLearn) $(lambdaX_ABC) $(lambdaY_ABC) $(lambdaZ_ABC) $(lambdaZ_ABC_in_1st_iter) $(ImZ_init_type) \
-		# $(doFullImOptWithoutPatRec) $(iterMain) $(Nc_max) $(CC_min) $(winSize) \
-		# $(evaluate_ImZ_init) $(set_neg_to_0) $(use_estimated_SRFs) $(writeImageFileAfterEveryIter) $(fullImOptOnSubspace) \
-		# $(platformID) $(subspace_transform_type) $(subspace_dim) $(ImX_sim_mode) $(SNR_normalization) $(balance_ImX_term_coef) $(saveAsDouble) $(use_LRnorm_for_dic_normalization) $(load_DictHR_and_DictLR)\
-		# $(dir_tmp_patches_additional_1) $(dir_tmp_patches_additional_2) $(dir_tmp_patches_additional_3)
 
 clean:
 	rm -f $(OBJ) $(EXE) $(SUB).tar.gz *~ Depends
