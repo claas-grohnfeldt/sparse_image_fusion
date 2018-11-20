@@ -2795,7 +2795,7 @@ void SpEOReport::initialize(SpEOPaths *paths,
 			<< " - file name ImZ_init:        " << paths->fname_ImZ_init << "\n"
 			<< " - directory output data:     " << paths->dir_out << "\n"
 			<< " - file name ImZ:             " << paths->fname_ImZ << "\n"
-	        << " - ### use_estimated_SRFs:                " << fSetting->use_estimated_SRFs << "\n"
+	        	<< " - use_estimated_SRFs:                    " << fSetting->use_estimated_SRFs << "\n"
 			<< " - file name SRF:                         " << paths->fname_SRF << "\n"
 			<< " - file name SRF (for spectral grouping): " << paths->fname_SRF_for_Spectral_Grouping << "\n"
 			<< " - ImZ_init_type = " << fSetting->ImZ_init_type << "(";
@@ -2939,8 +2939,8 @@ void SpEOReport::initialize(SpEOPaths *paths,
 			<< " - Nc_max (maximum size of spectral group above groups will" << "\n"
 			<< "   be double-checked and perhaps split into subgoups (int)):          "
 			<< fSetting->Nc_max << "\n"
-			<< " - CC_min (minimum cross-correlation within spectral goups (double)): "
-			<< fSetting->CC_min << "\n"
+			<< " - theta (minimum cross-correlation within spectral goups (double)): "
+			<< fSetting->theta << "\n"
 			<< " - tol_SRF (tolerance for decision matrix): "
 			<< fSetting->tol_SRF << "\n"
 			<< " - dictionary selection method ID:          "
@@ -3179,8 +3179,8 @@ void SpEOReport::initialize(SpEOPaths *paths,
 				<< " - Nc_max (maximum size of spectral group above groups will" << "\n"
 				<< "   be double-checked and perhaps split into subgoups (int)):            "
 				<< fSetting->Nc_max << "\n"
-				<< " - CC_min (minimum cross-correlation within spectral goups (double)):   "
-				<< fSetting->CC_min
+				<< " - theta (minimum cross-correlation within spectral goups (double)):   "
+				<< fSetting->theta
 				<< "\n"
 				<< " - tol_SRF (tolerance for decision matrix): "
 				<< fSetting->tol_SRF << "\n"
@@ -3421,8 +3421,8 @@ void SpEOReport::addGlobalParams(SpEOGlobalParams *glPrms, SpEOFusionSetting *fS
 			<< " - Nc_max (maximum size of spectral group above groups will" << "\n"
 			<< "   be double-checked and perhaps split into subgoups (int)):          "
 			<< fSetting->Nc_max << "\n"
-			<< " - CC_min (minimum cross-correlation within spectral goups (double)): "
-			<< fSetting->CC_min << "\n"
+			<< " - theta (minimum cross-correlation within spectral goups (double)): "
+			<< fSetting->theta << "\n"
 			<< " - NChX (number of bands in image ImX):            "
 			<< glPrms->NChX << "\n"
 			<< " - NChY (number of bands in image ImY):            "
@@ -4697,8 +4697,8 @@ void save_fSetting(SpEOPaths *paths, SpEOFusionSetting *fSetting){
 	//fname_tmp = dir_fSetting + "/" + "Nc_max.csv";
 	//write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
 
-	//tmp_mat(0,0) = fSetting->CC_min;
-	//fname_tmp = dir_fSetting + "/" + "CC_min.csv";
+	//tmp_mat(0,0) = fSetting->theta;
+	//fname_tmp = dir_fSetting + "/" + "theta.csv";
 	//write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
 
 	//tmp_mat(0,0) = fSetting->patchsize;
@@ -4798,7 +4798,7 @@ void save_fSetting(SpEOPaths *paths, SpEOFusionSetting *fSetting){
 		fSetting_file_matlab << "  fSet.No="<< fSetting->No << ";" << endl;
 		fSetting_file_matlab << "  fSet.tol_SRF="<< fSetting->tol_SRF << ";" << endl;
 		fSetting_file_matlab << "  fSet.Nc_max="<< fSetting->Nc_max << ";" << endl;
-		fSetting_file_matlab << "  fSet.CC_min="<< fSetting->CC_min << ";" << endl;
+		fSetting_file_matlab << "  fSet.theta="<< fSetting->theta << ";" << endl;
 		fSetting_file_matlab << "  fSet.patchsize="<< fSetting->patchsize << ";" << endl;
 		fSetting_file_matlab << "  fSet.overlap="<< fSetting->overlap << ";" << endl;
 		fSetting_file_matlab << "  fSet.lambda="<< fSetting->lambda << ";" << endl;
@@ -5152,7 +5152,7 @@ void save_fusion_setup(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOFusion
 					 << "fSet.iterMain="<<fSetting->iterMain << ";" << endl
 					 << "fSet.doFullImOptWithoutPatRec="<<fSetting->doFullImOptWithoutPatRec << ";" << endl
 					 << "fSet.Nc_max="<<fSetting->Nc_max << ";" << endl
-					 << "fSet.CC_min="<<fSetting->CC_min << ";" << endl
+					 << "fSet.theta="<<fSetting->theta << ";" << endl
 					 << "fSet.set_neg_to_0="<<fSetting->set_neg_to_0 << ";" << endl
 					 << "fSet.use_estimated_SRFs="<<fSetting->use_estimated_SRFs << ";" << endl
 					 << "fSet.fullImOptOnSubspace="<<fSetting->fullImOptOnSubspace << ";" << endl
@@ -5269,7 +5269,7 @@ void save_fusion_setup(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOFusion
 //		fSetting_file_matlab << "  fSet.No="<< fSetting->No << ";" << endl;
 //		fSetting_file_matlab << "  fSet.tol_SRF="<< fSetting->tol_SRF << ";" << endl;
 //		fSetting_file_matlab << "  fSet.Nc_max="<< fSetting->Nc_max << ";" << endl;
-//		fSetting_file_matlab << "  fSet.CC_min="<< fSetting->CC_min << ";" << endl;
+//		fSetting_file_matlab << "  fSet.theta="<< fSetting->theta << ";" << endl;
 //		fSetting_file_matlab << "  fSet.patchsize="<< fSetting->patchsize << ";" << endl;
 //		fSetting_file_matlab << "  fSet.overlap="<< fSetting->overlap << ";" << endl;
 //		fSetting_file_matlab << "  fSet.lambda="<< fSetting->lambda << ";" << endl;
@@ -5489,7 +5489,7 @@ void save_evalResults(SpEOPaths *paths, SpEOGlobalParams *glPrms, SpEOFusionSett
 	//################################
 	//# save SpEOFusionSetting
 	//################################
-	cout << "write assessment results to files to file" << endl << "     " << dir_eval << " .. ";
+	//cout << "write assessment results to files to file" << endl << "     " << dir_eval << " .. ";
 	//mkdir(dir_fSetting.c_str(), 0777);
 	//chmod(dir_fSetting.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
 	string fname_eval = dir_eval + ".m";
