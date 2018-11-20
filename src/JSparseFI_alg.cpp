@@ -486,7 +486,7 @@ void JSparseFI_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int it
 				int Nc_vec[NChY]; // Ng <= NChY (since Ng is yet to be calculated, NChY serves as conservative max size for declaration)
 				int idxChY[NChY]; // Ng <= NChY (since Ng is yet to be calculated, NChY serves as conservative max size for declaration)
 
-				CSG_corr_based_spectral_grouping(Ng, idxChY, Nc_vec, winY, fSet->CC_min, fSet->Nc_max, my_rank);
+				CSG_corr_based_spectral_grouping(Ng, idxChY, Nc_vec, winY, fSet->theta, fSet->Nc_max, my_rank);
 				check_for_inf_or_nan(my_rank,Ng, " ", -123, "Ng");
 				for(int ig=0; ig<Ng; ig++){
 					check_for_inf_or_nan(my_rank,idxChY[ig], "ig=", ig, ": idxChY[ig]");
