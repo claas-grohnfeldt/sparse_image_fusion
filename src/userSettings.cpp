@@ -78,17 +78,16 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
 	// regularization parameters for new coefficient estimation (double)
 	fSetting->lambdaX_ABC = (double)atof(argv[12]);
 	fSetting->lambdaY_ABC = (double)atof(argv[13]);
-	fSetting->lambdaZ_ABC = (double)atof(argv[14]);
 
 	//*************************************
 	// correlation-based Hyperspectral Grouping (CorHySpeG)
 	//*************************************
 	// maximum size of spectral group above groups will be double-checked and perhaps split into subgoups (int)
-	fSetting->Nc_max = atoi(argv[15]);
+	fSetting->Nc_max = atoi(argv[14]);
 	// minimum cross-correlation within spectral goups (double)
-	fSetting->CC_min = (double)atof(argv[16]);
+	fSetting->theta = (double)atof(argv[15]);
 	// size of window around patch: Must have the same sign as patchsize in order to have both centers matched; Used for correlation calculations (int)
-	fSetting->winSize = atoi(argv[17]);
+	fSetting->winSize = atoi(argv[16]);
 
 
 	//########################################################
@@ -98,22 +97,22 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
 	// >>>// flag used to decide whether or not the least square post-minimization (of the final image) is activated (bool)
 	// >>>fSetting->LQ_post_opt_im  = (bool)atoi(argv[19]);
 	// regularization parameter trading the relative weighting of the high resolution input image I_X (double)
-	fSetting->lambdaX_im      = (double)atof(argv[18]);
+	fSetting->lambdaX_im      = (double)atof(argv[17]);
 	// regularization parameter trading the relative weighting of the low resolution input image I_Y (double)
-	fSetting->lambdaY_im      = (double)atof(argv[19]);
+	fSetting->lambdaY_im      = (double)atof(argv[18]);
 	// maximum number of iterations in the GS step to solve the least squares problem on the final image level (int)
-	sSetting->maxiter_CGLS_im = atoi(argv[20]);
+	sSetting->maxiter_CGLS_im = atoi(argv[19]);
 	// error tolerance (double)
-	sSetting->tol_r_CGLS_im   = (double)atof(argv[21]);
+	sSetting->tol_r_CGLS_im   = (double)atof(argv[20]);
 
 	// write all intermediate image fusion resulta (after every iteration) (1: create file and write resulting image in file; 0: to not write image in file (useful for analyses only)) (bool)
-	fSetting->fullImOptOnSubspace = (bool)atoi(argv[22]);
+	fSetting->fullImOptOnSubspace = (bool)atoi(argv[21]);
         // subspace transformation type
-        fSetting->subspace_transform_type = argv[23];
+        fSetting->subspace_transform_type = argv[22];
         // subspace dimension
-        fSetting->subspace_dim = atoi(argv[24]);
+        fSetting->subspace_dim = atoi(argv[23]);
 	// calc. coeff. in full image opt. eq. via SNR calc. of ImX and ImY (bool)
-	fSetting->SNR_normalization = (bool)atoi(argv[25]);
+	fSetting->SNR_normalization = (bool)atoi(argv[24]);
 
 
     //########################################################
@@ -121,34 +120,34 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
     // and global processing module
     //########################################################
     // use estimated SRFs instead of apriori given ones (bool)
-	fSetting->use_estimated_SRFs = (bool)atoi(argv[26]);
+	fSetting->use_estimated_SRFs = (bool)atoi(argv[25]);
 	// type of initial high resolution image ImZ_init; flag (int)
-	fSetting->ImZ_init_type=atoi(argv[27]);
+	fSetting->ImZ_init_type=atoi(argv[26]);
 	       // ImZ_init_type=0: lambdaZ_ABZ=0 in 1st iter (no initial image)
 	       // ImZ_init_type=1: upsampled and bilinearly interpolated low resolution image ImY
 	       // ImZ_init_type=2: reconstruction result of another algorithm (e.g. Bayesian Sparse or CNMF. Depends on dataset)
 	
 	// flag used to decide whether or not the least square post-minimization (of the final image) is activated (bool)
-	fSetting->LQ_post_opt_im  = (bool)atoi(argv[28]);
+	fSetting->LQ_post_opt_im  = (bool)atoi(argv[27]);
     // jump to the full image optimization (of the initial image) without doing the patch-wise imge reconstruction.
-	fSetting->doFullImOptWithoutPatRec=(bool)atoi(argv[29]);
+	fSetting->doFullImOptWithoutPatRec=(bool)atoi(argv[28]);
 	// number of coupled ImZ calculations iterations
-	fSetting->iterMain = atoi(argv[30]);
+	fSetting->iterMain = atoi(argv[29]);
 
 	//########################################################
     //# Output settings                                      #
 	//########################################################
 
-	fSetting->evaluate           = (bool)atoi(argv[31]);
+	fSetting->evaluate           = (bool)atoi(argv[30]);
     //65 evaluate initial image (bool)
-	fSetting->evaluate_ImZ_init = (bool)atoi(argv[32]);
+	fSetting->evaluate_ImZ_init = (bool)atoi(argv[31]);
 
-	oSetting->writeImageFile      = (bool)atoi(argv[33]);
+	oSetting->writeImageFile      = (bool)atoi(argv[32]);
 
 	// write all intermediate image fusion resulta (after every iteration) (1: create file and write resulting image in file; 0: to not write image in file (useful for analyses only)) (bool)
-	oSetting->writeImageFileAfterEveryIter = (bool)atoi(argv[34]);
+	oSetting->writeImageFileAfterEveryIter = (bool)atoi(argv[33]);
 	// save output in double format (64bit) instead of uint16 (bool)
-	dSetting->saveAsDouble = (bool)atoi(argv[35]);	
+	dSetting->saveAsDouble = (bool)atoi(argv[34]);	
 
 
 	//########################################################
@@ -253,6 +252,7 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
 	//78: load and use a-priori calculated dictionaries. (bool)
 	fSetting->load_DictHR_and_DictLR = false;
 	
+	fSetting->lambdaZ_ABC = 1.0;
 
 	// set negative values to zero (int)
 	fSetting->set_neg_to_0 = 3;
