@@ -376,7 +376,7 @@ public:
 	bool doFullImOptWithoutPatRec;
 
 	double Nc_max;  // maximum size of spectral group above groups will be double-checked and perhaps split into subgoups (int)
-	double CC_min;  // minimum cross-correlation within spectral goups (double)
+	double theta;  // minimum cross-correlation within spectral goups (double)
 
 	int set_neg_to_0;   // = 0  => set negative values to zero only at the very end, before writing the final image
 						// = 1  => set negative values to zero only after patch reconstruction
@@ -726,8 +726,8 @@ void calc_ImX_sim(SpEODataset *ImX_sim, SpEODataset *ImX, SpEODataset *ImX_LR, S
 		          SpEOMatrixD *patX_LR, SpEOMatrixD *patY, SpEOVectorI *idxPUL, SpEOVectorI *idxPVL, int uP, int vP,
 		          bool localCalculation, int Ng, int *Nc_vec, int *idxChY, int sim_mode, MPI_Comm comm_busy);
 void calc_P_matrices(SpEOVectorD* P_lmd_vecs_loc, int **P_lmd_idx_bl_loc, SpEOMatrixI* P_lmd_idx_row_loc, int Ng, int *Nc_vec, int NChZ, int *idxChY, int my_rank);
-void CSG_corr_based_spectral_grouping(int &Ng, int *idxChY, int *Nc_vec, SpEOMatrixD &winY, double CC_min, int Nc_max, int my_rank);
-void threshold_CCmat(SpEOMatrixD &CCmat, double CC_min, double q);
+void CSG_corr_based_spectral_grouping(int &Ng, int *idxChY, int *Nc_vec, SpEOMatrixD &winY, double theta, int Nc_max, int my_rank);
+void threshold_CCmat(SpEOMatrixD &CCmat, double theta, double q);
 void cleanUp_CCmat(SpEOMatrixD &CCmat, double q);
 int calc_Ng(SpEOMatrixD &CCmat, double q);
 void calc_idxChY_and_Nc_vec(int *idxChY, int *Nc_vec, int Ng, SpEOMatrixD &CCmat, double q, int channelOffset);
