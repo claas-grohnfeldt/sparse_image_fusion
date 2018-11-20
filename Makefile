@@ -30,7 +30,7 @@ SRC = $(SRCDIR)/dataIO.cpp \
 	$(SRCDIR)/nnls.cpp
 
 SRCMAIN = $(SRCDIR)/JSparseFI.cpp
-EXE = $(BINDIR)/JSparseFIHM
+EXE = $(BINDIR)/JSparseFIHM_TEST
 
 SUB = $(SUBDIR)/JSparseFIHM
 
@@ -45,15 +45,15 @@ LIB_GDAL = -lgdal
 LIB_DIR  = -L $(GDAL_LIBRARY_PATH)
 
 ### compiler
-CXX      = mpic++
+CXX      = mpiCC
 #        = mpiCC   <- on SuperMUC
-#        = mpic++  <- alternative
+#        = mpic++  <- more common on PCs
 CFLAGS   = -O3 -w 
 LDFLAGS=$(LIB_DIR) $(LIB_GDAL)
 
 ### exec
 RUN      = mpiexec
-RUNFLAGS = -n 2
+RUNFLAGS = -n 18
 
 ########################################
 #                                      #
@@ -123,7 +123,7 @@ ImX_sim_mode=2
 # 8: Select coupled LR and HR Pan dictionaries according to:
 dictselect=8
 # option: 
-# 0: Dictionary contains ONLY the current patch -> (NDP=1) & Alpha is calculated by least squares
+# 0: Dictionary contains ONLY the current patch -> (N_a=1) & Alpha is calculated by least squares
 # 1: Nearest Neighbor
 # 2: PanLR norm
 # 3: SRF approximate PanLR  norm
@@ -135,7 +135,7 @@ dictselect=8
 # 9: PanHR self uncorrelated basis approximation, including current patch as first atom
 
 # 9: number of dictionary atoms/patches (int)
-NDP=900
+N_a=900
 
 # 10: patchsize, measured in low resolution pixels (int)
 psz=3
@@ -149,22 +149,21 @@ ovrlp=0
 # coefficient estimation
 #*************************************
 
-# 12~14: regularization parameters (double)
-mu_X=1e-5 # 316
-mu_Y=1e-5 # 0.316
-mu_Z=1
+# 12~13: regularization parameters (double)
+mu_X=1e-5
+mu_Y=1e-5
 
 #*************************************
 # correlation-based Hyperspectral Grouping (CorHySpeG)
 #*************************************
 
-# 15: maximum size of spectral group above groups will be double-checked and perhaps split into subgoups (int) 
-Nc_max=25
+# 14: maximum size of spectral group above groups will be double-checked and perhaps split into subgoups (int) 
+N_c=25
 
-# 16: minimum cross-correlation within spectral goups (double)
-CC_min=0.96
+# 15: minimum cross-correlation within spectral goups (double)
+theta=0.96
 
-# 17: size of window around patch: Must be odd if patchsize is odd and even if patchsize is even, in order to have both centers matched; Used for correlation calculations (int)
+# 16: size of window around patch: Must be odd if patchsize is odd and even if patchsize is even, in order to have both centers matched; Used for correlation calculations (int)
 winSize=6
 
 #######################################################
@@ -172,22 +171,22 @@ winSize=6
 # (for full-image optimization)                        
 #######################################################
 
-# 18: regularization parameter trading the relative weighting of the high resolution input image I_X (double)
+# 17: regularization parameter trading the relative weighting of the high resolution input image I_X (double)
 mu_X_prime=1e0
 
-# 19: regularization parameter trading the relative weighting of the low resolution input image I_Y (double)
+# 18: regularization parameter trading the relative weighting of the low resolution input image I_Y (double)
 mu_Y_prime=1e0
 
-# 20: maximum number of iterations in the GS step to solve the least squares problem on the final image level (int) 
+# 19: maximum number of iterations in the GS step to solve the least squares problem on the final image level (int) 
 maxiter_globalOpt=1500 
 
-# 21: error tolerance (double) 
+# 20: error tolerance (double) 
 tol_r_globalOpt=1e-12 
 
-# 22: do full image optimization on the full image space (not on a subspace); 1: in the full image optimization step, operate on a subspace (optimize for A, where  ImZ = E*A and E is known) (only effenctive if LQ_post_opt_im is set to 1 above)  (bool)
+# 21: do full image optimization on the full image space (not on a subspace); 1: in the full image optimization step, operate on a subspace (optimize for A, where  ImZ = E*A and E is known) (only effenctive if LQ_post_opt_im is set to 1 above)  (bool)
 fullImOptOnSubspace=1
 
-# 23: subspace transformation type
+# 22: subspace transformation type
 subspace_transform_type=SVD
 # options:
 #                      =PCA
@@ -195,10 +194,10 @@ subspace_transform_type=SVD
 #                      =VCA
 #                      =none
 
-# 24: subspace dimension
+# 23: subspace dimension
 subspace_dim=10
 
-# 25: calc. coeff. in full image opt. eq. via SNR calc. of ImX and ImY (bool)
+# 24: include SNR normalization to compensate for colored (band-dependend) noise (bool)
 SNR_normalization=1
 
 ######################################################### 
@@ -206,10 +205,10 @@ SNR_normalization=1
 # and global processing module 
 ######################################################### 
 
-# 26: use estimated SRFs instead of apriori given ones (bool)
+# 25: use estimated SRFs instead of apriori given ones (bool)
 use_estimated_SRFs=1
 
-# 27: type of initial high resolution image ImZ_init; flag (int)
+# 26: type of initial high resolution image ImZ_init; flag (int)
 ImZ_init_type=2
 # options:
 # 0: # mu_Z=0 in 1st iter (no initial image)
@@ -217,35 +216,38 @@ ImZ_init_type=2
 # 2: # reconstruction result of another algorithm (e.g. CNMF or HySure)
 # 3: # reference image (for tests only)
 
-# 28: use/activate global processing module (bool) 
+# 27: use/activate global processing module (bool) 
 use_global_proc_module=1
 
-# 29: skip local-non-local processing module, i.e. jump straight to global proceccing module. (bool)
+# 28: skip local-non-local processing module, i.e. jump straight to global proceccing module. (bool)
 use_ONLY_global_proc_module=0
 
-# 30: number of coupled ImZ calculations, i.e. local-non-local / glocal processing iterations 
+# 29: number of coupled ImZ calculations, i.e. local-non-local / glocal processing iterations 
 iterMain=1
 
 ########################################################
 # Output settings                                      #
 ########################################################
 
-# 31: evaluate reconstructed image(s) (bool)
+# 30: evaluate reconstructed image(s) (bool)
 eval=1
 # options:
 # 1: evaluation will be done immetiately after the reconstruction 
 # 0: evaluation will have to be done in a separate post-processing step)
 
-# 32: evaluate initial image (bool)
+# 31: evaluate initial image (bool)
 evaluate_ImZ_init=1
 
-# 33: write fused image in file (1: create file and write resulting image in file; 0: to not write image in file (useful for analyses only)) (bool)
+# 32: write fused image in file (1: create file and write resulting image in file; 0: to not write image in file (useful for analyses only)) (bool)
 writeImageFile=1
 
-# 34: write all intermediate image fusion resulta (after every iteration) (1: create file and write resulting image in file; 0: to not write image in file (useful for analyses only)) (bool)
+# 33: write all intermediate image fusion results/images (after every iteration) (bool) 
+# options:
+# 0: do not write image in file (useful for analyses only)
+# 1: create file and write resulting image in file
 writeImageFileAfterEveryIter=1
 
-# 35: save output in double format (64bit) instead of uint16 (bool)
+# 34: save output in double format (64bit) instead of uint16 (bool)
 saveAsDouble=1
 
 
@@ -267,7 +269,7 @@ $(EXE): $(OBJ)
 run:
 		$(RUN) $(RUNFLAGS) -x LD_LIBRARY_PATH=$(GDAL_LIBRARY_PATH) $(EXE) $(LOADL_JOB_NAME) $(LOADL_PID) \
 		$(datasetID) $(alg) $(lambda) $(useSimulatedImXforDictLearn) $(ImX_sim_mode) \
-		$(dictselect) $(NDP) $(psz) $(ovrlp) $(mu_X) $(mu_Y) $(mu_Z) $(Nc_max) $(CC_min) \
+		$(dictselect) $(N_a) $(psz) $(ovrlp) $(mu_X) $(mu_Y) $(N_c) $(theta) \
 		$(winSize) $(mu_X_prime) $(mu_Y_prime) $(maxiter_globalOpt) $(tol_r_globalOpt) \
 		$(fullImOptOnSubspace) $(subspace_transform_type) $(subspace_dim) $(SNR_normalization) \
 		$(use_estimated_SRFs) $(ImZ_init_type) $(use_global_proc_module) $(use_ONLY_global_proc_module) \
