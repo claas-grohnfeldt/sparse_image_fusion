@@ -113,41 +113,42 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
         fSetting->subspace_dim = atoi(argv[23]);
 	// calc. coeff. in full image opt. eq. via SNR calc. of ImX and ImY (bool)
 	fSetting->SNR_normalization = (bool)atoi(argv[24]);
-
+	// scale the coeff. of |R*Z-X| term by a factor of NChY/NChX (experimenatal, depricated) (bool)
+	fSetting->balance_ImX_term_coef = (bool)atoi(argv[25]);
 
     //########################################################
     // initialization and interplay between local-non-local 
     // and global processing module
     //########################################################
     // use estimated SRFs instead of apriori given ones (bool)
-	fSetting->use_estimated_SRFs = (bool)atoi(argv[25]);
+	fSetting->use_estimated_SRFs = (bool)atoi(argv[26]);
 	// type of initial high resolution image ImZ_init; flag (int)
-	fSetting->ImZ_init_type=atoi(argv[26]);
+	fSetting->ImZ_init_type=atoi(argv[27]);
 	       // ImZ_init_type=0: lambdaZ_ABZ=0 in 1st iter (no initial image)
 	       // ImZ_init_type=1: upsampled and bilinearly interpolated low resolution image ImY
 	       // ImZ_init_type=2: reconstruction result of another algorithm (e.g. Bayesian Sparse or CNMF. Depends on dataset)
 	
 	// flag used to decide whether or not the least square post-minimization (of the final image) is activated (bool)
-	fSetting->LQ_post_opt_im  = (bool)atoi(argv[27]);
+	fSetting->LQ_post_opt_im  = (bool)atoi(argv[28]);
     // jump to the full image optimization (of the initial image) without doing the patch-wise imge reconstruction.
-	fSetting->doFullImOptWithoutPatRec=(bool)atoi(argv[28]);
+	fSetting->doFullImOptWithoutPatRec=(bool)atoi(argv[29]);
 	// number of coupled ImZ calculations iterations
-	fSetting->iterMain = atoi(argv[29]);
+	fSetting->iterMain = atoi(argv[30]);
 
 	//########################################################
     //# Output settings                                      #
 	//########################################################
 
-	fSetting->evaluate           = (bool)atoi(argv[30]);
+	fSetting->evaluate           = (bool)atoi(argv[31]);
     //65 evaluate initial image (bool)
-	fSetting->evaluate_ImZ_init = (bool)atoi(argv[31]);
+	fSetting->evaluate_ImZ_init = (bool)atoi(argv[32]);
 
-	oSetting->writeImageFile      = (bool)atoi(argv[32]);
+	oSetting->writeImageFile      = (bool)atoi(argv[33]);
 
 	// write all intermediate image fusion resulta (after every iteration) (1: create file and write resulting image in file; 0: to not write image in file (useful for analyses only)) (bool)
-	oSetting->writeImageFileAfterEveryIter = (bool)atoi(argv[33]);
+	oSetting->writeImageFileAfterEveryIter = (bool)atoi(argv[34]);
 	// save output in double format (64bit) instead of uint16 (bool)
-	dSetting->saveAsDouble = (bool)atoi(argv[34]);	
+	dSetting->saveAsDouble = (bool)atoi(argv[35]);	
 
 
 	//########################################################
@@ -195,7 +196,7 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
 
 	pSetting->numProcPerPatch    = 1;
 	// patch parallelization strategy: work stealing (true) or fixed work scheduling (false)
-	pSetting->workStealingTurns  = 1;
+	pSetting->workStealingTurns  = -1;
 	
     dSetting->delete_tmp_patch_folders       = true;
 	dSetting->imageConstructionOnly          = false;
@@ -230,13 +231,13 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
 	// 43: regularization parameter trading the relative weighting of the low resolution input patch yLR (double)
 	fSetting->lambdaY      = 1.0; 
 	// 44: maximum number of iterations in the GS step to solve the least squares problem (int)
-	sSetting->maxiter_CGLS = 1000;
+	sSetting->maxiter_CGLS = 400;
 	// 45: error tolerance (double)
 	sSetting->tol_r_CGLS   = 0.000000000001;
 	// 46: decides whether or not the coefficients get updates via least squares (bool)
 	sSetting->fix_Alpha    = 1;
 	// 47: decides whether or not the mean values of Z are set to the same mean values as Y (i.e. either delta_m remains the initial zero vector or it gets updated via least squares) (bool)
-	sSetting->fix_delta_m  = true;
+	sSetting->fix_delta_m  = false;
 
     //58 set lambdaZ_ABC to this number only in the first iteration. A low value can be helpful e.g. if the initial image ImZ_init is not very good/trustworthy (double)
 	fSetting->lambdaZ_ABC_in_1st_iter = 1.0;
@@ -245,7 +246,7 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
 	dSetting->platformID = 0;
 
 	//75: set the coeff. of |R*Z-X| in full image opt. eq. to NChY/NChX [only relevant if SNR_normalization==1 ] (bool)
-	fSetting->balance_ImX_term_coef = false;
+	//fSetting->balance_ImX_term_coef = false;
 
     //77: use LR (low resolution) patch norm for normalization of corresponding LR and HR patch in coupled dictionaries. If set to 0 the HR nor is used by default. (bool)
 	fSetting->use_LRnorm_for_dic_normalization = true; //

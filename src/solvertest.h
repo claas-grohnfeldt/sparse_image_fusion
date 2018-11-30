@@ -1,5 +1,5 @@
 /*
- * JSparseFI.h
+ * solvertest.h
  *
  *  Created on: Apr 30, 2013
  *      Author: Claas Grohnfeldt
@@ -20,5 +20,4 @@
 #include <omp.h>
 #endif
 
-
-#endif /* JSPARSEFI_H_ */
+#endif 
