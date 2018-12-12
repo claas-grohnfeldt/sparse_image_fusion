@@ -1,41 +1,64 @@
 # Sparse image fusion
 
-## Table of Contents
+This document is structured as follows:
 
 - [Sparse image fusion](#sparse-image-fusion)
-  - [Table of Contents](#table-of-contents)
-  - [Description](#description)
-  - [Literature with detailed description of the algorithms](#literature-with-detailed-description-of-the-algorithms)
-  - [Identify a location (on server/drive) with sufficient storage space](#identify-a-location-on-serverdrive-with-sufficient-storage-space)
-  - [Link paths to directories with sufficient storage space](#link-paths-to-directories-with-sufficient-storage-space)
-  - [External libraries](#external-libraries)
+  - [Description and literature](#description-and-literature)
+  - [Getting started](#getting-started)
+    - [Create directories at an accessible location with sufficient storage space](#create-directories-at-an-accessible-location-with-sufficient-storage-space)
+    - [Install third party libraries](#install-third-party-libraries)
+      - [Eigen: C++ template library for linear algebra](#eigen-c-template-library-for-linear-algebra)
+      - [GDAL: Geospatial Data Abstraction Library](#gdal-geospatial-data-abstraction-library)
+    - [Link paths to repository's main directory](#link-paths-to-repositorys-main-directory)
   - [How to add a new data set](#how-to-add-a-new-data-set)
   - [platform-dependency](#platform-dependency)
   - [SuperMUC specifics](#supermuc-specifics)
   
-## Description
+## Description and literature
 
-This software suite comprises the \[SparseFI - J-SparseFI - J-SparseFI-HM\]-family of multi-sensor image super-resolution algorithms for multi- and hyperspectral image super-resolution based on sparse representations
+This software suite comprises the \[ **SparseFI** - **J-SparseFI** - **J-SparseFI-HM** \] family of multi-sensor image fusion algorithms for multi- and hyperspectral image super-resolution based on sparse representations.
 
-## Literature with detailed description of the algorithms
+<!--- ## Literature with detailed description of the algorithms --->
 
 A detailed description of the algotihms implemented in this software suite is provided in my dissertation:
 > C. Grohnfeldt, "Multi-sensor Data Fusion for Multi- and Hyperspectral Resolution Enhancement Based on Sparse Representations ", Ph.D. Dissertation, Technical University of Munich, 2017; doi:10.14459/2017md1366768
 
-## Identify a location (on server/drive) with sufficient storage space
+## Getting started
 
-The content of the following 4 sub-directories should be placed at a location with sufficient storage space that is accessible from the repository's main directory:
+<!---### Setup directories, links and external libraries--->
 
-- `sparse_image_fusion/lib` (libraries)
-- `sparse_image_fusion/data` (input data)
-- `sparse_image_fusion/results` (output data)
-- `sparse_image_fusion/tmp` (temporary data)
+### Create directories at an accessible location with sufficient storage space
 
+The following directories should be created at a location, say `<path-to-storage-dir>`, with sufficient storage space, which is accessible from the repository's main directory.
 
+```bash
+mkdir <path-to-storage-dir>/lib      # (third party libraries)
+mkdir <path-to-storage-dir>/data     # (input data)
+mkdir <path-to-storage-dir>/results  # (output data)
+mkdir <path-to-storage-dir>/tmp      # (temporary data)
+```
 
-## Link paths to directories with sufficient storage space
+Principally, those folders can be placed in different parent directories if preferred.
 
-In order to preserve the directories structure, which is partially hard-coded in the file `src/paths.cpp`, it is recommended to link those directories as follows:
+### Install third party libraries
+
+This software suite depends on two external libraries, which need to be installed and linked to the repository's main directory:
+
+#### Eigen: C++ template library for linear algebra
+
+The project is hosted on [http://eigen.tuxfamily.org](http://eigen.tuxfamily.org). A git mirrow is available on [GitHub](https://github.com/eigenteam/eigen-git-mirrow). We'll clone that into the above-created lib directory as follows:
+
+```bash
+git clone https://github.com/eigenteam/eigen-git-mirror.git <path-to-storage-dir>/lib/eigen
+```
+
+#### GDAL: Geospatial Data Abstraction Library
+
+download and install from www.gdal.org)
+
+### Link paths to repository's main directory
+
+In order to preserve the directories structure, which is partially hard-coded in `src/paths.cpp`, it is recommended to link those directories as follows:
 
 ```bash
 ln -s <PATH_TO_your_input_data_dir/HS_MS> <PATH_TO_sparse_image_fusion/data/HS_MS>
@@ -44,20 +67,14 @@ ln -s <PATH_TO_your_output_data_dir> <PATH_TO_sparse_image_fusion/results>
 ln -s <PATH_TO_your_temporary_data_dir> <PATH_TO_sparse_image_fusion/tmp>
 ```
 
-## External libraries
-
-This software suite depends on external libraries, which need to be linked to the repository's main directory:
-
-1. GDAL - Geospatial Data Abstraction Library (download and install from www.gdal.org)
-2. eigen - c++ template library for linear algebra (download and install from http://eigen.tuxfamily.org)
-
-links should be set to the following locations:
+links to external libraries should be set to the following locations:
 
 ```bash
 ln -s <PATH_TO_gdal_include_dir> <PATH_TO_sparse_image_fusion/lib/gdal/inc>
 ln -s <PATH_TO_gdal_lib_dir> <PATH_TO_sparse_image_fusion/lib/gdal/lib>
 ln -s <PATH_TO_eigen_lib_dir> <PATH_TO_sparse_image_fusion/lib/eigen/lib>
 ```
+
 
 ## How to add a new data set
 
