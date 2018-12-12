@@ -1,21 +1,39 @@
-# Sparse Image Fusion
+# Sparse image fusion
 
+## Table of Contents
+
+- [Sparse image fusion](#sparse-image-fusion)
+  - [Table of Contents](#table-of-contents)
+  - [Description](#description)
+  - [Literature with detailed description of the algorithms](#literature-with-detailed-description-of-the-algorithms)
+  - [Identify a location (on server/drive) with sufficient storage space](#identify-a-location-on-serverdrive-with-sufficient-storage-space)
+  - [Link paths to directories with sufficient storage space](#link-paths-to-directories-with-sufficient-storage-space)
+  - [External libraries](#external-libraries)
+  - [How to add a new data set](#how-to-add-a-new-data-set)
+  - [platform-dependency](#platform-dependency)
+  - [SuperMUC specifics](#supermuc-specifics)
+  
 ## Description
 
 This software suite comprises the \[SparseFI - J-SparseFI - J-SparseFI-HM\]-family of multi-sensor image super-resolution algorithms for multi- and hyperspectral image super-resolution based on sparse representations
 
-## Literature with detailed description
+## Literature with detailed description of the algorithms
 
 A detailed description of the algotihms implemented in this software suite is provided in my dissertation:
 > C. Grohnfeldt, "Multi-sensor Data Fusion for Multi- and Hyperspectral Resolution Enhancement Based on Sparse Representations ", Ph.D. Dissertation, Technical University of Munich, 2017; doi:10.14459/2017md1366768
 
-## Link paths to directories with sufficient storage space
+## Identify a location (on server/drive) with sufficient storage space
 
-The following 3 sub-directories should be placed at a location with sufficient storage space that is accessible from the repository's main directory:
+The content of the following 4 sub-directories should be placed at a location with sufficient storage space that is accessible from the repository's main directory:
 
+- `sparse_image_fusion/lib` (libraries)
 - `sparse_image_fusion/data` (input data)
 - `sparse_image_fusion/results` (output data)
 - `sparse_image_fusion/tmp` (temporary data)
+
+
+
+## Link paths to directories with sufficient storage space
 
 In order to preserve the directories structure, which is partially hard-coded in the file `src/paths.cpp`, it is recommended to link those directories as follows:
 
