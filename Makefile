@@ -45,7 +45,7 @@ LIB_GDAL = -lgdal
 LIB_DIR  = -L $(GDAL_LIBRARY_PATH)
 
 ### compiler
-CXX      = mpiCC
+CXX      = mpic++
 #        = mpiCC   <- on SuperMUC
 #        = mpic++  <- more common on PCs
 CFLAGS   = -O3 -w 
