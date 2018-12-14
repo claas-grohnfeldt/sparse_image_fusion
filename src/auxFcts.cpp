@@ -262,18 +262,18 @@ double spec_norm(SpEOMatrixD A) {
   SpEOMatrixD S = A*A.transpose(); // use selfadjoint property of spectral norm and use the computationally more efficient way (smaller matrix)
 
   // old Eigen Library version (eigen-eigen-2249f9c22fe8)
-  PowerIteration<SpEOMatrixD> e2 = PowerIteration<SpEOMatrixD>();
-  e2.setPrecision(1e-2);
-  e2.setMaxIter(1e2);
-  e2.compute(S,1);
-  SpEOVectorD esev2 = e2.eigenvalues().transpose();
+  // PowerIteration<SpEOMatrixD> e2 = PowerIteration<SpEOMatrixD>();
+  // e2.setPrecision(1e-2);
+  // e2.setMaxIter(1e2);
+  // e2.compute(S,1);
+  // SpEOVectorD esev2 = e2.eigenvalues().transpose();
 
-  // new Eigen Library version (eigen-eigen-2249f9c22fe8)
- // EigenSolver<SpEOMatrixD> es(S);
- // SpEOVectorD esev2 = es.eigenvalues().transpose();
+  // newer Eigen Library versions
+  EigenSolver<SpEOMatrixD> es;
+  es.compute(S, /*computeEigenvectors = */ false);
+  VectorXcd eivals = es.eigenvalues().transpose();
+  double esev2 = real(eivals(0));
 
-
-
-  return sqrt(esev2(0));
+  //return sqrt(esev2(0));
+  return sqrt(esev2);
 }
-
