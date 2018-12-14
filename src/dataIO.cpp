@@ -2392,7 +2392,7 @@ void write_Mat_to_CSV(SpEOMatrixD *Mat, const char *fname_CSV) {
 		CSV_file << Mat->format(CSVFmt);
 		CSV_file << "\n";
 	}else{
-		cout << endl << "WARNING: CSV_file '" << CSV_file << "' could not be written!" << endl;
+		cout << endl << "WARNING: CSV_file '" << fname_CSV << "' could not be written!" << endl;
 	}
 	CSV_file.close();
 	chmod(fname_CSV, S_IRWXU | S_IRWXG | S_IRWXO);
