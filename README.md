@@ -5,6 +5,7 @@ This document is structured as follows:
 - [Sparse image fusion](#sparse-image-fusion)
   - [Description and literature](#description-and-literature)
   - [Getting started](#getting-started)
+    - [Prerequisites](#prerequisites)
     - [Create directories at an accessible location with sufficient storage space](#create-directories-at-an-accessible-location-with-sufficient-storage-space)
     - [Install third party libraries](#install-third-party-libraries)
       - [Eigen: C++ template library for linear algebra](#eigen-c-template-library-for-linear-algebra)
@@ -27,15 +28,24 @@ A detailed description of the algotihms implemented in this software suite is pr
 
 <!---### Setup directories, links and external libraries--->
 
+### Prerequisites
+
+Linux:
+
+- curl
+- wget
+- grep
+
 ### Create directories at an accessible location with sufficient storage space
 
 The following directories should be created at a location, say `<path-to-storage-dir>`, with sufficient storage space, which is accessible from the repository's main directory.
 
 ```bash
-mkdir <path-to-storage-dir>/lib      # (third party libraries)
-mkdir <path-to-storage-dir>/data     # (input data)
-mkdir <path-to-storage-dir>/results  # (output data)
-mkdir <path-to-storage-dir>/tmp      # (temporary data)
+mkdir <path-to-storage-dir>/lib       # (third party libraries)
+mkdir <path-to-storage-dir>/data      # (input data)
+mkdir <path-to-storage-dir>/results   # (output data)
+mkdir <path-to-storage-dir>/tmp       # (temporary data)
+mkdir <path-to-storage-dir>/downloads # (only used during installation for downloading the source code of GDAL)
 ```
 
 Principally, those folders can be placed in different parent directories if preferred.
@@ -46,15 +56,49 @@ This software suite depends on two external libraries, which need to be installe
 
 #### Eigen: C++ template library for linear algebra
 
-The project is hosted on [http://eigen.tuxfamily.org](http://eigen.tuxfamily.org). A git mirrow is available on [GitHub](https://github.com/eigenteam/eigen-git-mirrow). We'll clone that into the above-created lib directory as follows:
+The Eigen project is hosted on [http://eigen.tuxfamily.org](http://eigen.tuxfamily.org). A git mirrow is available on [GitHub](https://github.com/eigenteam/eigen-git-mirrow). We'll clone that into the above-created lib directory as follows:
 
 ```bash
 git clone https://github.com/eigenteam/eigen-git-mirror.git <path-to-storage-dir>/lib/eigen
 ```
 
+That's it for Eigen. The only thing left now is to link the Eigen lib to our repository's directory as described [below](#Link-paths-to-repository's-main-directory).
+
 #### GDAL: Geospatial Data Abstraction Library
 
-download and install from www.gdal.org)
+GDAL can be installed either on a system level or locally following the descriptions on [www.gdal.org](www.gdal.org). Here, we'll build it from source code and install it locally to avoid dependency on sudo permissions.
+
+- Download the source code of the latest stable release:
+
+  ```bash
+  cd <path-to-storage-dir>/downloads
+  tmp=$(curl http://download.osgeo.org/gdal/CURRENT/ | grep -o "gdal-[2-9].[0-9].[0-9].tar.gz")
+  filename=${tmp/.tar.gz*/.tar.gz}
+  wget "http://download.osgeo.org/gdal/CURRENT/$filename"
+  tar zxf $filename  
+  ```
+
+- Install locally as follows:
+
+  ```bash
+  cd ${filename/.tar.gz/}
+  gdal_prefix="<path-to-storage-dir>/lib/gdal"
+  ./configure --prefix=$gdal_prefix
+  make
+  make install
+  ```
+
+- Test if local installation process was successfull:
+
+  ```bash
+  export PATH=${gdal_prefix}/bin:$PATH
+  export LD_LIBRARY_PATH=${gdal_prefix}/lib:$LD_LIBRARY_PATH
+  export GDAL_DATA=${gdal_prefix}/share/gdal
+  gdalinfo --version
+  ```
+
+  The last command should output something like the following:\
+  `GDAL 2.3.2, released 2018/09/21`.
 
 ### Link paths to repository's main directory
 
@@ -74,7 +118,6 @@ ln -s <PATH_TO_gdal_include_dir> <PATH_TO_sparse_image_fusion/lib/gdal/inc>
 ln -s <PATH_TO_gdal_lib_dir> <PATH_TO_sparse_image_fusion/lib/gdal/lib>
 ln -s <PATH_TO_eigen_lib_dir> <PATH_TO_sparse_image_fusion/lib/eigen/lib>
 ```
-
 
 ## How to add a new data set
 
