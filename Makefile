@@ -5,9 +5,9 @@
 
 ### local settings
 # path to eigen library (you might need to adapt the version number 'f562a193118d' in the path)
-EIGEN_HEADER_PATH = ./lib/eigen/eigen-eigen-f562a193118d/
+EIGEN_HEADER_PATH = ./lib/eigen/
 # path to GDAL library
-GDAL_INCLUDE_PATH = ./lib/gdal/inc
+GDAL_INCLUDE_PATH = ./lib/gdal/include
 GDAL_LIBRARY_PATH = ./lib/gdal/lib
 
 ### internal path variables
