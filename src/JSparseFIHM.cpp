@@ -236,45 +236,47 @@ int main(int argc, char* argv[]) {
     //   or estimate SRFs from ImY and ImX_LR together with a band-wise //
     //   shift in ImX                                                   //
 	//==================================================================//
-	  SpEOMatrixD SRF(ImX->get_NCh(), ImY->get_NCh());
-	  
-	  if(!fSetting.use_estimated_SRFs){
-		  bool normalize_SRFs_to_fulfill_SumToOne_constraint = false; // potentially beneficial when processing more realistic data (not synthesized ones)
-		  read_SRF(&glPrms, &SRF, paths.fname_SRF,',', normalize_SRFs_to_fulfill_SumToOne_constraint);
-		  MPI_Barrier(MPI_COMM_WORLD);
-          }else{
-                  if(my_rank == 0){
-                     cout << "#############################################################" << endl 
-                          << "##                                                         ##" << endl
-                          << "##   estimate spectral response functions and ImX shift    ##" << endl
-                          << "##                                                         ##" << endl
-                          << "#############################################################" << endl;
-		  }
-		  double *ImX_shift = new double[ImX->get_NCh()];
-		  SpEOMatrixD ImY_2D    = SpEOMatrixD::Zero(ImY->get_NCh(),   ImY->get_sizeU()   *ImY->get_sizeV());
-		  SpEOMatrixD ImX_LR_2D = SpEOMatrixD::Zero(ImX_LR->get_NCh(),ImX_LR->get_sizeU()*ImX_LR->get_sizeV());
+	SpEOMatrixD SRF(ImX->get_NCh(), ImY->get_NCh());
+
+	if(!fSetting.use_estimated_SRFs){
+		bool normalize_SRFs_to_fulfill_SumToOne_constraint = false; // potentially beneficial when processing more realistic data (not synthesized ones)
+		read_SRF(&glPrms, &SRF, paths.fname_SRF,',', normalize_SRFs_to_fulfill_SumToOne_constraint);
+		MPI_Barrier(MPI_COMM_WORLD);
+    }else{
+		if(my_rank == 0){
+			cout << "#############################################################" << endl 
+                 << "##                                                         ##" << endl
+                 << "##   estimate spectral response functions and ImX shift    ##" << endl
+                 << "##                                                         ##" << endl
+                 << "#############################################################" << endl;
+		}
+		double *ImX_shift = new double[ImX->get_NCh()];
+		SpEOMatrixD ImY_2D    = SpEOMatrixD::Zero(ImY->get_NCh(),   ImY->get_sizeU()   *ImY->get_sizeV());
+		SpEOMatrixD ImX_LR_2D = SpEOMatrixD::Zero(ImX_LR->get_NCh(),ImX_LR->get_sizeU()*ImX_LR->get_sizeV());
 	
-		  transform_SpEODataset_to_2D(ImY    ,ImY_2D    );
-		  transform_SpEODataset_to_2D(ImX_LR ,ImX_LR_2D );
-	          if(my_rank == 0) cout << "estimate SFRs and ImX shift (band-wise) simultaneously via non-negative Least Squares.." << endl;
-		  bool est_successful = estimate_SRFs_and_ImX_shift(SRF, ImX_shift, ImY_2D, ImX_LR_2D, my_rank);
-	 	  if(my_rank == 0) cout << ".. done! The estimation completed with status: successful=" << est_successful << endl << endl;
-		  if(my_rank == 0) cout << "shift both ImX and ImX_LR band-wise..." << endl;
-		  ImX->shift_image_bandwise(ImX_shift);
-		  ImX_LR->shift_image_bandwise(ImX_shift);
-	 	  if(my_rank==0) cout << ".. done!" << endl << endl;
+		transform_SpEODataset_to_2D(ImY    ,ImY_2D    );
+		transform_SpEODataset_to_2D(ImX_LR ,ImX_LR_2D );
+	    if(my_rank == 0) cout << "estimate SFRs and ImX shift (band-wise) simultaneously via non-negative Least Squares.." << endl;
+		bool est_successful = estimate_SRFs_and_ImX_shift(SRF, ImX_shift, ImY_2D, ImX_LR_2D, my_rank);
+		if(my_rank == 0) cout << ".. done! The estimation completed with status: successful=" << est_successful << endl << endl;
+		if(my_rank == 0) cout << "shift both ImX and ImX_LR band-wise..." << endl;
+		ImX->shift_image_bandwise(ImX_shift);
+		ImX_LR->shift_image_bandwise(ImX_shift);
+		if(my_rank==0) cout << ".. done!" << endl << endl;
 	
-	      // clean up
-	      delete[] ImX_shift;
-	      ImY_2D    = SpEOMatrixD::Zero(0,0);
-	      ImX_LR_2D = SpEOMatrixD::Zero(0,0);
+	    // clean up
+	    delete[] ImX_shift;
+	    ImY_2D    = SpEOMatrixD::Zero(0,0);
+	    ImX_LR_2D = SpEOMatrixD::Zero(0,0);
 	}
 
+	obsolete:
 	//==================================================================//
 	//                  Calculate decision matrix C                     //
 	//     according to the spectral grouping concept based on SRFs     //
 	//==================================================================//
-	  if (paths.fname_SRF != paths.fname_SRF_for_Spectral_Grouping){
+	  if(!fSetting.use_estimated_SRFs){
+	  //if (paths.fname_SRF != paths.fname_SRF_for_Spectral_Grouping){
 		  if(my_rank==0){
 			  cout << "The path names stored in fname_SRF and fname_SRF_for_Spectral_Grouping are not identical. " <<
 					  "Therefore, there will be an additional SRF file loaded, supposedly containing a " <<
@@ -298,6 +300,7 @@ int main(int argc, char* argv[]) {
 	 //===================================================================//
 	 //              Create MPI groups and sub-communicators              //
 	 //===================================================================//
+	  // MPI_Barrier(MPI_COMM_WORLD);
 	  if(my_rank==0){
 		  cout << "Generate MPI communicators .." << endl;
 	  }
@@ -312,7 +315,7 @@ int main(int argc, char* argv[]) {
 #ifdef _OPENMP
 	  int numProcBusy = glPrms.numPatchGroups;
 #else
-	  int numProcBusy = min(glPrms.numPatchGroups*pSetting.numProcPerPatch,glPrms.NP_sub*pSetting.numProcPerPatch);
+	  int numProcBusy = pSetting.numProcPerPatch * min(glPrms.numPatchGroups, glPrms.NP_sub);
 #endif
 	  int ranges_busy[1][3] = {{0,numProcBusy-1,1}};
 	  int rangesIdl_busy[1][3] = {{numProcBusy,my_processes-1,1}};
@@ -339,6 +342,7 @@ int main(int argc, char* argv[]) {
 	  MPI_Comm comm_write;
 	  MPI_Comm_create(MPI_COMM_WORLD, group_write, &comm_write);
 
+	cout << "[" << my_rank << "] numProcBusy = " << numProcBusy << endl;
 	//==================================================================//
 	//                      Call image fusion method                    //
 	//==================================================================//
@@ -901,6 +905,7 @@ int main(int argc, char* argv[]) {
 	  }
 	  delete[] glPrms.km;
 	  delete[] glPrms.km2;
+	//   MPI_Barrier(MPI_COMM_WORLD);
 	  delete[] glPrms.Nc_vec;
 	  delete[] glPrms.P_lmd_idx_row;
 	  for(int iG=0; iG<glPrms.Ng; iG++){
