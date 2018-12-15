@@ -9,24 +9,24 @@
 
 void getPaths(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOParallelSetting *pSetting, int argc, char **argv){
 
-	paths->dataSetID_str = argv[3];
-	string maindir_path;
-	switch(dSetting->platformID){
-        case 0:{ // generic
-                   maindir_path = "data";
-		           paths->dir_out = "results";
-                   paths->dir_tmp = "tmp";
-                   break;
-        }case 1:{ //SuperMUC - pr45ne - ga39yoz2
-                maindir_path = "/gpfs/work/pr45ne/ga39yoz2/data/links_for_fusion";
-		paths->dir_out = "/gpfs/work/pr45ne/ga39yoz2/recResults";
-                paths->dir_tmp = "/gpfs/scratch/pr45ne/ga39yoz2/JSparseFI/tmp";
-		break;
-	    }default:{
-		cout << "UNKNOWN platformID!" << endl << endl;
-		cerr << "UNKNOWN platformID!" << endl << endl;
-	  }
-	}
+	// paths->dataSetID_str = argv[3];
+	// string maindir_path;
+	// switch(dSetting->platformID){
+ //        case 0:{ // generic
+ //                   maindir_path = "data";
+	// 	           paths->dir_out = "results";
+ //                   paths->dir_tmp = "tmp";
+ //                   break;
+ //        }case 1:{ //SuperMUC - pr45ne - ga39yoz2
+ //                maindir_path = "/gpfs/work/pr45ne/ga39yoz2/data/links_for_fusion";
+	// 	paths->dir_out = "/gpfs/work/pr45ne/ga39yoz2/recResults";
+ //                paths->dir_tmp = "/gpfs/scratch/pr45ne/ga39yoz2/JSparseFI/tmp";
+	// 	break;
+	//     }default:{
+	// 	cout << "UNKNOWN platformID!" << endl << endl;
+	// 	cerr << "UNKNOWN platformID!" << endl << endl;
+	//   }
+	// }
 	// define dataset paths and set ID according to the following encryption:
 		/*
 		 * 1st digit: ID of Machine the date is stored on:
@@ -120,40 +120,46 @@ void getPaths(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOParallelSetting
     ////                                                                                                     ////
     ////*****************************************************************************************************////
 
-    // Hyperspectral-Multispectral (J-SparseFI-HM)
-    if(      paths->dataSetID_str == "11119211105350"){ paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "11119211105350_2013IEEEGRSSDFC_Sentinel2_Univ"   + "/" + "InputData" + "/" + "links";
-    }else if(paths->dataSetID_str == "109211103990"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "109211103990_EnMAP_Sentinel2"                    + "/" + "InputData" + "/" + "links";
-    }else if(paths->dataSetID_str == "3315211304350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3315211304350_Aviris_IndianPines_WV3_VNIR_SWIR"  + "/" + "InputData" + "/" + "links";
-    }else if(paths->dataSetID_str == "3315212405350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3315212405350_Aviris_Cuprite_sc03_WV3_VNIR_SWIR" + "/" + "InputData" + "/" + "links";
-    }else if(paths->dataSetID_str == "335213304350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "335213304350_Aviris_Moffett_Field"               + "/" + "InputData" + "/" + "links";
-    }else if(paths->dataSetID_str == "665211108350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "665211108350_ROSIS_Pavia_Univeristy"             + "/" + "InputData" + "/" + "links";
-    }else if(paths->dataSetID_str == "774212106350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "774212106350_Headwall_Chikusei_nonUrban"         + "/" + "InputData" + "/" + "links";
-    }else if(paths->dataSetID_str == "885211404350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "885211404350_HYDICE_WashDC_Mall"                 + "/" + "InputData" + "/" + "links";
-    }
-    // Multispectral-Panchromatic (Pan-sharpening: SparseFI & J-SparseFI)
-    else if(paths->dataSetID_str == "155111203350"){    paths->dir_in = maindir_path + "/" + "MS_PAN"  + "/" + "155111203350_HySpex_Olymp_3600x1200"       + "/" + "InputData" + "/" + "links";
-    }else if(paths->dataSetID_str == "2444101104000"){  paths->dir_in = maindir_path + "/" + "MS_PAN" + "/" + "2444101104000_WV2_REAL_scene"                    + "/" + "InputData" + "/" + "links";
-    }else{ 
-    	if(my_rank==0){
-    		cout << endl << "ERROR: Undefined dataset: " << paths->dataSetID_str << "! " << endl << endl;
-    	}
-    	MPI_Barrier(MPI_COMM_WORLD);
-    	cerr << endl << "ERROR: Undefined dataset: " << paths->dataSetID_str << "! " << endl << endl;
-    	exit(2);
-    }
+    // // Hyperspectral-Multispectral (J-SparseFI-HM)
+    // if(      paths->dataSetID_str == "11119211105350"){ paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "11119211105350_2013IEEEGRSSDFC_Sentinel2_Univ"   + "/" + "InputData" + "/" + "links";
+    // }else if(paths->dataSetID_str == "109211103990"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "109211103990_EnMAP_Sentinel2"                    + "/" + "InputData" + "/" + "links";
+    // }else if(paths->dataSetID_str == "3315211304350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3315211304350_Aviris_IndianPines_WV3_VNIR_SWIR"  + "/" + "InputData" + "/" + "links";
+    // }else if(paths->dataSetID_str == "3315212405350"){  paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "3315212405350_Aviris_Cuprite_sc03_WV3_VNIR_SWIR" + "/" + "InputData" + "/" + "links";
+    // }else if(paths->dataSetID_str == "335213304350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "335213304350_Aviris_Moffett_Field"               + "/" + "InputData" + "/" + "links";
+    // }else if(paths->dataSetID_str == "665211108350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "665211108350_ROSIS_Pavia_Univeristy"             + "/" + "InputData" + "/" + "links";
+    // }else if(paths->dataSetID_str == "774212106350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "774212106350_Headwall_Chikusei_nonUrban"         + "/" + "InputData" + "/" + "links";
+    // }else if(paths->dataSetID_str == "885211404350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "885211404350_HYDICE_WashDC_Mall"                 + "/" + "InputData" + "/" + "links";
+    // }
+    // // Multispectral-Panchromatic (Pan-sharpening: SparseFI & J-SparseFI)
+    // else if(paths->dataSetID_str == "155111203350"){    paths->dir_in = maindir_path + "/" + "MS_PAN"  + "/" + "155111203350_HySpex_Olymp_3600x1200"       + "/" + "InputData" + "/" + "links";
+    // }else if(paths->dataSetID_str == "2444101104000"){  paths->dir_in = maindir_path + "/" + "MS_PAN" + "/" + "2444101104000_WV2_REAL_scene"                    + "/" + "InputData" + "/" + "links";
+    // }else{ 
+    // 	if(my_rank==0){
+    // 		cout << endl << "ERROR: Undefined dataset: " << paths->dataSetID_str << "! " << endl << endl;
+    // 	}
+    // 	MPI_Barrier(MPI_COMM_WORLD);
+    // 	cerr << endl << "ERROR: Undefined dataset: " << paths->dataSetID_str << "! " << endl << endl;
+    // 	exit(2);
+    // }
+
+    // outsourced as program arguments
+    paths->fname_ImX           = argv[36]; // paths->dir_in + "/" + "slink_to_ImX.dat";
+    paths->fname_ImY           = argv[37]; // paths->dir_in + "/" + "slink_to_ImY.dat";
+    paths->fname_ImZ_init_rec  = argv[38]; // paths->dir_in + "/" + "slink_to_ImZ_init_rec.dat";
+    paths->fname_ImZ_ref       = argv[39]; // paths->dir_in + "/" + "slink_to_ImZ_ref.dat";
+    paths->fname_SRF           = argv[40]; // paths->dir_in + "/" + "slink_to_SRF.csv";
     
-    paths->fname_ImZ_ref                   = paths->dir_in + "/" + "slink_to_ImZ_ref.dat";
-    paths->fname_ImZ_init_rec              = paths->dir_in + "/" + "slink_to_ImZ_init_rec.dat";
-    paths->fname_ImY                       = paths->dir_in + "/" + "slink_to_ImY.dat";
-    paths->fname_ImX                       = paths->dir_in + "/" + "slink_to_ImX.dat";
-    paths->fname_SRF                       = paths->dir_in + "/" + "slink_to_SRF.csv";
-    paths->fname_SRF_for_Spectral_Grouping = paths->dir_in + "/" + "slink_to_SRF_for_Spectral_Grouping.csv";
-    paths->fname_ImZ                       = paths->dataSetID_str + "_rec";
-    // obsolete:
-    paths->fname_ImZ_init_ImY_US           = paths->dir_in + "/" + "slink_to_ImZ_init_ImY_US.dat";
-    paths->fname_SubspaceTransformMat      = paths->dir_in + "/" + "slink_to_HySure_output" + "/" + "EndmemberMat.csv";
-    paths->fname_DictLR                    = paths->dir_in + "/" + "slink_to_DictLR.csv";
-    paths->fname_DictHR                    = paths->dir_in + "/" + "slink_to_DictHR.csv";
+	paths->dir_out             = argv[41];
+	paths->dir_tmp             = argv[42];
+
+	paths->fname_ImZ           = "JSparesFIHM_fusion_result";
+    
+	// obsolete:
+    paths->fname_SRF_for_Spectral_Grouping = "jiopath"; // paths->fname_SRF; 
+    paths->fname_ImZ_init_ImY_US           = "jiopath"; // paths->dir_in + "/" + "slink_to_ImZ_init_ImY_US.dat";
+    paths->fname_SubspaceTransformMat      = "jiopath"; // paths->dir_in + "/" + "slink_to_HySure_output" + "/" + "EndmemberMat.csv";
+    paths->fname_DictLR                    = "jiopath"; // paths->dir_in + "/" + "slink_to_DictLR.csv";
+    paths->fname_DictHR                    = "jiopath"; // paths->dir_in + "/" + "slink_to_DictHR.csv";
 
      // get current time and broadcast to all processes
 
