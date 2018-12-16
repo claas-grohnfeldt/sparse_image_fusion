@@ -53,7 +53,7 @@ LDFLAGS=$(LIB_DIR) $(LIB_GDAL)
 
 ### exec
 RUN      = mpiexec
-RUNFLAGS = -n 11 --use-hwthread-cpus
+RUNFLAGS = -n 1
 
 ########################################
 #                                      #
@@ -104,7 +104,7 @@ alg=JSparseFIHM
 #########################################################
 
 # 5: regularization parameter trading the weighting of the l_2,1 norm term in the joint sparsity optimization problem (float)
-lambda=1e6
+lambda=1e1
 
 #*************************************
 # dictionary generation
@@ -141,7 +141,7 @@ N_a=200
 psz=4
 
 # 11: patch overlap, measured in low resolution pixels (int)
-ovrlp=0
+ovrlp=2
 # options:
 # any int between 0 and psz-1
 
@@ -150,8 +150,8 @@ ovrlp=0
 #*************************************
 
 # 12~13: regularization parameters (double)
-mu_X=1e-5
-mu_Y=1e-5
+mu_X=1e0
+mu_Y=1e0
 
 #*************************************
 # correlation-based Hyperspectral Grouping (CorHySpeG)
@@ -164,7 +164,7 @@ N_c=25
 theta=0.96
 
 # 16: size of window around patch: Must be odd if patchsize is odd and even if patchsize is even, in order to have both centers matched; Used for correlation calculations (int)
-winSize=3
+winSize=6
 
 #######################################################
 # Global processing module                             
@@ -172,10 +172,10 @@ winSize=3
 #######################################################
 
 # 17: regularization parameter trading the relative weighting of the high resolution input image I_X (double)
-mu_X_prime=1e-9
+mu_X_prime=1e0
 
 # 18: regularization parameter trading the relative weighting of the low resolution input image I_Y (double)
-mu_Y_prime=1e-9
+mu_Y_prime=1e0
 
 # 19: maximum number of iterations in the GS step to solve the least squares problem on the final image level (int) 
 maxiter_globalOpt=1500 
@@ -226,7 +226,7 @@ use_global_proc_module=1
 use_ONLY_global_proc_module=0
 
 # 30: number of coupled ImZ calculations, i.e. local-non-local / glocal processing iterations 
-iterMain=1
+iterMain=2
 
 ########################################################
 # Output settings                                      #
@@ -253,19 +253,23 @@ writeImageFileAfterEveryIter=1
 # 35: save output in double format (64bit) instead of uint16 (bool)
 saveAsDouble=1
 
-dir_data="./data/HS_MS/ROSIS_Pavia_Univeristy"
+dir_data="./data/HS_MS/demo_small_dataset"
 # 36:
-fname_ImX="${dir_data}/InputData/multispectral_highRes/ROSIS_Pavia_University_synthesized_QuickBird_MSHR_SNR35.dat"
+fname_ImX="${dir_data}/InputData/multispectral_highRes/ROSIS_Pavia_University_100x80_Sentinel2_10m_bands_MSHR_SNR35.dat"
+#fname_ImX="${dir_data}/InputData/multispectral_highRes/ROSIS_Pavia_University_synthesized_QuickBird_MSHR_SNR35.dat"
 # 37:
-fname_ImY="${dir_data}/InputData/hyperspectral_lowRes/ROSIS_Pavia_University_synthesized_HSLR_fDS8_SNR35.dat"
+fname_ImY="${dir_data}/InputData/hyperspectral_lowRes/ROSIS_Pavia_University_100x80_HSLR_fDS4_SNR35.dat"
+#fname_ImY="${dir_data}/InputData/hyperspectral_lowRes/ROSIS_Pavia_University_synthesized_HSLR_fDS8_SNR35.dat"
 # 38:
-fname_ImZ_init="${dir_data}/FusionResults/CNMF/ROSIS_Pavia_Univeristy_FusionResult_CNMF.dat"
+fname_ImZ_init="${dir_data}/FusionResults/bilinearly_interpolated/ROSIS_Pavia_University_100x80_HSLR_fDS4_US_via_bilinear_SNR35.dat"
+#fname_ImZ_init="${dir_data}/FusionResults/CNMF/ROSIS_Pavia_Univeristy_FusionResult_CNMF.dat"
 # 39:
-fname_ImZ_ref="${dir_data}/ReferenceData/ROSIS_Pavia_Univeristy_hyperspectral_highRes_reference.dat"
+fname_ImZ_ref="${dir_data}/ReferenceData/ROSIS_Pavia_Univeristy_hyperspectral_highRes_reference_subarea.dat"
+#fname_ImZ_ref="${dir_data}/ReferenceData/ROSIS_Pavia_Univeristy_hyperspectral_highRes_reference.dat"
 # 40:
 fname_SRF="${dir_data}/InputData/SRFs/SRFs_of_QuickBird_sampled_to_centers_of_SRFs_of_ROSIS_for_scene_Pavia_Univeristy.csv"
 # 41:
-dir_out="${dir_data}/FusionResults/JSparseFIHM/experimental"
+dir_out="${dir_data}/FusionResults/JSparseFIHM"
 # 42:
 dir_tmp="./tmp"
 
