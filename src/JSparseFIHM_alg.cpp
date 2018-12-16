@@ -36,7 +36,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 	bool print_CSG_output = false;
 	bool print_optimization_input_output = false;
 	bool print_other_stuff_during_patch_rec = false;
-	bool print_for_debugging = true;
+	bool print_for_debugging = false;
 	
 	int testnr = 0;
 	bool write_testset = false;
@@ -353,6 +353,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				vP = vPFirst + jP % NPV_sub;
 				iP = uP*NPV+vP;
 			}
+			if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_0" << endl;
 #ifndef _OPENMP
 			if(my_rank%pSet->numProcPerPatch==0 && !fSet->LQ_post_opt){
 				if(my_rank==0){
@@ -393,6 +394,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				//+++++++++++++++++++++
 				//+  extract patches  +
 				//+++++++++++++++++++++
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-01: extract patches" << endl;
 				// extract patch patY from ImY and calculate mean values in all channels individually
 				SpEOMatrixD patY = SpEOMatrixD::Zero(NChY,pszL2);
 				SpEOVectorD m_Y = SpEOVectorD::Zero(NChY); // to be calculated
@@ -422,6 +424,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				//+++++++++++++++++++++
 				//+  extract windows  +
 				//+++++++++++++++++++++
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-02: extract windows" << endl;
 				int winSizeL = fSet->winSize;// must have the same sign as pszL in order to have both centers matched
 				int winSizeH = winSizeL*fDS;
 
@@ -436,6 +439,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				int winSizeVH = fDS*winSizeVL;
 
 				// extract window winY from ImY in each channel individually
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-02-01" << endl;
 				SpEOMatrixD winY = SpEOMatrixD::Zero(NChY,winSizeUL*winSizeVL);
 				for(iChY=0; iChY<NChY; iChY++){
 					SpEOMatrixD windowBand = (ImY->get_rasterBands()[iChY]->get_bandDataMat()->block(idxWUL, idxWVL, winSizeUL, winSizeVL)).cast<double>();
@@ -450,6 +454,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				}
 				check_for_inf_or_nan(my_rank,winY, " ", -123, "winY");
 				// extract window winX from ImX
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-02-02" << endl;
 				SpEOMatrixD winX = SpEOMatrixD::Zero(NChX,winSizeUH*winSizeVH);
 				for(iChX=0; iChX<NChX; iChX++){
 					SpEOMatrixD windowBand = (ImX->get_rasterBands()[iChX]->get_bandDataMat()->block(idxWUH, idxWVH, winSizeUH, winSizeVH)).cast<double>();
@@ -462,6 +467,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				}
 				check_for_inf_or_nan(my_rank,winX, " ", -123, "winX");
 				// extract window winX_LR from ImX_LR
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-02-03" << endl;
 				SpEOMatrixD winX_LR = SpEOMatrixD::Zero(NChX,winSizeUL*winSizeVL);
 				for(iChX=0; iChX<NChX; iChX++){
 					SpEOMatrixD windowBand = (ImX_LR->get_rasterBands()[iChX]->get_bandDataMat()->block(idxWUL, idxWVL, winSizeUL, winSizeVL)).cast<double>();
@@ -477,6 +483,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				//+              correlation based spectral grouping            +//
 				//+                          - START -                          +//
 				//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-03: Correlation based spectral grouping" << endl;
 
 				//++++++++++++++++++++++++++++++++++++++++++++++
 				//+   calculate Ng, Nc_vec and idxChY via      +
@@ -512,6 +519,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				//+  P_lmd_idx_bl, P_lmd_idx_row, avrgBnds     +
 				//+                                            +
 				//++++++++++++++++++++++++++++++++++++++++++++++
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-03-01" << endl;
 				// initialize the vectors (containing the non-trivial entries along the diagonal in the corresponding blocks) in P_lmd
 				SpEOVectorD* P_lmd_vecs_loc = new SpEOVectorD[Ng];
 				int **P_lmd_idx_bl_loc = new int*[Ng];
@@ -536,9 +544,11 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				//+      calculate ImX_sim                     +
 				//+                                            +
 				//++++++++++++++++++++++++++++++++++++++++++++++
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-04: Calculate ImX_sim" << endl;
 				//==================================================================//
 				//      Calculate a preliminary (temporary) version of ImX_sim      //
 				//==================================================================//
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-04-01: Calculate a preliminary (temporary) version of ImX_sim" << endl;
 				SpEODataset *ImX_sim;//, *ImX_sim_LR;
 				ImX_sim    = new SpEODataset(HR, imFlag_X_sim);
 
@@ -555,6 +565,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				//===================================================================//
 				//  Low-pass filter and down-sample ImX_sim to generate ImX_sim_LR   //
 				//===================================================================//
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-04-02: Low-pass filter and down-sample ImX_sim to generate ImX_sim_LR" << endl;
 				if(print_other_stuff_during_patch_rec && my_rank==0){
 					cout << "         Declare and initialize ImX_sim_LR dataset .." << endl;
 				}
@@ -582,6 +593,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				// ******************************************************************************
 				// generate coupled local dictionaries
 				// ******************************************************************************
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-05: generate coupled local dictionaries" << endl;
 				SpEOVectorD *alpha        = new SpEOVectorD[Ng];
 				SpEOVectorD *alpha_init   = new SpEOVectorD[Ng];
 				SpEOVectorD *dictHR       = new SpEOVectorD[Ng];
@@ -622,12 +634,14 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 					check_for_inf_or_nan(my_rank,dictHR[ig], "ig=", ig, ": dictHR[ig]");
 					check_for_inf_or_nan(my_rank,dictLR[ig], "ig=", ig, ": dictLR[ig]");
 				}
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-05-1: Init Alpha, DictHR and DictLR" << endl;
 				SpEOMatrixD *Alpha        = new SpEOMatrixD[Ng];
 				SpEOMatrixD *Alpha_init   = new SpEOMatrixD[Ng];
 				SpEOMatrixD *DictHR       = new SpEOMatrixD[Ng];
 				SpEOMatrixD *DictLR       = new SpEOMatrixD[Ng];
 
 				int NDP_min = NDP;
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-05-2: Fill DictHR and DictLR" << endl;
 				for(ig=0; ig<Ng; ig++){
 					Alpha[ig]       = SpEOMatrixD::Zero(NDP_min,Nc_vec[ig]);
 					Alpha_init[ig]  = SpEOMatrixD::Zero(NDP_min,Nc_vec[ig]);
@@ -690,6 +704,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 					check_for_inf_or_nan(my_rank,DictHR[ig], "ig=", ig, ": DictHR[ig]");
 					check_for_inf_or_nan(my_rank,DictLR[ig], "ig=", ig, ": DictLR[ig]");
 				}
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-05-3: check sizes" << endl;
 				if(NDP_min < NDP){
 					// ensure that the dictionaries in all groups corresponding to this current patch have the same size (number of atoms)
 					NDP = NDP_min;
@@ -702,6 +717,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				}
 
 				if(fSet->load_DictHR_and_DictLR){
+					if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-05-03-01: load dictionaries" << endl;
 					for(ig=0; ig<Ng; ig++){
 						for(int iDP = 0; iDP<NDP_min; iDP++) {
 							DictHR[ig].col(iDP) = DictHR_loaded.col(iDP);
@@ -723,6 +739,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				double optMeanDiffLS_tol_r = 1e-12;
 
 				// extract patch Z_init from ImZ_init
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-05-04: extract patch Z_init from ImZ_init" << endl;
 				SpEOMatrixD Z_init = SpEOMatrixD::Zero(NChY,pszH2);
 				for(iChY=0; iChY<NChY; iChY++){
 					SpEOMatrixD patchBand = (ImZ_init->get_rasterBands()[iChY]->bandDataMatD.block(idxPUH.coeff(uP), idxPVH.coeff(vP), pszH, pszH));
@@ -734,6 +751,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				int    optMeanDiffLS_iter;
 				double optMeanDiffLS_rel_res;
 				// calculate delta_m_Z via least squares
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-05-05: calculate delta_m_Z" << endl;
 				int g, j, k;
 				int N_l = patY.cols();
 				int N_h = patX.cols();
@@ -784,12 +802,14 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				// under reconstruction in each channel group separately
 				// (i.e. alpha which is the first row in Alpha)
 				// ******************************************************************************
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-06: calcOptCoeffCurrPatchLS" << endl;
 				int    optCoeffCurrPatchLS_maxiter = 5000;
 				double optCoeffCurrPatchLS_tol_r = 1e-12;
 				int    optCoeffCurrPatchLS_iter;
 				double optCoeffCurrPatchLS_rel_res;
 				// calculate alpha via least squares
 				// calculate Functional Value before solver call
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-06-01: calculate Functional Value before solver call" << endl;
 				SpEOVectorD onesNh = SpEOVectorD::Ones(N_h);
 				SpEOVectorD onesNl = SpEOVectorD::Ones(N_l);
 				double fct_value = 0.0;
@@ -810,6 +830,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				double calcOptCoeffCurrPatchLS_functional_before = fct_value;
 				check_for_inf_or_nan(my_rank, calcOptCoeffCurrPatchLS_functional_before, " ", -123, "calcOptCoeffCurrPatchLS_functional_before");
 				// call solver
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-06-02: call solver" << endl;
 				calcOptCoeffCurrPatchLS(optCoeffCurrPatchLS_iter, optCoeffCurrPatchLS_rel_res, alpha, alpha_init, dictHR, dictLR, &m_Y, &delta_m_Z, &Z_init, &patY, &patX, SRF, P_lmd_vecs_loc, P_lmd_idx_row_loc, P_lmd_idx_bl_loc, lambda_X_ABC, lambda_Y_ABC, lambda_Z_ABC, Ng, optCoeffCurrPatchLS_maxiter, optCoeffCurrPatchLS_tol_r);
 
 				check_for_inf_or_nan(my_rank, optCoeffCurrPatchLS_rel_res, " ", -123, "optCoeffCurrPatchLS_rel_res");
@@ -817,6 +838,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 					check_for_inf_or_nan(my_rank, alpha[ig], "ig=", ig, ": alpha[ig]");
 				}
 				// calculate Functional Value after solver call
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-06-03: calculate Functional Value after solver call" << endl;
 				fct_value = 0.0;
 				tmp_upper = (Z_init - (m_Y+delta_m_Z)*onesNh.transpose()).transpose();
 				tmp_center = (patY - (m_Y*onesNl.transpose())).transpose();
@@ -840,6 +862,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				}
 				fct_value += 0.5*lambda_X_ABC/(N_h*N_X)*pow((patX - (*SRF)*(tmpPDA + (m_Y+delta_m_Z)*onesNh.transpose())).norm(),2);
 				// output
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-06-04: print output" << endl;
 				double calcOptCoeffCurrPatchLS_functional_after = fct_value;
 				check_for_inf_or_nan(my_rank, calcOptCoeffCurrPatchLS_functional_after, " ", -123, "calcOptCoeffCurrPatchLS_functional_after");
 				if (print_optimization_input_output && my_rank == 0) {
@@ -853,6 +876,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				}
 
 				// copy the vector alpha to the first row of Alpha and Alpha_init
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-06-05: copy the vector alpha to the first row of Alpha and Alpha_init" << endl;
 				for(int ig=0; ig<Ng; ig++){
 					Alpha[ig].row(0) = SpEOVectorD::Map(alpha[ig].data(),Alpha[ig].cols());
 					Alpha_init[ig].row(0) = Alpha[ig].row(0);
@@ -865,6 +889,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				// the column-sparse coefficient matrices Alpha_res
 				// ******************************************************************************
 				
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-07: calcOptCoeffResPFISTA" << endl;
 				FBSsolverOptions opts = FBSsolverOptions(
 								1, // decomposition parameter
 								1, // inner iterations (1 for standard FISTA)
@@ -877,6 +902,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 								false,
 								true,
 								1e2);
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-07-01: after fnct call" << endl;
 				int spectral_normalizer = fSet->matrixNorm;
 				int *optCoeffResPFISTA_iter = new int[Ng];
 				double *optCoeffResPFISTA_rel_res = new double[Ng];
@@ -895,6 +921,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				}
 				double calcOptCoeffResPFISTA_functional_before = fct_value;
 				check_for_inf_or_nan(my_rank, calcOptCoeffResPFISTA_functional_before, " ", -123, "calcOptCoeffResPFISTA_functional_before");
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-07-02: calling calcOptCoeffResPFISTA" << endl;
 				calcOptCoeffResPFISTA(optCoeffResPFISTA_iter, optCoeffResPFISTA_rel_res, Alpha, Alpha_init, DictHR, DictLR,
 						              &m_Y, &delta_m_Z, &Z_init, &patY, P_lmd_idx_bl_loc, lambda_A_ABC,
 						              lambda_Y_ABC, lambda_Z_ABC, Ng, opts, spectral_normalizer, write_testset, testnr);
@@ -932,6 +959,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				// identify Omega = support(Alpha), i.e. find the
 				// non-trivial rows of the jointly sparse coefficients in Alpha
 				// ******************************************************************************
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-08: for each spectral group: identify Omega = support(Alpha)" << endl;
 				double tol_support = 1e-13;
 				SpEOVectorI *support = new SpEOVectorI[Ng];
 				for(int ig=0; ig<Ng; ig++){
@@ -963,6 +991,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				// reduce Alpha, Alpha_init, DictHR and DictLR to
 				// their entries on the support of Alpha
 				// ******************************************************************************/
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-09: for each spectral group: reduce Alpha, Alpha_init, DictHR and DictLR" << endl;
 				SpEOMatrixD *Alpha_red      = new SpEOMatrixD[Ng];
 				SpEOMatrixD *Alpha_red_init = new SpEOMatrixD[Ng];
 				SpEOMatrixD *DictHR_red     = new SpEOMatrixD[Ng];
@@ -992,6 +1021,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				// Calculate the Alpha_res (rows 2 to end of Alpha) by re-estimating the
 				// magnitudes of Alpha_res_init on the support Omega via least squares
 				// ******************************************************************************
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-10: calcOptCoeffResLS" << endl;
 				int    optCoeffResLS_maxiter = 5000;
 				double optCoeffResLS_tol_r   = 1e-12;
 				int    optCoeffResLS_iter;
@@ -1023,6 +1053,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				check_for_inf_or_nan(my_rank, calcOptCoeffResLS_functional_before, " ", -123, "calcOptCoeffResLS_functional_before");
 				check_for_inf_or_nan(my_rank, tmpPDA, " ", -123, "tmpPDA");
 				// call solver
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-10-01: call solver" << endl;
 				if(supp_numel_sum>N_g){ // otherwise it's a trivial case that every dictionary (the dictionary in any group) contains only the current patch -> this step can be skipped
 					calcOptCoeffResLS(optCoeffResLS_iter, optCoeffResLS_rel_res, Alpha_red, Alpha_red_init, DictHR_red, DictLR_red, &m_Y, &delta_m_Z, &Z_init, &patY, &patX, SRF, P_lmd_vecs_loc, P_lmd_idx_row_loc, P_lmd_idx_bl_loc, lambda_X_ABC, lambda_Y_ABC, lambda_Z_ABC, Ng, optCoeffResLS_maxiter, optCoeffResLS_tol_r);
 				}else{
@@ -1032,6 +1063,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				}
 				check_for_inf_or_nan(my_rank, optCoeffResLS_rel_res, " ", -123, "optCoeffResLS_rel_res");
 				// calculate Functional Value after solver call
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-10-02: calc functional value" << endl;
 				fct_value = 0.0;
 				tmp_upper = (Z_init - (m_Y+delta_m_Z)*onesNh.transpose()).transpose();
 				tmp_center = (patY - (m_Y*onesNl.transpose())).transpose();
@@ -1055,6 +1087,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				}
 				fct_value += 0.5*lambda_X_ABC/(N_h*N_X)*pow((patX - (*SRF)*(tmpPDA + (m_Y+delta_m_Z)*onesNh.transpose())).norm(),2);
 				// output
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-10-03: output" << endl;
 				double calcOptCoeffResLS_functional_after = fct_value;
 				if (print_optimization_input_output && my_rank == 0) {
 					cout << "         ------------------------------------------------------------------------------------------" << endl;
@@ -1073,6 +1106,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				// ******************************************************************************
 				// Calculate the new patch patZ
 				// ******************************************************************************
+				if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-11: calculate the new patch patZ" << endl;
 				patZ = tmpPDA + (m_Y+delta_m_Z)*onesNh.transpose();
 				check_for_inf_or_nan(my_rank, patZ, " ", -123, "patZ");
 
