@@ -3,12 +3,9 @@
 # Author: Claas Grohnfeldt
 ############################################################################
 
-### local settings
-# path to eigen library (you might need to adapt the version number 'f562a193118d' in the path)
-EIGEN_HEADER_PATH = ./lib/eigen/
-# path to GDAL library
-GDAL_INCLUDE_PATH = ./lib/gdal/include
-GDAL_LIBRARY_PATH = ./lib/gdal/lib
+INCLUDE_PATH_EIGEN = ./lib/eigen/
+INCLUDE_PATH_GDAL = ./lib/gdal/include
+LIBRARY_PATH_GDAL = ./lib/gdal/lib
 
 ### internal path variables
 COREDIR = .
@@ -38,11 +35,11 @@ HDR = $(wildcard ${SRCDIR}/*.h)
 OBJ = $(addprefix $(OBJDIR)/,$(notdir $(SRC:.cpp=.o)))
 
 ### includes
-INCFLAGS = -I $(EIGEN_HEADER_PATH) -I $(GDAL_INCLUDE_PATH) -I./ 
+INCFLAGS = -I $(INCLUDE_PATH_EIGEN) -I $(INCLUDE_PATH_GDAL) -I./ 
 
 ### libraries
 LIB_GDAL = -lgdal
-LIB_DIR  = -L $(GDAL_LIBRARY_PATH)
+LIB_DIR  = -L $(LIBRARY_PATH_GDAL)
 
 ### compiler
 CXX      = mpic++
@@ -290,7 +287,7 @@ $(EXE): $(OBJ)
 	$(CXX) $(SRCMAIN) $(CFLAGS) $(INCFLAGS) $(OBJ) $(LDFLAGS) -o $(EXE)
 
 run:
-		$(RUN) $(RUNFLAGS) -x LD_LIBRARY_PATH=$(GDAL_LIBRARY_PATH) $(EXE) $(LOADL_JOB_NAME) $(LOADL_PID) \
+		$(RUN) $(RUNFLAGS) -x LD_LIBRARY_PATH=$(LIBRARY_PATH_GDAL) $(EXE) $(LOADL_JOB_NAME) $(LOADL_PID) \
 		$(datasetID) $(alg) $(lambda) $(useSimulatedImXforDictLearn) $(ImX_sim_mode) \
 		$(dictselect) $(N_a) $(psz) $(ovrlp) $(mu_X) $(mu_Y) $(N_c) $(theta) \
 		$(winSize) $(mu_X_prime) $(mu_Y_prime) $(maxiter_globalOpt) $(tol_r_globalOpt) \
