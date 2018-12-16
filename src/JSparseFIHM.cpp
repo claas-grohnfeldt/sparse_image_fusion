@@ -270,7 +270,7 @@ int main(int argc, char* argv[]) {
 	    ImX_LR_2D = SpEOMatrixD::Zero(0,0);
 	}
 
-	obsolete:
+	// obsolete:
 	//==================================================================//
 	//                  Calculate decision matrix C                     //
 	//     according to the spectral grouping concept based on SRFs     //
