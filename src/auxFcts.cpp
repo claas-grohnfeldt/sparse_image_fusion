@@ -267,13 +267,18 @@ double spec_norm(SpEOMatrixD A) {
   // e2.setMaxIter(1e2);
   // e2.compute(S,1);
   // SpEOVectorD esev2 = e2.eigenvalues().transpose();
+  // return sqrt(esev2(0));
 
   // newer Eigen Library versions
+  // EigenSolver<SpEOMatrixD> es;
+  // es.compute(S, /*computeEigenvectors = */ false);
+  // VectorXcd eivals = es.eigenvalues().transpose();
+  // double esev2 = real(eivals(0));
+  // return sqrt(esev2);
+
   EigenSolver<SpEOMatrixD> es;
   es.compute(S, /*computeEigenvectors = */ false);
-  VectorXcd eivals = es.eigenvalues().transpose();
-  double esev2 = real(eivals(0));
-
-  //return sqrt(esev2(0));
-  return sqrt(esev2);
+  complex<double> largest_eival = es.eigenvalues()[0];
+  double largest_eival_real = real(largest_eival);
+  return sqrt(largest_eival_real);
 }

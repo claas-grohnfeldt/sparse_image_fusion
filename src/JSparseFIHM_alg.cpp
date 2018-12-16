@@ -36,7 +36,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 	bool print_CSG_output = false;
 	bool print_optimization_input_output = false;
 	bool print_other_stuff_during_patch_rec = false;
-	bool print_for_debugging = false;
+	bool print_for_debugging = true;
 	
 	int testnr = 0;
 	bool write_testset = false;
