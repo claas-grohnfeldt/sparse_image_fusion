@@ -259,7 +259,8 @@ SpEOVectorI randperm(int N) {
 }
 
 double spec_norm(SpEOMatrixD A) {
-  SpEOMatrixD S = A*A.transpose(); // use selfadjoint property of spectral norm and use the computationally more efficient way (smaller matrix)
+  //SpEOMatrixD S = A*A.transpose(); // use selfadjoint property of spectral norm and use the computationally more efficient way (smaller matrix)
+  MatrixXd S = A*A.transpose(); // use selfadjoint property of spectral norm and use the computationally more efficient way (smaller matrix)
 
   // old Eigen Library version (eigen-eigen-2249f9c22fe8)
   // PowerIteration<SpEOMatrixD> e2 = PowerIteration<SpEOMatrixD>();
@@ -276,9 +277,18 @@ double spec_norm(SpEOMatrixD A) {
   // double esev2 = real(eivals(0));
   // return sqrt(esev2);
 
-  EigenSolver<SpEOMatrixD> es;
-  es.compute(S, /*computeEigenvectors = */ false);
-  complex<double> largest_eival = es.eigenvalues()[0];
-  double largest_eival_real = real(largest_eival);
+  // EigenSolver<MatrixXd> es;
+  // es.compute(S, /*computeEigenvectors = */ false);
+  EigenSolver<MatrixXd> es(S, /*computeEigenvectors = */ false);
+  //cout << "  es.info() = " << endl << es.info() << endl;
+  double largest_eival_real;
+  if(!es.info()){
+	  complex<double> largest_eival = es.eigenvalues()[0];
+  	  largest_eival_real = real(largest_eival);
+  	  //cout << " real(largest_eival) = " << largest_eival_real << endl;
+  }else{
+	  largest_eival_real = 0.1;
+	  cout << "Warning: eigenvalue computation for spectral norm normalization did not succeed. Normalize by static value instead" << endl;
+  }
   return sqrt(largest_eival_real);
 }

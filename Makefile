@@ -53,7 +53,7 @@ LDFLAGS=$(LIB_DIR) $(LIB_GDAL)
 
 ### exec
 RUN      = mpiexec
-RUNFLAGS = -n 1
+RUNFLAGS = -n 6
 
 ########################################
 #                                      #
@@ -135,7 +135,7 @@ ImX_sim_mode=2
 dictselect=8
 
 # 9: number of dictionary atoms/patches (int)
-N_a=200
+N_a=900
 
 # 10: patchsize, measured in low resolution pixels (int)
 psz=4
@@ -195,7 +195,7 @@ fullImOptOnSubspace=1
 subspace_transform_type=SVD
 
 # 23: subspace dimension
-subspace_dim=5
+subspace_dim=10
 
 # 24: include SNR normalization to compensate for colored (band-dependend) noise (bool)
 SNR_normalization=1
@@ -254,18 +254,19 @@ writeImageFileAfterEveryIter=1
 saveAsDouble=1
 
 dir_data="./data/HS_MS/demo_small_dataset"
+# dir_data="./data/HS_MS/ROSIS_Pavia_Univeristy"
 # 36:
 fname_ImX="${dir_data}/InputData/multispectral_highRes/ROSIS_Pavia_University_100x80_Sentinel2_10m_bands_MSHR_SNR35.dat"
-#fname_ImX="${dir_data}/InputData/multispectral_highRes/ROSIS_Pavia_University_synthesized_QuickBird_MSHR_SNR35.dat"
+# fname_ImX="${dir_data}/InputData/multispectral_highRes/ROSIS_Pavia_University_synthesized_QuickBird_MSHR_SNR35.dat"
 # 37:
 fname_ImY="${dir_data}/InputData/hyperspectral_lowRes/ROSIS_Pavia_University_100x80_HSLR_fDS4_SNR35.dat"
-#fname_ImY="${dir_data}/InputData/hyperspectral_lowRes/ROSIS_Pavia_University_synthesized_HSLR_fDS8_SNR35.dat"
+# fname_ImY="${dir_data}/InputData/hyperspectral_lowRes/ROSIS_Pavia_University_synthesized_HSLR_fDS8_SNR35.dat"
 # 38:
 fname_ImZ_init="${dir_data}/FusionResults/bilinearly_interpolated/ROSIS_Pavia_University_100x80_HSLR_fDS4_US_via_bilinear_SNR35.dat"
-#fname_ImZ_init="${dir_data}/FusionResults/CNMF/ROSIS_Pavia_Univeristy_FusionResult_CNMF.dat"
+# fname_ImZ_init="${dir_data}/FusionResults/CNMF/ROSIS_Pavia_Univeristy_FusionResult_CNMF.dat"
 # 39:
 fname_ImZ_ref="${dir_data}/ReferenceData/ROSIS_Pavia_Univeristy_hyperspectral_highRes_reference_subarea.dat"
-#fname_ImZ_ref="${dir_data}/ReferenceData/ROSIS_Pavia_Univeristy_hyperspectral_highRes_reference.dat"
+# fname_ImZ_ref="${dir_data}/ReferenceData/ROSIS_Pavia_Univeristy_hyperspectral_highRes_reference.dat"
 # 40:
 fname_SRF="${dir_data}/InputData/SRFs/SRFs_of_QuickBird_sampled_to_centers_of_SRFs_of_ROSIS_for_scene_Pavia_Univeristy.csv"
 # 41:
