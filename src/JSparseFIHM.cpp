@@ -342,7 +342,6 @@ int main(int argc, char* argv[]) {
 	  MPI_Comm comm_write;
 	  MPI_Comm_create(MPI_COMM_WORLD, group_write, &comm_write);
 
-	cout << "[" << my_rank << "] numProcBusy = " << numProcBusy << endl;
 	//==================================================================//
 	//                      Call image fusion method                    //
 	//==================================================================//
