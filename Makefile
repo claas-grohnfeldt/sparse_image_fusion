@@ -11,7 +11,7 @@ LIBRARY_PATH_GDAL = ./lib/gdal/lib
 COREDIR = .
 OBJDIR = $(COREDIR)/obj
 SRCDIR = $(COREDIR)/src
-SUBDIR = $(COREDIR)/archive
+ARCDIR = $(COREDIR)/archive
 BINDIR = $(COREDIR)/bin
 
 ### files
@@ -27,9 +27,9 @@ SRC = $(SRCDIR)/dataIO.cpp \
 	$(SRCDIR)/nnls.cpp
 
 SRCMAIN = $(SRCDIR)/main.cpp
-EXE = $(BINDIR)/JSparseFIHM_testing
+EXE = $(BINDIR)/JSparseFIHM
 
-SUB = $(SUBDIR)/JSparseFIHM
+ARC = $(ARCDIR)/JSparseFIHM
 
 HDR = $(wildcard ${SRCDIR}/*.h)
 OBJ = $(addprefix $(OBJDIR)/,$(notdir $(SRC:.cpp=.o)))
@@ -48,6 +48,9 @@ CXX      = mpic++
 CFLAGS   = -O3 -w 
 LDFLAGS=$(LIB_DIR) $(LIB_GDAL)
 
+
+
+# ------------------------------------------------------------------------
 ### exec
 RUN      = mpiexec
 RUNFLAGS = -n 6
@@ -271,6 +274,8 @@ dir_out="${dir_data}/FusionResults/JSparseFIHM"
 # 42:
 dir_tmp="./tmp"
 
+# ------------------------------------------------------------------------
+
 ########################################################################
 #                                                                      #
 #                  DON'T MODIFY BEYOND THIS LINE                       #
@@ -286,6 +291,7 @@ $(OBJ): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 $(EXE): $(OBJ)
 	$(CXX) $(SRCMAIN) $(CFLAGS) $(INCFLAGS) $(OBJ) $(LDFLAGS) -o $(EXE)
 
+# ------------------------------------------------------------------------
 run:
 		$(RUN) $(RUNFLAGS) -x LD_LIBRARY_PATH=$(LIBRARY_PATH_GDAL) $(EXE) $(LOADL_JOB_NAME) $(LOADL_PID) \
 		$(datasetID) $(alg) $(lambda) $(useSimulatedImXforDictLearn) $(ImX_sim_mode) \
@@ -295,12 +301,13 @@ run:
 		$(balance_ImX_term_coef) $(use_estimated_SRFs) $(ImZ_init_type) $(use_global_proc_module) $(use_ONLY_global_proc_module) \
 		$(iterMain) $(eval) $(evaluate_ImZ_init) $(writeImageFile) $(writeImageFileAfterEveryIter) $(saveAsDouble) \
         ${fname_ImX} ${fname_ImY} ${fname_ImZ_init} ${fname_ImZ_ref} ${fname_SRF} ${dir_out} ${dir_tmp}
+# ------------------------------------------------------------------------
 
 clean:
-	rm -f $(OBJ) $(EXE) $(SUB).tar.gz *~ Depends
+	rm -f $(OBJ) $(EXE) *~ Depends
 
-submit:
-	tar czvf $(SUB)$(shell date +_%Y_%m_%d).tar.gz $(EXE) $(SRCMAIN) $(SRC) $(HDR) Makefile 
+archive_snapshot:
+	tar czvf $(ARC)$(shell date +_%Y_%m_%d).tar.gz $(EXE) $(SRCMAIN) $(SRC) $(HDR) Makefile 
 
 .SUFFIXES : .o .cpp
 
