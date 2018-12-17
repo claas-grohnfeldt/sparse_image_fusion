@@ -26,7 +26,7 @@ SRC = $(SRCDIR)/dataIO.cpp \
 	$(SRCDIR)/JSparseFIHM_alg.cpp \
 	$(SRCDIR)/nnls.cpp
 
-SRCMAIN = $(SRCDIR)/JSparseFIHM.cpp
+SRCMAIN = $(SRCDIR)/main.cpp
 EXE = $(BINDIR)/JSparseFIHM_testing
 
 SUB = $(SUBDIR)/JSparseFIHM

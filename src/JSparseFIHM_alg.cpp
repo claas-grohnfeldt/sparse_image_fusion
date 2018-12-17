@@ -2311,7 +2311,7 @@ for (iChY=0; iChY<N_Y; iChY++){
     if (numProcEq1 == 1) {
 
 	  if(!fSetting->fullImOptOnSubspace){
-	      // calculate LAMBDA_X LAMBDA_Y and LAMBDA_Z  (can be oursource to JSparseFIHM.cpp)
+	      // calculate LAMBDA_X LAMBDA_Y and LAMBDA_Z  (can be oursource to main.cpp)
 		  SpEOVectorD LAMBDA_X(N_X);
 		  SpEOVectorD LAMBDA_Y(N_Y);
 		  SpEOVectorD LAMBDA_Z(N_Y);
@@ -2370,7 +2370,7 @@ for (iChY=0; iChY<N_Y; iChY++){
 		       }
 		  }
 	  }else{
-	      // calculate LAMBDA_X LAMBDA_Y and LAMBDA_Z   TBD: calculation of LAMBDA_X and LAMBDA_Y can be oursource to JSparseFIHM.cpp
+	      // calculate LAMBDA_X LAMBDA_Y and LAMBDA_Z   TBD: calculation of LAMBDA_X and LAMBDA_Y can be oursource to main.cpp
 		  SpEOVectorD LAMBDA_X(N_X);
 		  SpEOVectorD LAMBDA_Y(N_Y);
 		  SpEOVectorD LAMBDA_Z(N_Y);

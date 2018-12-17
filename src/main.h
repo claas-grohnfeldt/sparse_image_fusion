@@ -1,12 +1,12 @@
 /*
- * JSparseFIHM.h
+ * main.h
  *
  *  Created on: Apr 30, 2013
  *      Author: Claas Grohnfeldt
  */
 
-#ifndef JSPARSEFIHM_H_
-#define JSPARSEFIHM_H_
+#ifndef MAIN_H_
+#define MAIN_H_
 
 // project headers
 #include "includes.h"
@@ -24,4 +24,4 @@
 #endif
 
 
-#endif /* JSPARSEFIHM_H_ */
+#endif /* MAIN_H_ */
