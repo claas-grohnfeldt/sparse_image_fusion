@@ -130,19 +130,8 @@ On the SuperMUC, corresponding LoadLeveler scripts need to be created and submit
 
 A technical flowchart describing the J-SpareFI-HM algorithm is given below.
 
-<!---
-<object data="http://yoursite.com/the.pdf" type="application/pdf" width="700px" height="700px">
-    <embed src="http://yoursite.com/the.pdf">
-        <p>This browser does not support PDFs. Please download the PDF to view it: <a href="http://yoursite.com/the.pdf">Download PDF</a>.</p>
-    </embed>
-</object>
---->
-<object data="https://github.com/claasg/sparse_image_fusion/tree/dev/Mitgliedsbescheinigung.pdf" type="application/pdf" width="700px" height="700px">
-    <embed src="https://github.com/claasg/sparse_image_fusion/tree/dev/Mitgliedsbescheinigung.pdf">
-        <p>This browser does not support PDFs. Please download the PDF to view it: <a href="https://github.com/claasg/sparse_image_fusion/tree/dev/Mitgliedsbescheinigung.pdf">Download PDF</a>.</p>
-    </embed>
-</object>
+![Flowchart of the J-SparseFI-HM algorithm.](./img/flowchart_JSparseFIHM.png)
 
-other method:
-
-![Alt](https://github.com/claasg/sparse_image_fusion/tree/dev/Mitgliedsbescheinigung.pdf)
+<!-- convert pdf to png as follows:
+convert -density 300 flowchart_JSparseFIHM.pdf -quality 90 flowchart_JSparseFIHM.png
+ -->
