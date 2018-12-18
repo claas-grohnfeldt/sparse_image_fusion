@@ -137,12 +137,12 @@ A technical flowchart describing the J-SpareFI-HM algorithm is given below.
     </embed>
 </object>
 --->
-<object data="Mitgliedsbescheinigung.pdf" type="application/pdf" width="700px" height="700px">
-    <embed src="Mitgliedsbescheinigung.pdf">
-        <p>This browser does not support PDFs. Please download the PDF to view it: <a href="Mitgliedsbescheinigung.pdf">Download PDF</a>.</p>
+<object data="https://github.com/claasg/sparse_image_fusion/tree/dev/Mitgliedsbescheinigung.pdf" type="application/pdf" width="700px" height="700px">
+    <embed src="https://github.com/claasg/sparse_image_fusion/tree/dev/Mitgliedsbescheinigung.pdf">
+        <p>This browser does not support PDFs. Please download the PDF to view it: <a href="https://github.com/claasg/sparse_image_fusion/tree/dev/Mitgliedsbescheinigung.pdf">Download PDF</a>.</p>
     </embed>
 </object>
 
 other method:
 
-![Alt](Mitgliedsbescheinigung.pdf)
+![Alt](https://github.com/claasg/sparse_image_fusion/tree/dev/Mitgliedsbescheinigung.pdf)
