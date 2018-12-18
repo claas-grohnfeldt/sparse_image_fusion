@@ -12,6 +12,7 @@ This document is structured as follows:
       - [Link libraries to repository's main directory](#link-libraries-to-repositorys-main-directory)
     - [Compile the program](#compile-the-program)
   - [Run the program](#run-the-program)
+  - [Flowchart](#flowchart)
   
 ## Description and literature
 
@@ -124,3 +125,24 @@ bash run.sh
 ```
 
 On the SuperMUC, corresponding LoadLeveler scripts need to be created and submitted.
+
+## Flowchart
+
+A technical flowchart describing the J-SpareFI-HM algorithm is given below.
+
+<!---
+<object data="http://yoursite.com/the.pdf" type="application/pdf" width="700px" height="700px">
+    <embed src="http://yoursite.com/the.pdf">
+        <p>This browser does not support PDFs. Please download the PDF to view it: <a href="http://yoursite.com/the.pdf">Download PDF</a>.</p>
+    </embed>
+</object>
+--->
+<object data="Mitgliedsbescheinigung.pdf" type="application/pdf" width="700px" height="700px">
+    <embed src="Mitgliedsbescheinigung.pdf">
+        <p>This browser does not support PDFs. Please download the PDF to view it: <a href="Mitgliedsbescheinigung.pdf">Download PDF</a>.</p>
+    </embed>
+</object>
+
+other method:
+
+![Alt](Mitgliedsbescheinigung.pdf)
