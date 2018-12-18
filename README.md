@@ -6,14 +6,12 @@ This document is structured as follows:
   - [Description and literature](#description-and-literature)
   - [Getting started](#getting-started)
     - [Prerequisites](#prerequisites)
-    - [Create directories at an accessible location with sufficient storage space](#create-directories-at-an-accessible-location-with-sufficient-storage-space)
-    - [Install third party libraries](#install-third-party-libraries)
+    - [Installing third party libraries](#installing-third-party-libraries)
       - [Eigen: C++ template library for linear algebra](#eigen-c-template-library-for-linear-algebra)
       - [GDAL: Geospatial Data Abstraction Library](#gdal-geospatial-data-abstraction-library)
-    - [Link paths to repository's main directory](#link-paths-to-repositorys-main-directory)
-  - [How to add a new data set](#how-to-add-a-new-data-set)
-  - [platform-dependency](#platform-dependency)
-  - [SuperMUC specifics](#supermuc-specifics)
+      - [Link libraries to repository's main directory](#link-libraries-to-repositorys-main-directory)
+    - [Compile the program](#compile-the-program)
+  - [Run the program](#run-the-program)
   
 ## Description and literature
 
@@ -26,43 +24,31 @@ A detailed description of the algotihms implemented in this software suite is pr
 
 ## Getting started
 
-<!---### Setup directories, links and external libraries--->
-
 ### Prerequisites
 
-Linux:
+This code has been tested on UNIX-based machines only. Its dependencies are as follows: `gcc/g++`, `OpenMPI`, `curl`, `wget`, `grep`.
 
-- curl
-- wget
-- grep
+### Installing third party libraries
 
-### Create directories at an accessible location with sufficient storage space
+This software suite depends on two external libraries, which need to be installed and linked to the repository's main directory.
 
-The following directories should be created at a location, say `<path-to-storage-dir>`, with sufficient storage space, which is accessible from the repository's main directory.
+It is recommended to install those libraries outside of the repo and link them via symbolic links, as instructed further below.
+
+Create a directory, somewhere outside of the repository, into which third party libraries will be installed.
 
 ```bash
-mkdir <path-to-storage-dir>/lib       # (third party libraries)
-mkdir <path-to-storage-dir>/data      # (input data)
-mkdir <path-to-storage-dir>/results   # (output data)
-mkdir <path-to-storage-dir>/tmp       # (temporary data)
-mkdir <path-to-storage-dir>/downloads # (only used during installation for downloading the source code of GDAL)
+mkdir <chosen-path-to-thirdparty-library-dir>
 ```
-
-Principally, those folders can be placed in different parent directories if preferred.
-
-### Install third party libraries
-
-This software suite depends on two external libraries, which need to be installed and linked to the repository's main directory:
 
 #### Eigen: C++ template library for linear algebra
 
-The Eigen project is hosted on [http://eigen.tuxfamily.org](http://eigen.tuxfamily.org). A git mirrow is available on [GitHub](https://github.com/eigenteam/eigen-git-mirrow). We'll clone that into the above-created lib directory as follows:
+The *Eigen* project is hosted on [http://eigen.tuxfamily.org](http://eigen.tuxfamily.org). A git mirrow is available on [GitHub](https://github.com/eigenteam/eigen-git-mirrow). We'll clone that into the above-created lib directory as follows:
 
 ```bash
-git clone https://github.com/eigenteam/eigen-git-mirror.git <path-to-storage-dir>/lib/eigen
+git clone https://github.com/eigenteam/eigen-git-mirror.git <chosen-path-to-thirdparty-library-dir>/eigen
 ```
 
-That's it for Eigen. The only thing left now is to link the Eigen lib to our repository's directory as described [below](#Link-paths-to-repository's-main-directory).
+That's it for Eigen. [Further below](#Link-paths-to-repository's-main-directory), we will link this library to our repository's directory.
 
 #### GDAL: Geospatial Data Abstraction Library
 
@@ -71,19 +57,24 @@ GDAL can be installed either on a system level or locally following the descript
 - Download the source code of the latest stable release:
 
   ```bash
-  cd <path-to-storage-dir>/downloads
+  cd <chosen-path-to-thirdparty-library-dir>
+  mkdir downloads
+  cd downloads
   tmp=$(curl http://download.osgeo.org/gdal/CURRENT/ | grep -o "gdal-[2-9].[0-9].[0-9].tar.gz")
   filename=${tmp/.tar.gz*/.tar.gz}
   wget "http://download.osgeo.org/gdal/CURRENT/$filename"
-  tar zxf $filename  
+  tar zxf $filename
   ```
 
 - Install locally as follows:
 
   ```bash
   cd ${filename/.tar.gz/}
-  gdal_prefix="<path-to-storage-dir>/lib/gdal"
+  gdal_prefix="<chosen-path-to-thirdparty-library-dir>/gdal"
   ./configure --prefix=$gdal_prefix
+  # for compilation on the SuperMUC, you need to load a gcc
+  # compiler that is more recent that the default one:
+  # module load gcc/8
   make
   make install
   ```
@@ -100,58 +91,36 @@ GDAL can be installed either on a system level or locally following the descript
   The last command should output something like the following:\
   `GDAL 2.3.2, released 2018/09/21`.
 
-### Link paths to repository's main directory
-
-In order to preserve the directories structure, which is partially hard-coded in `src/paths.cpp`, it is recommended to link those directories as follows:
-
-```bash
-ln -s <PATH_TO_your_input_data_dir/HS_MS> <PATH_TO_sparse_image_fusion/data/HS_MS>
-ln -s <PATH_TO_your_input_data_dir/MS_PAN> <PATH_TO_sparse_image_fusion/data/MS_PAN>
-ln -s <PATH_TO_your_output_data_dir> <PATH_TO_sparse_image_fusion/results>
-ln -s <PATH_TO_your_temporary_data_dir> <PATH_TO_sparse_image_fusion/tmp>
-```
-
-links to external libraries should be set to the following locations:
-
-```bash
-ln -s <PATH_TO_gdal_include_dir> <PATH_TO_sparse_image_fusion/lib/gdal/inc>
-ln -s <PATH_TO_gdal_lib_dir> <PATH_TO_sparse_image_fusion/lib/gdal/lib>
-ln -s <PATH_TO_eigen_lib_dir> <PATH_TO_sparse_image_fusion/lib/eigen/lib>
-```
-
-## How to add a new data set
-
-1. give the data set a unique ID number (can be any string unique to this data set. One option is to use the 12-digit encription that is descriped in the file ```src/paths.cpp```, which corresponds to the sensors used, resolution ratio, SNR, etc.)
-2. The directory of the data set should be structured like the ones used in the demo. Pay attention to the symbolic links in the directory "links" with generic names, which should be created for any new data set.
-3. modify paths.cpp by adding a line such as
-
-   ```cpp
-   }else if(paths->dataSetID_str == "665211108350"){   paths->dir_in = maindir_path + "/" + "HS_MS"  + "/" + "665211108350_ROSIS_Pavia_Univeristy"             + "/" + "InputData" + "/" + "links";
-   ```
-
-4. re-compile
-5. use the data set ID as a program argument while calling the binary (running the program)
-
-## platform-dependency
-
-1. Makefile: \
-   compiler: on the supermuc, the compiler should be set to ```CXX = mpiCC```, while on other platforms you might want to set ```CXX = mpic++```.
-
-## SuperMUC specifics
-
-- Preferred machine: haswell (hw.supermuc.lrz.de)
-- LoadLeveler Scripts: modify the following lines:
+- Clean up: Navigate to repository and remove downloaded files.
 
   ```bash
-  #@ initialdir = <your absolut path to the main directory sparse_image_fusion>
-  #@ notify_user = <your e-mail address> 
+  cd <path-to-repo(sparse_image_fusion)>
+  rm -r <chosen-path-to-thirdparty-library-dir>/downloads
   ```
 
-- compilation: Before compiling the code, make sure to load Intel's impementation of the MPI compiler instead of the standard IBM one. To do so, enter the following two command lines:
+#### Link libraries to repository's main directory
 
-  ```bash
-  module unload mpi.ibm
-  module load mpi.intel/2017
-  ```
+```bash
+ln -s <chosen-path-to-thirdparty-library-dir> <path-to-repo(sparse_image_fusion)/lib>
+```
 
-  Note that those lines are also included in the demo LoadLeveler scripts and should be used in your LoadLeveler scripts as well.
+### Compile the program
+
+Depending on the underlying maching this program is compiled and run on, you need to modify the `Makefile` by setting the compiler variable `CXX` to either `mpic++` (PC) or `mpiCC` (server).
+
+```bash
+module unload mpi.ibm           # <- on SuperMUC only
+module load mpi.intel/2018_gcc  # <- on SuperMUC only
+module load gcc/8               # <- on SuperMUC only
+make
+```
+
+## Run the program
+
+Run the script `run.sh`, in which all program arguments are set including specification of paths to the input data set.
+
+```bash
+bash run.sh
+```
+
+On the SuperMUC, corresponding LoadLeveler scripts need to be created and submitted.
