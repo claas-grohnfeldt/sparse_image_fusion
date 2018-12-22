@@ -15,7 +15,6 @@
 #include "dataIO.h"
 #include "paths.h"
 
-void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, SpEOOutputSetting *oSetting, SpEOSolverSetting *sSetting, SpEOParallelSetting *pSetting, int argc, char **argv);
-
+void getUserSettings(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, SpEOOutputSetting *oSetting, SpEOSolverSetting *sSetting, SpEOParallelSetting *pSetting, int argc, char **argv);
 
 #endif /* USERSETTINGS_H_ */

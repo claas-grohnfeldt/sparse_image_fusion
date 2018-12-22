@@ -360,13 +360,13 @@ public:
 	bool matrixNorm;
 	bool addMeanPixelwise;
 	//  <<<<<< TMP
-	bool LQ_post_opt;       // flag used to decide whether or not the least square post-minimization (of any individual patch) is activated (bool)
+	//bool LQ_post_opt;       // flag used to decide whether or not the least square post-minimization (of any individual patch) is activated (bool)
 	bool LQ_post_opt_im;    // flag used to decide whether or not the least square post-minimization (of the final image) is activated (bool)
-	bool useSimulatedImXforDictLearn; // for all spectral groups: flag used to decide if the high resolution monochromatic image which is used
+	//bool useSimulatedImXforDictLearn; // for all spectral groups: flag used to decide if the high resolution monochromatic image which is used
 	                                  // for dictionary selection/learning is created as a correlation-based linear combination of the available
 	                                  // channels in ImX (if 'true'), or if one of the available channels in ImX (selection according to SRF integrals)
 	                                  // is used as it is (if 'false').
-	bool useNewMethodForCalculatingZ;
+	//bool useNewMethodForCalculatingZ;
 	double lambdaX_ABC;
 	double lambdaY_ABC;
 	double lambdaZ_ABC;
@@ -393,27 +393,27 @@ public:
 	bool SNR_normalization;       // calc. coeff. in full image opt. eq. via SNR calc. of ImX and ImY
 	bool balance_ImX_term_coef;   // set the coeff. of |R*Z-X| in full image opt. eq. to NChY/NChX [only relevant if SNR_normalization==1]
 	bool use_LRnorm_for_dic_normalization; // 
-	bool load_DictHR_and_DictLR;
+	//bool load_DictHR_and_DictLR;
 };
 
 struct SpEODataIOSetting
 {
 public:
 	string jobName;
-	string jobID;
+	//string jobID;
 	int chBundleFirst;//
 	int chBundleLast;
 	int uLFirst;                        // low resolution vertival pixel coordinate from where the reconstruction should start (default: 0) (int)
 	int uLLast;                         // low resolution vertival pixel coordinate from where the reconstruction should end (default: 9999999) (int)
 	int vLFirst;                        // low resolution horizontal pixel coordinate from where the reconstruction should start (default: 0) (int)
 	int vLLast;                         // low resolution horizontal pixel coordinate from where the reconstruction should end (default: 9999999) (int)
-	bool delete_tmp_patch_folders;      // delete tmp patch folders after the fusion process?
-	int dir_tmp_patches_additional_num; // number of additional directories that contain previously processed tmp patches needed to reconstruct full image
-	bool imageConstructionOnly;         // Construct the image exclusively from previously processed TMP patches. No patch processing will be done, which makes most of the parameters set above inaffective (bool)
+	//bool delete_tmp_patch_folders;      // delete tmp patch folders after the fusion process?
+	//int dir_tmp_patches_additional_num; // number of additional directories that contain previously processed tmp patches needed to reconstruct full image
+	//bool imageConstructionOnly;         // Construct the image exclusively from previously processed TMP patches. No patch processing will be done, which makes most of the parameters set above inaffective (bool)
 	                                    //   TMP patches must be located in the directories given as last arguments in this list
-	bool contUnfinishedRec;             // continue unfinished reconstruction
-	int platformID;                     // e.g. =1 for SuperMUC or =2 for CG local
-        bool saveAsDouble;
+	//bool contUnfinishedRec;             // continue unfinished reconstruction
+	//int platformID;                     // e.g. =1 for SuperMUC or =2 for CG local
+    bool saveAsDouble;
 };
 
 struct SpEOOutputSetting
@@ -463,33 +463,25 @@ public:
 struct SpEOPaths
 {
 public:
-//	long long int dataSetID;
-	std::string dataSetID_str;
-	std::string dir_in;
 	std::string dir_out;
 	std::string fname_ImX;
-	std::string fname_ImX_shifted;
-//	std::string fname_ImX_LR;
 	std::string fname_ImY;
 	std::string fname_ImZ_ref;
 	std::string fname_ImZ_init;
-//	std::string fname_ImZ_init_ref;
-	std::string fname_ImZ_init_rec;
-	std::string fname_ImZ_init_ImY_US;
-	std::string fname_ImZ;
+	std::string fname_ImZ_out;
 	std::string fname_SRF; // Name of .csv file containing APRIORI GIVEN spectral response functions of multispectral sensor with values rastered to the centers of the spectral response function of the hyperspectral sensor
-	std::string fname_SRF_estimated; // Name of .csv file containing the ESTIMATED spectral response functions of multispectral sensor with values rastered to the centers of the spectral response function of the hyperspectral sensor
-	std::string fname_SRF_for_Spectral_Grouping; // Name of .csv file containing (possibly modified) spectral response functions of multispectral sensor with values rastered to the centers of the spectral response function of the hyperspectral sensor
+//	std::string fname_SRF_estimated; // Name of .csv file containing the ESTIMATED spectral response functions of multispectral sensor with values rastered to the centers of the spectral response function of the hyperspectral sensor
+//	std::string fname_SRF_for_Spectral_Grouping; // Name of .csv file containing (possibly modified) spectral response functions of multispectral sensor with values rastered to the centers of the spectral response function of the hyperspectral sensor
 //	const char *fname_SRF; // Name of .csv file containing spectral response functions of multispectral sensor with values rastered to the centers of the spectral response function of the hyperspectral sensor
 	std::string dir_tmp;
 	std::string dir_tmp_patches;
-	int dir_tmp_patches_additional_num;
-	std::string *dir_tmp_patches_additional; // additional directories that contain previously processed tmp patches needed to reconstruct full image
-	std::string PathToIncompletePatchSetCSV; // path to .csv file that contains the list of linear patch IDs (iP numbers) which remain to be processed in oder to finish incomplete reconstruction
+//	int dir_tmp_patches_additional_num;
+//	std::string *dir_tmp_patches_additional; // additional directories that contain previously processed tmp patches needed to reconstruct full image
+//	std::string PathToIncompletePatchSetCSV; // path to .csv file that contains the list of linear patch IDs (iP numbers) which remain to be processed in oder to finish incomplete reconstruction
 	                                         // [applicable ONLY IF (contUnfinishedRec==TRUE)] (string)
-        std::string fname_SubspaceTransformMat; // e.g. Endmember matrix as VCA output
-	std::string fname_DictHR; // pre-calculated high resolution dictionary
-	std::string fname_DictLR; // pre-calculated low resolution dictionary
+//        std::string fname_SubspaceTransformMat; // e.g. Endmember matrix as VCA output
+//	std::string fname_DictHR; // pre-calculated high resolution dictionary
+//	std::string fname_DictLR; // pre-calculated low resolution dictionary
 };
 
 struct SpEOGlobalParams
@@ -516,43 +508,43 @@ public:
 	SpEOVectorI idxPVH;         //
 	int* idxChY;
 	SpEOMatrixD ***SparseCoeffs;// originally: SpEOMatrixD *SparseCoeffs;
-	SpEOMatrixD decMat_C;		// [Only relevant for J-SparseFI-HM] Decision matrix. depends on (1) spectral response function, (2) Nc, and (3) No
-	SpEOVectorD decMat_C_IT_ChX;   // Index Table (ChX) for non-zero entries of decMat_C
-	SpEOVectorD decMat_C_IT_Bundle;// Index Table (Bundle) for non-zero entries of decMat_C
-	int Ng;						// [Only relevant for J-SparseFI-HM] Number of groups of hyperspectral channels that are jointly sharpened
-	int *Nc_vec;     			// [Only relevant for J-SparseFI-HM] Vector of length Ng; Numbers of HS channels in channel groups (in case of Spectral Grouping,
+	// SpEOMatrixD decMat_C;		// [Only relevant for J-SparseFI-HM] Decision matrix. depends on (1) spectral response function, (2) Nc, and (3) No
+	// SpEOVectorD decMat_C_IT_ChX;   // Index Table (ChX) for non-zero entries of decMat_C
+	// SpEOVectorD decMat_C_IT_Bundle;// Index Table (Bundle) for non-zero entries of decMat_C
+	//int Ng;						// [Only relevant for J-SparseFI-HM] Number of groups of hyperspectral channels that are jointly sharpened
+	//int *Nc_vec;     			// [Only relevant for J-SparseFI-HM] Vector of length Ng; Numbers of HS channels in channel groups (in case of Spectral Grouping,
 	                            // all values in Nc_vec are identical and equal to the Nc value specified by the user in fSettings)
-	int sum_Nc_vec;     		// sum of all values stored in Nc_vec
-	SpEOMatrixI* P_lmd_idx_row; // for every row (each corresponding to one HS channel iChY) these matrices contain the relevant corresponding block indexes (first row) and the corresponding entry indexes relative to the corresponding block's origin each starting at 0.
-	int **P_lmd_idx_bl;          // For every block (1,...,Ng) this array contains the absolute (total) row- and column index in the actual sparse matrix P_lmd. Row indexes are stored in the first row and the corresponding column indexes are stored in the second row.
-	SpEOVectorD* P_lmd_vecs;    // vectors containing the non-trivial entries along the diagonal in the corresponding blocks (= spectral groups) in P_lmd
+	//int sum_Nc_vec;     		// sum of all values stored in Nc_vec
+	//SpEOMatrixI* P_lmd_idx_row; // for every row (each corresponding to one HS channel iChY) these matrices contain the relevant corresponding block indexes (first row) and the corresponding entry indexes relative to the corresponding block's origin each starting at 0.
+	//int **P_lmd_idx_bl;          // For every block (1,...,Ng) this array contains the absolute (total) row- and column index in the actual sparse matrix P_lmd. Row indexes are stored in the first row and the corresponding column indexes are stored in the second row.
+	// SpEOVectorD* P_lmd_vecs;    // vectors containing the non-trivial entries along the diagonal in the corresponding blocks (= spectral groups) in P_lmd
 //	int * Nc_start_pos;         // vector containing the index of the first HS channel in each group
 //	                            // (in case of Spectral Grouping, all groups (possibly except for the last group) are equally spaced, i.e. Nc_start_pos is linearly increasing)
 //	SpEOMatrixF P_lmd;          // Matrix to conduct (possibly weighted) spectral averaging of the hyperspectral spectral bands that correspond to multiple spectral groups
 //	SpEOVectorI *P_lmd_idx;     // NChZ vectors of indexes which indicate the non-trivial column entries in row j=1,...,NChZ in matrix P_lmd
-	int *Nm;					/* [Only relevant for J-SparseFI-HM] Number of non-zero entries of C in row m=1,...,NChX (NChX = number of bands of X)
-								 *   Nm[1] , ... , Nm[NChX] */
-	int *Nm2;					/* [Only relevant for J-SparseFI-HM] Number of non-zero entries of C in bundle b=1,...,Ng (Ng = number of groups of HS bands)
-								 *   Nm2[1] , ... , Nm2[Ng] */
-	int **km;					/* [Only relevant for J-SparseFI-HM] Column indices of non-zero entries of C in row m=1,...,NChX (NChX = number of bands of X)
-								 *   km[1][1]  , ... , km[1][Nm[1]]
-								 *      ...    , ... ,    ...
-								 *   km[NChX][1] , ... , km[NChX][Nm[NChX]] */
-	int **km2;					/* [Only relevant for J-SparseFI-HM] Column indices of non-zero entries of C in row m=1,...,NChX (NChX = number of bands of X)
-								 *   km2[1][1]  , ... , km2[1][Nm2[1]]
-								 *      ...     , ... ,    ...
-								 *   km2[Ng][1] , ... , km2[Ng][Nm2[Ng]] */
-	double timeMainLoop;		//
-	double timeFileWrite;
-	double timeTotal;
-	double timeDictSelect;
-	double timeDictSelect_avg;
+//	int *Nm;					/* [Only relevant for J-SparseFI-HM] Number of non-zero entries of C in row m=1,...,NChX (NChX = number of bands of X)
+//								 *   Nm[1] , ... , Nm[NChX] */
+//	int *Nm2;					/* [Only relevant for J-SparseFI-HM] Number of non-zero entries of C in bundle b=1,...,Ng (Ng = number of groups of HS bands)
+//								 *   Nm2[1] , ... , Nm2[Ng] */
+//	int **km;					/* [Only relevant for J-SparseFI-HM] Column indices of non-zero entries of C in row m=1,...,NChX (NChX = number of bands of X)
+//								 *   km[1][1]  , ... , km[1][Nm[1]]
+//								 *      ...    , ... ,    ...
+//								 *   km[NChX][1] , ... , km[NChX][Nm[NChX]] */
+//	int **km2;					/* [Only relevant for J-SparseFI-HM] Column indices of non-zero entries of C in row m=1,...,NChX (NChX = number of bands of X)
+//								 *   km2[1][1]  , ... , km2[1][Nm2[1]]
+//								 *      ...     , ... ,    ...
+//								 *   km2[Ng][1] , ... , km2[Ng][Nm2[Ng]] */
+	// double timeMainLoop;		//
+	// double timeFileWrite;
+	// double timeTotal;
+	// double timeDictSelect;
+	// double timeDictSelect_avg;
 	// int numProcPerPatch;     // moved to SpEOParallelSetting
-	int numProbPerPatch;
+	//int numProbPerPatch;
 #ifndef _OPENMP
-	int *myChX;					// varies for different processes
-	int *myBundle;
-	int myNumProbPerPatch;
+	//int *myChX;					// varies for different processes
+	//int *myBundle;
+	//int myNumProbPerPatch;
 #endif
 	int numPatchGroups;
 	int NP_sub;

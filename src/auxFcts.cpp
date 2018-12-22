@@ -120,7 +120,7 @@ void calcGlobalParams(SpEOGlobalParams *glPrms,
 
 	if (fSetting->NDP > glPrms->NP){
 		if(my_rank==0){
-			cout << "\n     WARNING: NDP got corrected from NDP=" << fSetting->NDP << " to NDP=" << glPrms->NP << "==NP!" << endl;
+			cout << "\nNDP got corrected from NDP=" << fSetting->NDP << " to NDP=" << glPrms->NP << "==NP!" << endl;
 		}
 		fSetting->NDP = glPrms->NP;
 	}
@@ -288,7 +288,7 @@ double spec_norm(SpEOMatrixD A) {
   	  //cout << " real(largest_eival) = " << largest_eival_real << endl;
   }else{
 	  largest_eival_real = 0.1;
-	  cout << "Warning: eigenvalue computation for spectral norm normalization did not succeed. Normalize by static value instead" << endl;
+	  cout << "     Eigenvalue computation for spectral norm normalization did not converge. Using static value for normalization instead." << endl;
   }
   return sqrt(largest_eival_real);
 }

@@ -55,7 +55,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 	     cout << "     step 1: Declarations and initializations.. ";
 	}
 
-	glPrms->numProbPerPatch = glPrms->Ng;
+	//glPrms->numProbPerPatch = glPrms->Ng;
 
 	// running variables
 	int jP, iP, uP, vP, iG;
@@ -93,46 +93,46 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 	//------------------------------>
 	// variables in the the following part will
 	// not be used or overwritten if CSG is used
-	int Ng	  = glPrms->Ng;
-	int Nc	  = fSet->Nc;
-	int No	  = fSet->No;
-	int aY    = Nc-No;
-    SpEOVectorI idxChY_old = SpEOVectorI::Zero(Ng,  1);
-	for(iG=0; iG<Ng-1; iG++){
-		idxChY_old(iG) = aY*iG;
-	}
-	idxChY_old(Ng-1) = NChY-Nc;
-	SpEOVectorD avrgBnds = SpEOVectorD::Zero(NChY);
-	for(iG=0; iG<Ng; iG++){
-		int iC;
-		for(iC=0; iC<Nc; iC++){
-			// in case of shortage in memory: replace by operations
-			avrgBnds(idxChY_old(iG)+iC) += 1.0;
-		}
-	}
+	//int Ng	  = glPrms->Ng;
+	//int Nc	  = fSet->Nc;
+	//int No	  = fSet->No;
+	// int aY    = Nc-No;
+ //    SpEOVectorI idxChY_old = SpEOVectorI::Zero(Ng,  1);
+	// for(iG=0; iG<Ng-1; iG++){
+	// 	idxChY_old(iG) = aY*iG;
+	// }
+	// idxChY_old(Ng-1) = NChY-Nc;
+	// SpEOVectorD avrgBnds = SpEOVectorD::Zero(NChY);
+	// for(iG=0; iG<Ng; iG++){
+	// 	int iC;
+	// 	for(iC=0; iC<Nc; iC++){
+	// 		// in case of shortage in memory: replace by operations
+	// 		avrgBnds(idxChY_old(iG)+iC) += 1.0;
+	// 	}
+	// }
 	// <-----------------------------
 
-	int **P_lmd_idx_bl = new int*[glPrms->numProbPerPatch];
+	//int **P_lmd_idx_bl = new int*[glPrms->numProbPerPatch];
 	int col_idx=0, row_idx;
-	for(int ipp=0; ipp<glPrms->numProbPerPatch-glPrms->Nm2[glPrms->Ng-1]; ipp++){
-		P_lmd_idx_bl[ipp] = new int[2];
-		P_lmd_idx_bl[ipp][0] = glPrms->P_lmd_idx_bl[ipp][0];
-		P_lmd_idx_bl[ipp][1] = glPrms->P_lmd_idx_bl[ipp][1];
-	}
-	for(int ipp=glPrms->numProbPerPatch-glPrms->Nm2[glPrms->Ng-1]; ipp<glPrms->numProbPerPatch; ipp++){
-		P_lmd_idx_bl[ipp] = new int[2];
-		P_lmd_idx_bl[ipp][0] = glPrms->P_lmd_idx_bl[ipp][0];
-		P_lmd_idx_bl[ipp][1] = glPrms->P_lmd_idx_bl[ipp][1];
-	}
-	SpEOMatrixI* P_lmd_idx_row; // for every row (each corresponding to one HS channel iChY) these matrices contain the relevant corresponding block indexes (first row) and the corresponding entry indexes relative to the corresponding block's origin each starting at 0.
-	P_lmd_idx_row = new SpEOMatrixI[glPrms->NChZ];
-	for(int iChZ=0; iChZ<glPrms->NChZ; iChZ++){
-		P_lmd_idx_row[iChZ] = glPrms->P_lmd_idx_row[iChZ];
-	}
-	SpEOVectorD* P_lmd_vecs = new SpEOVectorD[glPrms->numProbPerPatch];
-	for(int ipp=0; ipp<glPrms->numProbPerPatch; ipp++){
-		P_lmd_vecs[ipp] = glPrms->P_lmd_vecs[ipp];
-	}
+	// for(int ipp=0; ipp<glPrms->numProbPerPatch-glPrms->Nm2[glPrms->Ng-1]; ipp++){
+	// 	P_lmd_idx_bl[ipp] = new int[2];
+	// 	P_lmd_idx_bl[ipp][0] = glPrms->P_lmd_idx_bl[ipp][0];
+	// 	P_lmd_idx_bl[ipp][1] = glPrms->P_lmd_idx_bl[ipp][1];
+	// }
+	// for(int ipp=glPrms->numProbPerPatch-glPrms->Nm2[glPrms->Ng-1]; ipp<glPrms->numProbPerPatch; ipp++){
+	// 	P_lmd_idx_bl[ipp] = new int[2];
+	// 	P_lmd_idx_bl[ipp][0] = glPrms->P_lmd_idx_bl[ipp][0];
+	// 	P_lmd_idx_bl[ipp][1] = glPrms->P_lmd_idx_bl[ipp][1];
+	// }
+	// SpEOMatrixI* P_lmd_idx_row; // for every row (each corresponding to one HS channel iChY) these matrices contain the relevant corresponding block indexes (first row) and the corresponding entry indexes relative to the corresponding block's origin each starting at 0.
+	// P_lmd_idx_row = new SpEOMatrixI[glPrms->NChZ];
+	// for(int iChZ=0; iChZ<glPrms->NChZ; iChZ++){
+	// 	P_lmd_idx_row[iChZ] = glPrms->P_lmd_idx_row[iChZ];
+	// }
+	// SpEOVectorD* P_lmd_vecs = new SpEOVectorD[glPrms->numProbPerPatch];
+	// for(int ipp=0; ipp<glPrms->numProbPerPatch; ipp++){
+	// 	P_lmd_vecs[ipp] = glPrms->P_lmd_vecs[ipp];
+	// }
 
 	SpEOVectorI idxPUL = SpEOVectorI::Zero(NPU, 1);
 	SpEOVectorI idxPVL = SpEOVectorI::Zero(NPV, 1);
@@ -162,11 +162,11 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 		patchComp(iP,0) = uP;
 		patchComp(iP,1) = vP;
 	}
-	if(fSet->useNewMethodForCalculatingZ){
+	//if(fSet->useNewMethodForCalculatingZ){
 		patchComp = SpEOMatrixF::Zero(0,0);
-	}else{
-		patchCompD = SpEOMatrixD::Zero(0,0);
-	}
+	//}else{
+	//	patchCompD = SpEOMatrixD::Zero(0,0);
+	//}
 	double mytimeDictSum = 0;
 	double mytimeOptSum  = 0;
 
@@ -185,6 +185,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 
 	int numRemPatches = NP_sub;
 	int *remainingPatches;
+	/*
 	if(dSet->contUnfinishedRec){
 		int stat_CSV_read = read_CSV(&incomplPatchList, paths->PathToIncompletePatchSetCSV.c_str(), ',', 0);
 		if(stat_CSV_read==-1){
@@ -234,9 +235,14 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 	else{
 		remainingPatches = new int[1];
 	}
+	*/
+	remainingPatches = new int[1];
+
+
 	// clean up
 	delete[] patchExists;
 
+	/*
 	SpEOMatrixD DictHR_loaded;
 	SpEOMatrixD DictLR_loaded;
 	if(fSet->load_DictHR_and_DictLR){
@@ -262,6 +268,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 			NDP = DictHR_loaded.cols();
 		}
 	}
+	*/
 
 	//============================================================================//
 	//	         Sparse high-resolution image reconstruction                  //
@@ -271,9 +278,9 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 		cout << endl << "     step 2: Sparse Reconstruction.. " << endl;
 		cout << "         total number of available patches                 = NPU     x NPV     = " << NPU             << " x " << NPV             << " = " << glPrms->NP     << endl;
 		cout << "         number of patches in reconstructed subregion      = NPU_sub x NPV_sub = " << glPrms->NPU_sub << " x " << glPrms->NPV_sub << " = " << glPrms->NP_sub << endl;
-		if(dSet->contUnfinishedRec){
-			cout << "         number of actually processed (remaining) patches  = numRemPatches = " << numRemPatches << endl;
-		}
+		// if(dSet->contUnfinishedRec){
+		// 	cout << "         number of actually processed (remaining) patches  = numRemPatches = " << numRemPatches << endl;
+		// }
 		cout << "         number of dictionary atoms (NDP)                  = " << NDP << endl << endl;
 		cout << "     [my_rank] (iP_sub, uP_sub, vP_sub) (iP, uP, vP) =" << endl;
 	}
@@ -281,25 +288,25 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 	// TIME STATISTICS (START)
 	// collect statistics concerning idling and working time of processes and groups of proc.
 	// definition of variables
-	double mytime = MPI_Wtime();
-	double mytime0 = mytime;
-	double mytime2 = mytime;
-	double mytime_diff = 0;
+	// double mytime = MPI_Wtime();
+	// double mytime0 = mytime;
+	// double mytime2 = mytime;
+	// double mytime_diff = 0;
 	
 #ifndef _OPENMP
-	double *accIdlingInner = new double[glPrms->myNumProbPerPatch];
-	double *accIdlingOuter = new double[glPrms->myNumProbPerPatch];
-	double *accWorkingAll = new double[glPrms->myNumProbPerPatch];
-	double *accWorkingWrite = new double[glPrms->myNumProbPerPatch];
-	double *accWorkingComm = new double[glPrms->myNumProbPerPatch];
-	int k;
-	for (k=0; k < glPrms->myNumProbPerPatch; k++) {
-		accIdlingInner[k] = 0;
-		accIdlingOuter[k] = 0;
-		accWorkingAll[k] = 0;
-		accWorkingWrite[k] = 0;
-		accWorkingComm[k] = 0;
-	}
+	// double *accIdlingInner = new double[glPrms->myNumProbPerPatch];
+	// double *accIdlingOuter = new double[glPrms->myNumProbPerPatch];
+	// double *accWorkingAll = new double[glPrms->myNumProbPerPatch];
+	// double *accWorkingWrite = new double[glPrms->myNumProbPerPatch];
+	// double *accWorkingComm = new double[glPrms->myNumProbPerPatch];
+	// int k;
+	// for (k=0; k < glPrms->myNumProbPerPatch; k++) {
+	// 	accIdlingInner[k] = 0;
+	// 	accIdlingOuter[k] = 0;
+	// 	accWorkingAll[k] = 0;
+	// 	accWorkingWrite[k] = 0;
+	// 	accWorkingComm[k] = 0;
+	// }
 #endif
 	
 
@@ -327,9 +334,9 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 #endif
 	int pLast_sub = NP_sub-1;
 
-	if(dSet->contUnfinishedRec){
-		pLast_sub = numRemPatches-1;
-	}
+	// if(dSet->contUnfinishedRec){
+	// 	pLast_sub = numRemPatches-1;
+	// }
 	// additional work stealing
 	int lastFixedPatch = pLast_sub;
 	if (pSet->workStealingTurns >= 0){
@@ -341,21 +348,21 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 	c = create_counter(0, lastFixedPatch+1, comm_busy);
 
 	// Compute NP indices for all patches, for use in Non-Local Dictionary Training
-	double timeMainLoop = MPI_Wtime();
-	if(!dSet->imageConstructionOnly){
-		while(jP <=pLast_sub){//      as long as there are patches to work on
-			if(dSet->contUnfinishedRec){
-				iP = remainingPatches[jP];
-				uP = iP / NPV;
-				vP = iP % NPV;
-			}else{
-				uP = uPFirst + jP / NPV_sub;
-				vP = vPFirst + jP % NPV_sub;
-				iP = uP*NPV+vP;
-			}
-			if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_0" << endl;
+	//double timeMainLoop = MPI_Wtime();
+	//if(!dSet->imageConstructionOnly){
+	while(jP <=pLast_sub){//      as long as there are patches to work on
+		//if(dSet->contUnfinishedRec){
+		//	iP = remainingPatches[jP];
+		//	uP = iP / NPV;
+		//	vP = iP % NPV;
+		//}else{
+			uP = uPFirst + jP / NPV_sub;
+			vP = vPFirst + jP % NPV_sub;
+			iP = uP*NPV+vP;
+		//}
+		if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_0" << endl;
 #ifndef _OPENMP
-			if(my_rank%pSet->numProcPerPatch==0 && !fSet->LQ_post_opt){
+			if(my_rank%pSet->numProcPerPatch==0){//} && !fSet->LQ_post_opt){
 				if(my_rank==0){
 					cout << "     [" << my_rank << "] (iP,uP,vP)_local=(" << jP << "(of "<<pLast_sub<<")," << jP / NPV_sub << "," << jP % NPV_sub << "), and (iP,uP,vP)_total=(" << iP << "," << uP << "," << vP << ")" << endl;
 					report.file.open(report.fileName.c_str(),
@@ -367,24 +374,24 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				}
 			}
 #else
-			if(!fSet->LQ_post_opt){
+			//if(!fSet->LQ_post_opt){
 				if(my_rank==0){
 					cout << endl << "     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl
 					             << "     [" << my_rank << "] (iP,uP,vP)_local=(" << jP << "(of "<<pLast_sub<<")," << jP / NPV_sub << "," << jP % NPV_sub << "), and (iP,uP,vP)_total=(" << iP << "," << uP << "," << vP << ")" << endl
 					             << "     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl << endl;
 				}
-			}
+			//}
 #endif
 
 			// TIME STATISTICS
 			// start time measurement
 			//
 #ifndef _OPENMP
-			mytime2 = MPI_Wtime();
+			// mytime2 = MPI_Wtime();
 #endif
 
 			//bool newMethodForCalculatingZ = true;
-			if(fSet->useNewMethodForCalculatingZ){
+			//if(fSet->useNewMethodForCalculatingZ){
 				//###########################################################################
 				//
 				//          new model for calculating the patch patZ beginning ...
@@ -715,16 +722,17 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 						DictLR[ig]      = DictLR[ig].block(0,0,pszL2,NDP);
 					}
 				}
-
+				/*
 				if(fSet->load_DictHR_and_DictLR){
 					if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp-05-03-01: load dictionaries" << endl;
 					for(ig=0; ig<Ng; ig++){
-						for(int iDP = 0; iDP<NDP_min; iDP++) {
+					^	for(int iDP = 0; iDP<NDP_min; iDP++) {
 							DictHR[ig].col(iDP) = DictHR_loaded.col(iDP);
 							DictLR[ig].col(iDP) = DictLR_loaded.col(iDP);
 						}
 					}
 				}
+				*/
 
 				double lambda_X_ABC = fSet->lambdaX_ABC;
 				double lambda_Y_ABC = fSet->lambdaY_ABC;
@@ -1144,7 +1152,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 				//        ... new model for calculating the patch patZ ends here
 				//
 				//###########################################################################
-			}else{
+			/*}else{
 				// inner-patch-wise loop
 				SpEOVectorD DYL_mnVl_sum = SpEOVectorD::Zero(NChY); // sum of mean value, maybe we can move the initialization to the beginning of the fct
 				SpEOMatrixD* Alpha_p = new SpEOMatrixD[glPrms->myNumProbPerPatch];
@@ -1560,18 +1568,18 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 							SpEOMatrixD* Alpha_p_out;
 							SpEOVectorD m_out;
 
-							/*
-							// *********************************
-							//  Input variables relevant for the extension of the optimization problem
-							// *********************************
-							glPrms->sum_Nc_vec  a.k.a. sum_{g=1}^{N_g}N_c(g)
-							pszL2               a.k.a. N_l^p
-							pszH2               a.k.a. N_h^p
-							DXLS_p              a.k.a. \tilde{D}_l^p
-							yLR_p               a.k.a. \tilde{Y}_0^p
-							fSet->lambdaX       a.k.a. lambda_X
-							fSet->lambdaY       a.k.a. lambda_Y
-							*/
+							// 
+							// // *********************************
+							// //  Input variables relevant for the extension of the optimization problem
+							// // *********************************
+							// glPrms->sum_Nc_vec  a.k.a. sum_{g=1}^{N_g}N_c(g)
+							// pszL2               a.k.a. N_l^p
+							// pszH2               a.k.a. N_h^p
+							// DXLS_p              a.k.a. \tilde{D}_l^p
+							// yLR_p               a.k.a. \tilde{Y}_0^p
+							// fSet->lambdaX       a.k.a. lambda_X
+							// fSet->lambdaY       a.k.a. lambda_Y
+							// 
 
 							int maxiter_CGLS  = sSet->maxiter_CGLS;
 							double tol_R_CGLS = sSet->tol_r_CGLS;
@@ -1690,7 +1698,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 
 				delete[] Alpha_p;
 				delete[] DXHS_p;
-			}
+			}*/
 
 			if(pSet->store_patches_tmp_on_drive){
 				char buf0 [paths->dir_tmp_patches.length()+7];
@@ -1739,15 +1747,15 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 #ifndef _OPENMP
 			if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_1" << endl;
 			MPI_Barrier(comm_patch);
-			if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_2" << endl;
+			//if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_2" << endl;
 			// TIME STATISTICS
 			// store time which is needed only for writing (loc. proc. 0)
-			mytime_diff = (MPI_Wtime()-mytime2)/glPrms->myNumProbPerPatch;
-			for (k=0; k < glPrms->myNumProbPerPatch; k++) {
-				accWorkingWrite[k] += mytime_diff;
-				accWorkingAll[k] += mytime_diff;
-			}
-			mytime2 = MPI_Wtime();
+			//mytime_diff = (MPI_Wtime()-mytime2)/glPrms->myNumProbPerPatch;
+			// for (k=0; k < glPrms->myNumProbPerPatch; k++) {
+			// 	accWorkingWrite[k] += mytime_diff;
+			// 	accWorkingAll[k] += mytime_diff;
+			// }
+			//mytime2 = MPI_Wtime();
 #endif
 			if (jP <= lastFixedPatch - glPrms->numPatchGroups || pSet->workStealingTurns < 0) {
 				jP += glPrms->numPatchGroups;
@@ -1768,17 +1776,17 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 #endif
 			}
 #ifndef _OPENMP
-			mytime_diff = (MPI_Wtime()-mytime2)/glPrms->myNumProbPerPatch;
-			for (k=0; k < glPrms->myNumProbPerPatch; k++) {
-				accWorkingComm[k] += mytime_diff;
-				accWorkingAll[k] += mytime_diff;
-			}
-			mytime2 = MPI_Wtime();
+			// mytime_diff = (MPI_Wtime()-mytime2)/glPrms->myNumProbPerPatch;
+			// for (k=0; k < glPrms->myNumProbPerPatch; k++) {
+			// 	accWorkingComm[k] += mytime_diff;
+			// 	accWorkingAll[k] += mytime_diff;
+			// }
+			// mytime2 = MPI_Wtime();
 #endif
 			if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_3" << endl;
 		}
 		if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_4" << endl;
-	}
+	//}
 	if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_5" << endl;
 	MPI_Barrier(comm_busy);
 	if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_6" << endl;
@@ -1789,17 +1797,18 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 	// obtain additional idling time for proc != 0
 #ifndef _OPENMP
 	MPI_Barrier(comm_busy);
-	mytime_diff = (MPI_Wtime()-mytime2)/glPrms->myNumProbPerPatch;
+	/*mytime_diff = (MPI_Wtime()-mytime2)/glPrms->myNumProbPerPatch;
 	for (k=0; k < glPrms->myNumProbPerPatch; k++) {
 		accIdlingOuter[k] += mytime_diff;
 	}
 	if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_8" << endl;
 	mytime2 = MPI_Wtime();
+	*/
 #endif
 	
 	if (my_rank==0){
-		cout << "     Loop needed this long: " << MPI_Wtime() - mytime0 << endl;
-		glPrms->timeMainLoop = MPI_Wtime() - mytime0;
+		// cout << "     Loop needed this long: " << MPI_Wtime() - mytime0 << endl;
+		// glPrms->timeMainLoop = MPI_Wtime() - mytime0;
 		cout << endl
 			<< "########################################################### " << endl
 			<< "#        algorithm (patch-wise fusion) completed          # " << endl
@@ -1841,7 +1850,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 			ImZ->rasterBands[iChY]->bandDataMatD = (ImZ->rasterBands[iChY]->bandDataMatD).cwiseQuotient(avg_mat);
 		}
 	}
-
+/*
 	double timeOptCommSum = mytimeOptSum;
 	double *bufferTimeOpt = new double[1];
 	if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_10" << endl;
@@ -1887,7 +1896,6 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 	if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_16" << endl;
 
 	delete[] bufferdict;
-	
 #ifndef _OPENMP
 	// TIME STATISTICS
 	// exchange of statistics, process 0 is collecting
@@ -2111,6 +2119,7 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 	}
 	if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_19" << endl;
 	
+
 	// TIME STATISTICS (END)
 	// clear memory
 	//
@@ -2144,9 +2153,10 @@ void JSparseFIHM_alg(SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, int 
 	for(int ipp=0; ipp<glPrms->numProbPerPatch; ipp++){
 		delete[] P_lmd_idx_bl[ipp];
 	}
-	delete[] P_lmd_idx_bl;
-	delete[] P_lmd_idx_row;
-	delete[] P_lmd_vecs;
+*/
+	//delete[] P_lmd_idx_bl;
+	//delete[] P_lmd_idx_row;
+	//delete[] P_lmd_vecs;
 
 #ifndef _OPENMP
 	if(print_for_debugging && (my_rank==0)) cout << "[" << my_rank << "] bp_20" << endl;

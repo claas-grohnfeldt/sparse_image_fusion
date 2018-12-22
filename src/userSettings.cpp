@@ -8,8 +8,7 @@
 #include "userSettings.h"
 
 
-void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, SpEOOutputSetting *oSetting, SpEOSolverSetting *sSetting, SpEOParallelSetting *pSetting, int argc, char **argv){
-
+void getUserSettings(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, SpEOOutputSetting *oSetting, SpEOSolverSetting *sSetting, SpEOParallelSetting *pSetting, int argc, char **argv){
     
 	/*=================================================================*
 	 *                          User Settings                          *
@@ -22,133 +21,248 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
 	// MPI / parallelization settings
 	// total number of processes
 	pSetting->numProcTot = my_processes;
-	dSetting->jobName             = argv[1];
-	dSetting->jobID               = argv[2];
 
-	// Choose a sparse image fusion methods
-	//fSetting->fMethod             = JSparseFI;
-	//                            = SparseFI
-	//                         or = JSparseFI
-	//                         or = JSparseFIHM
-	if(strcmp(argv[4],"JSparseFIHM") == 0){
-		fSetting->fMethod             = JSparseFIHM;
-	    // use new method for calculating Z based on step-wise least squares optimization (bool)
-	    fSetting->useNewMethodForCalculatingZ = true;
-	//}else if(strcmp(argv[4],"JSparseFI") == 0){  <- old implementation of J-SparesFI
-	//	fSetting->fMethod             = JSparseFI;
-	}else if(strcmp(argv[4],"GroupedJSparseFI") == 0){
-		fSetting->fMethod             = GroupedJSparseFI; // <- new implementation of J-SparseFI for WorldView-2
-	    // use new method for calculating Z based on step-wise least squares optimization (bool)
-	    fSetting->useNewMethodForCalculatingZ = false;
-	}else if(strcmp(argv[4],"SparseFI") == 0){
-		fSetting->fMethod             = SparseFI;
-	    // use new method for calculating Z based on step-wise least squares optimization (bool)
-	    fSetting->useNewMethodForCalculatingZ = false;
-	}else{
-		cerr << "ERROR: UNKNOWN Fusion Method";
-		exit(2);
-	}
+	//----------------
+	// 1: Arbitrary string roughly describing this job (string)
+	//----------------
+	dSetting->jobName = argv[1]; // job_name
 
-	//########################################################
+	//----------------------------------
+	// paths
+	//----------------------------------
+
+	//----------------
+	// 2: Filename of image with higher spatial resolution (string) 
+	//----------------
+	paths->fname_ImX = argv[2]; // filename_ImX
+
+	//----------------
+	// 3: Filename of image with lower spatial resolution higher spectral 
+	//    resolution (string)
+	//----------------
+	paths->fname_ImY = argv[3]; // filename_ImY
+
+	//----------------
+	// 4: Filename of initial image (string)
+	//    (The final fusion product is the result of an alternating opti-
+	//    mization process, which requires initialization. A simple initia-
+	//    lization can be optained by bilinearly interpolating ImY - the
+	//    lower-resolution input image)
+	//----------------
+	paths->fname_ImZ_init = argv[4]; // filename_ImZ_init
+
+	//----------------
+	// 5: Boolean flag to specify whether or not a high-resolution 
+	//    reference ("ground truth") image (ImZ_ref) is available. (bool)
+	//----------------
+	fSetting->ImZ_ref_avlbl = (bool)atoi(argv[5]); // reference_image_available
+
+	//----------------
+	// 6: Filename of image reference ("ground truth") image. (bool)
+	//----------------
+	paths->fname_ImZ_ref = argv[6]; // filename_ImZ_ref
+
+	//----------------
+	// 7: Boolean flag to specify whether the program should use SRFs that 
+	//    are (1) estimated directly from the data, or (0) known from the 
+	//    sensors' specifications a priori. In the latter case, those known 
+	//    SRFs must be loaded from an existing .csv file (see next program 
+	//    argument below). (bool)
+	//----------------
+	fSetting->use_estimated_SRFs = (bool)atoi(argv[7]); // estimate_SRFs_from_data
+
+	//----------------
+	// 8: File name of .csv file containing a priory known SRFs. Only used
+	//    (required) if the flag 'estimage_SRFs_from_data' is set to '0'.
+	//    (bool)
+	//----------------
+	paths->fname_SRF = argv[8]; // filename_SRF
+
+	//----------------
+	// 9: Arbitrary directory into which the program's output including 
+	//    image fusion results will be stored.
+	//----------------
+	paths->dir_out = argv[9]; // dirname_output
+
+	paths->fname_ImZ_out = "JSparesFIHM_fusion_result";
+
+	//----------------------------------
 	// local-non-local processing module
-	//########################################################
-	// Set Lagrangian multiplier
-	fSetting->lambda              = atof(argv[5]);
+	//----------------------------------
 
-	//*************************************
-	// dictionary settings
-	//*************************************
-	// use simulated high resolution image X for dictionary learning (bool)
-	fSetting->useSimulatedImXforDictLearn = (bool)atoi(argv[6]);
-    // ImX simulation mode: 0: correlation based; 1: unconstrained LS based; 2: NNLS based
-    fSetting->ImX_sim_mode        = atoi(argv[7]);
-    // dictionary selection method
-	fSetting->dictselect 		  = atoi(argv[8]);
-	// Set number of nearest patches to be selected in order to form the reduced
-	// dictionaries. Set npp=9999999 in order to use the full dictionary (all patches).
-	fSetting->NDP                 = atoi(argv[9]);
-	// Set size of (quadratic) patch, i.e. number of pixels in one direction.
-	fSetting->patchsize           = atoi(argv[10]);
-	// Set overlap, measured in pixels at the spatial scale of the LR MS image.
-	fSetting->overlap             = atoi(argv[11]);
+	//----------------
+	// 10: patch size, measured in low resolution pixels. Images patches 
+	//     are set to be square and contain patch_size^2 pixels at the low-
+	//     resolution scale. (int)
+	//----------------
+	fSetting->patchsize = atoi(argv[10]); // patch_size
 
-	//*************************************
-	// coefficient estimation
-	//*************************************
-	// regularization parameters for new coefficient estimation (double)
-	fSetting->lambdaX_ABC = (double)atof(argv[12]);
-	fSetting->lambdaY_ABC = (double)atof(argv[13]);
+	//----------------
+	// 11: Patch overlap, measured in low resolution pixels.
+	//     patch_overlap can be set to any number between 0 and 
+	//     patch_size-1. Usually, the higher the patch overlap, the better 
+	//     the fusion results. (int)
+	//----------------
+	fSetting->overlap = atoi(argv[11]); // patch_overlap
 
-	//*************************************
-	// correlation-based Hyperspectral Grouping (CorHySpeG)
-	//*************************************
-	// maximum size of spectral group above groups will be double-checked and perhaps split into subgoups (int)
-	fSetting->Nc_max = atoi(argv[14]);
-	// minimum cross-correlation within spectral goups (double)
-	fSetting->theta = (double)atof(argv[15]);
-	// size of window around patch: Must have the same sign as patchsize in order to have both centers matched; Used for correlation calculations (int)
-	fSetting->winSize = atoi(argv[16]);
+	//----------------
+	// 12: Number of dictionary atoms/patches (int)
+	//----------------
+	fSetting->NDP = atoi(argv[12]); // N_a
+
+	//----------------
+	// 13: Select coupled LR and HR Pan dictionaries according to:
+	// options: '0': Dictionary contains ONLY the current patch 
+	//               Hence, (N_a=1) & Alpha is calculated by least squares
+	//          '1': Nearest Neighbors
+	//          '2': PanLR norm
+	//          '3': SRF approximate PanLR  norm
+	//          '4': PanHR norm (POSITIVE PanHR correlation)   (depricated)
+	//          '5': PanLR-PanHR joint ranking                 (depricated)
+	//          '6': ABSOLUTE PanHR correlation
+	//          '7': PanHR uncorrelation, including current patch as first 
+	//               atom
+	//          '8': Random, including current patch as first atom
+	//          '9': PanHR self uncorrelated basis approximation, including
+	//               current patch as first atom
+	//----------------
+	fSetting->dictselect = atoi(argv[13]); // dictselect
+
+	//----------------
+	// 14: Regularization parameter weighting the l_2,1 norm term in the 
+	//     joint sparsity optimization problem. (float)
+	//----------------
+	fSetting->lambda = atof(argv[14]); // lambda
+
+	//----------------
+	// 15: minimum cross-correlation within spectral goups (double)
+	//----------------
+	fSetting->theta = (double)atof(argv[15]); // theta
+
+	//----------------
+	// 16: maximum size of spectral group above groups will be double-checked and perhaps split into subgoups (int) 
+	//----------------
+	fSetting->Nc_max = atoi(argv[16]); // N_c
+
+	//----------------
+	// 17-18: regularization parameters for weighing the impact of ImX and
+	//        ImY, respectively, to the product (double)
+	//----------------
+	fSetting->lambdaX_ABC = (double)atof(argv[17]); // mu_X
+	fSetting->lambdaY_ABC = (double)atof(argv[18]); // mu_Y
+
+	//----------------
+	// 19: ImX simulation mode flag (int) 
+	// options: '0': correlation based
+	//          '1': unconstrained least-squares based 
+	//          '2': non-negative least-squares based
+	//----------------
+	fSetting->ImX_sim_mode = atoi(argv[19]); // ImX_sim_mode
+
+	//----------------
+	// 20: Size of window around patch: For symmetry reasons, it should be
+	//     be set to an odd number if patch_size is odd and to en even if 
+	//     patch_size is even. Should be set to a number larger than or
+	//     equal to patch_size. (int)
+	//----------------
+	fSetting->winSize = atoi(argv[20]); // winSize
+
+	//----------------------------------
+	// Global-non-local processing module
+	// (full image optimization)
+	//----------------------------------
+
+	//----------------
+	// 21-22: Regularization parameters trading the weighting of the high-
+	//        and low-resolution input images, I_X and I_Y, respectively.
+	//        (double)
+	//----------------
+	fSetting->lambdaX_im = (double)atof(argv[21]); //mu_X_prime
+	fSetting->lambdaY_im = (double)atof(argv[22]); // mu_Y_prime
+
+	//----------------
+	// 23: Subspace dimension
+	//----------------
+	fSetting->subspace_dim = atoi(argv[23]); // subspace_dim
+
+	//----------------------------------
+	// Concerning both local-non-local and global processing modules
+	//----------------------------------
+
+	//----------------
+	// 24: Processing module selection flag (int)
+	// options: '0': run only local-non-local processing module
+	//          '1': run only global processing module
+	//          '2': run both processing module in an alternating manner
+	//               (recommended)
+	//----------------
+	int processing_module_flag = atoi(argv[24]);
+	switch(processing_module_flag){
+		case 0: {
+			fSetting->doFullImOptWithoutPatRec=false;
+			fSetting->LQ_post_opt_im = false;
+			break;
+		}case 1: {
+			fSetting->doFullImOptWithoutPatRec=true;
+			fSetting->LQ_post_opt_im = true;
+			break;
+		}case 2: {
+			fSetting->doFullImOptWithoutPatRec=false;
+			fSetting->LQ_post_opt_im = true;
+			break;
+		}
+	}
+	//----------------
+	// 25: Maximum number of times each of the two processing module should
+	//     be run. More specifically, maximum number of iteration in the 
+	//     alternating calculation of ImZ using the local-non-local and 
+	//     global processing mdules. (int) 
+	//----------------
+	fSetting->iterMain = atoi(argv[25]); // iterMain
+
+	//----------------------------------
+	// Output settings
+	//----------------------------------
+
+	//----------------
+	// 26: Boolean flag to specify whether the quality of the fusion result
+	//     (image ImZ) should be assessed relative to the supposedly 
+	//     provided high-resolution reference ("ground truth") image, i.e.
+	//     ImZ_ref. (bool)
+	//----------------
+	fSetting->evaluate = (bool)atoi(argv[26]); // perform_quality_assessment_of_fusion_result
+
+	fSetting->evaluate_ImZ_init = fSetting->evaluate;
+
+	//----------------
+	// 27: write fused image in file (1: create file and write resulting image in file; 0: to not write image in file (useful for analyses only)) (bool)
+	//----------------
+	oSetting->writeImageFile = (bool)atoi(argv[27]); // writeImageFile
+
+	//----------------
+	// write all intermediate image fusion results/images (after every iteration) (bool) 
+	// options:
+	// 0: do not write image in file (useful for analyses only)
+	// 1: create file and write resulting image in file
+	// CAN BE PUT BACK TO PROGRAM ARGUMENTS IF NEEDED 
+	//----------------
+	oSetting->writeImageFileAfterEveryIter = false; // writeImageFileAfterEveryIter
+
+	//----------------
+	// 28: Output image format flag.
+	// options: '0': 16-bit unsigned integer (UInt16) 
+	//          '1': 64-bit float (Float64)
+	//----------------
+	dSetting->saveAsDouble = (bool)atoi(argv[28]);// output_image_format_flag
+
+	//----------------
+	// DEPRICATED
+	// 29: scale the coefficient of |R*Z-X| term by a factor of NChY/NChX 
+	//     (experimenatal) (bool)
+	fSetting->balance_ImX_term_coef = (bool)atoi(argv[29]); // balance_ImX_term_coef
+	// ---------------
 
 
-	//########################################################
-    //# Global processing module                             #
-	//# (for full-image optimization)                        #
-	//########################################################
-	// >>>// flag used to decide whether or not the least square post-minimization (of the final image) is activated (bool)
-	// >>>fSetting->LQ_post_opt_im  = (bool)atoi(argv[19]);
-	// regularization parameter trading the relative weighting of the high resolution input image I_X (double)
-	fSetting->lambdaX_im      = (double)atof(argv[17]);
-	// regularization parameter trading the relative weighting of the low resolution input image I_Y (double)
-	fSetting->lambdaY_im      = (double)atof(argv[18]);
-	// maximum number of iterations in the GS step to solve the least squares problem on the final image level (int)
-	sSetting->maxiter_CGLS_im = atoi(argv[19]);
-	// error tolerance (double)
-	sSetting->tol_r_CGLS_im   = (double)atof(argv[20]);
-
-	// write all intermediate image fusion resulta (after every iteration) (1: create file and write resulting image in file; 0: to not write image in file (useful for analyses only)) (bool)
-	fSetting->fullImOptOnSubspace = (bool)atoi(argv[21]);
-        // subspace transformation type
-        fSetting->subspace_transform_type = argv[22];
-        // subspace dimension
-        fSetting->subspace_dim = atoi(argv[23]);
-	// calc. coeff. in full image opt. eq. via SNR calc. of ImX and ImY (bool)
-	fSetting->SNR_normalization = (bool)atoi(argv[24]);
-	// scale the coeff. of |R*Z-X| term by a factor of NChY/NChX (experimenatal, depricated) (bool)
-	fSetting->balance_ImX_term_coef = (bool)atoi(argv[25]);
-
-    //########################################################
-    // initialization and interplay between local-non-local 
-    // and global processing module
-    //########################################################
-    // use estimated SRFs instead of apriori given ones (bool)
-	fSetting->use_estimated_SRFs = (bool)atoi(argv[26]);
-	// type of initial high resolution image ImZ_init; flag (int)
-	fSetting->ImZ_init_type=atoi(argv[27]);
-	       // ImZ_init_type=0: lambdaZ_ABZ=0 in 1st iter (no initial image)
-	       // ImZ_init_type=1: upsampled and bilinearly interpolated low resolution image ImY
-	       // ImZ_init_type=2: reconstruction result of another algorithm (e.g. Bayesian Sparse or CNMF. Depends on dataset)
-	
-	// flag used to decide whether or not the least square post-minimization (of the final image) is activated (bool)
-	fSetting->LQ_post_opt_im  = (bool)atoi(argv[28]);
-    // jump to the full image optimization (of the initial image) without doing the patch-wise imge reconstruction.
-	fSetting->doFullImOptWithoutPatRec=(bool)atoi(argv[29]);
-	// number of coupled ImZ calculations iterations
-	fSetting->iterMain = atoi(argv[30]);
-
-	//########################################################
-    //# Output settings                                      #
-	//########################################################
-
-	fSetting->evaluate           = (bool)atoi(argv[31]);
-    //65 evaluate initial image (bool)
-	fSetting->evaluate_ImZ_init = (bool)atoi(argv[32]);
-
-	oSetting->writeImageFile      = (bool)atoi(argv[33]);
-
-	// write all intermediate image fusion resulta (after every iteration) (1: create file and write resulting image in file; 0: to not write image in file (useful for analyses only)) (bool)
-	oSetting->writeImageFileAfterEveryIter = (bool)atoi(argv[34]);
-	// save output in double format (64bit) instead of uint16 (bool)
-	dSetting->saveAsDouble = (bool)atoi(argv[35]);	
 
 
 	//########################################################
@@ -158,6 +272,8 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
     //**********************************
 	//########################################################
 
+	// use simulated high resolution image X for dictionary learning (bool)
+	//fSetting->useSimulatedImXforDictLearn = true; //(bool)atoi(argv[6]);
 	// number of processes to work on one sparse reconstruction problem (solver parallelization)
 	pSetting->numProcGrp          = 1;
 	// Choose if input images should be normalized before calculation
@@ -168,7 +284,6 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
 	fSetting->substrMean          = true;
 	// Specify whether or not original high resolution MS image is available.
 	// If so, the fusion results will be evaluated.
-	fSetting->ImZ_ref_avlbl       = true;
 	oSetting->prec                = 10;
 
 	//fSetting->pFirst             = 0; // atoi(argv[10]);
@@ -198,16 +313,20 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
 	// patch parallelization strategy: work stealing (true) or fixed work scheduling (false)
 	pSetting->workStealingTurns  = -1;
 	
-    dSetting->delete_tmp_patch_folders       = true;
-	dSetting->imageConstructionOnly          = false;
-	dSetting->contUnfinishedRec              = false;
+    //dSetting->delete_tmp_patch_folders       = true;
+	//dSetting->imageConstructionOnly          = false;
+	//dSetting->contUnfinishedRec              = false;
+
+	// calc. coeff. in full image opt. eq. via SNR calc. of ImX and ImY (bool).
+	// include SNR normalization to compensate for colored (band-dependend) noise (bool)
+	fSetting->SNR_normalization = true;
 
 //	Attention: set in getPaths.cpp!!!
 //	if(dSetting->contUnfinishedRec){
 //		paths->PathToIncompletePatchSetCSV = argv[35];
 //	}
 
-	dSetting->dir_tmp_patches_additional_num = 0; //atoi(argv[36]);
+	//dSetting->dir_tmp_patches_additional_num = 0; //atoi(argv[36]);
 
 //  matrix (dictionary) normalization norm: 0: spectral norm, 1: Frobenious norm (bool)
     fSetting->matrixNorm        = true;
@@ -221,21 +340,21 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
 	sSetting->maxiter_out        = 200000;
 	// 40: tolerance
 	sSetting->tol                = 0.000000000001;
-    //########################################################
-	//# for Least squares post processing on the patch level #
-	//########################################################
-	// 41: flag used to decide whether or not the least square post-minimization is activated (bool)
-	fSetting->LQ_post_opt  = false;
-	// 42: regularization parameter trading the relative weighting of the high resolution input patch xHR (double)
-	fSetting->lambdaX      = 1.0;
-	// 43: regularization parameter trading the relative weighting of the low resolution input patch yLR (double)
-	fSetting->lambdaY      = 1.0; 
-	// 44: maximum number of iterations in the GS step to solve the least squares problem (int)
-	sSetting->maxiter_CGLS = 400;
-	// 45: error tolerance (double)
-	sSetting->tol_r_CGLS   = 0.000000000001;
-	// 46: decides whether or not the coefficients get updates via least squares (bool)
-	sSetting->fix_Alpha    = 1;
+ // //    //########################################################
+	// // //# for Least squares post processing on the patch level #
+	// // //########################################################
+	// // // 41: flag used to decide whether or not the least square post-minimization is activated (bool)
+	// // fSetting->LQ_post_opt  = false;
+	// // // 42: regularization parameter trading the relative weighting of the high resolution input patch xHR (double)
+	// // fSetting->lambdaX      = 1.0;
+	// // // 43: regularization parameter trading the relative weighting of the low resolution input patch yLR (double)
+	// // fSetting->lambdaY      = 1.0; 
+	// // // 44: maximum number of iterations in the GS step to solve the least squares problem (int)
+	// // sSetting->maxiter_CGLS = 400;
+	// // // 45: error tolerance (double)
+	// // sSetting->tol_r_CGLS   = 0.000000000001;
+	// // // 46: decides whether or not the coefficients get updates via least squares (bool)
+	// // sSetting->fix_Alpha    = 1;
 	// 47: decides whether or not the mean values of Z are set to the same mean values as Y (i.e. either delta_m remains the initial zero vector or it gets updated via least squares) (bool)
 	sSetting->fix_delta_m  = false;
 
@@ -243,7 +362,7 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
 	fSetting->lambdaZ_ABC_in_1st_iter = 1.0;
 
 	//70: e.g. =0 for generic; =1 for SuperMUC-pr45ne and =2 for CG local (int)
-	dSetting->platformID = 0;
+	//dSetting->platformID = 0;
 
 	//75: set the coeff. of |R*Z-X| in full image opt. eq. to NChY/NChX [only relevant if SNR_normalization==1 ] (bool)
 	//fSetting->balance_ImX_term_coef = false;
@@ -251,7 +370,7 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
     //77: use LR (low resolution) patch norm for normalization of corresponding LR and HR patch in coupled dictionaries. If set to 0 the HR nor is used by default. (bool)
 	fSetting->use_LRnorm_for_dic_normalization = true; //
 	//78: load and use a-priori calculated dictionaries. (bool)
-	fSetting->load_DictHR_and_DictLR = false;
+	//fSetting->load_DictHR_and_DictLR = false;
 	
 	fSetting->lambdaZ_ABC = 1.0;
 
@@ -262,6 +381,20 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
     //	                       = 2  => set negative values to zero only after full image optimization
     //	                       = 3  => set negative values to zero both after patch reconstruction and after full image optimization
 
+	// maximum number of iterations in the GS step to solve the least squares problem on the final image level (int)
+	sSetting->maxiter_CGLS_im = 1500; //atoi(argv[19]);
+	// error tolerance (double)
+	sSetting->tol_r_CGLS_im   = (double)atof("1e-12");
+
+	// write all intermediate image fusion results (after every iteration) (1: create file and write resulting image in file; 0: to not write image in file (useful for analyses only)) (bool)
+	fSetting->fullImOptOnSubspace = true; // (bool)atoi(argv[21]);
+    // subspace transformation type
+    // options:
+    // - PCA
+    // - SVD
+    // - VCA
+    // - none
+    fSetting->subspace_transform_type = "SVD"; //argv[22];
 
 	//##############################################//
 	//##         Check & Correct Input            ##//
@@ -284,21 +417,94 @@ void getUserSettings(SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, S
 		}
 		pSetting->parWrNumProc = tmp;
 	}
-	if(fSetting->LQ_post_opt && pSetting->numProcPerPatch>1){
-		if(my_rank==0){
-			cerr << endl << "ERROR: The least-squares based post processing step (program argument LQ_post_opt) is set active. This step is only supported for ONE PROCESSOR PER PATCH! However, the program argument numProcPerPatch is set to a number greater than one!" << endl << endl;
-		}
-		MPI_Barrier(MPI_COMM_WORLD);
-		exit(2);
-	}
-	if(pSetting->store_patches_tmp_on_drive && dSetting->contUnfinishedRec ){
-		if(my_rank==0){
-			cerr << endl << "ERROR: The two flags 'store_patches_tmp_on_drive' and 'contUnfinishedRec' are not compatible!" << endl << endl;
-		}
-		MPI_Barrier(MPI_COMM_WORLD);
-		exit(2);
-	}
+	// if(fSetting->LQ_post_opt && pSetting->numProcPerPatch>1){
+	// 	if(my_rank==0){
+	// 		cerr << endl << "ERROR: The least-squares based post processing step (program argument LQ_post_opt) is set active. This step is only supported for ONE PROCESSOR PER PATCH! However, the program argument numProcPerPatch is set to a number greater than one!" << endl << endl;
+	// 	}
+	// 	MPI_Barrier(MPI_COMM_WORLD);
+	// 	exit(2);
+	// }
+	//if(pSetting->store_patches_tmp_on_drive && dSetting->contUnfinishedRec ){
+	//	if(my_rank==0){
+	//		cerr << endl << "ERROR: The two flags 'store_patches_tmp_on_drive' and 'contUnfinishedRec' are not compatible!" << endl << endl;
+	//	}
+	//	MPI_Barrier(MPI_COMM_WORLD);
+	//	exit(2);
+	//}
 //}
+
+
+	// TO BE REMOVED FROM ENTIRE PROGRAM:
+	 // paths->dir_tmp             = argv[42];
+     // paths->dir_tmp_patches
+	 // pSetting->store_patches_tmp_on_drive
+
+
+
+
+
+     // // // char buf[15]="";
+     // // // if(my_rank==0){
+     // // //         time_t t = time(0);
+     // // //         struct tm  tstruct;
+     // // //         tstruct = *localtime(&t);
+     // // //         strftime(buf, sizeof(buf), "%y%m%d_%H%M%S", &tstruct);
+     // // // }
+     // // // MPI_Bcast(&buf, sizeof(buf), MPI_CHAR, 0,MPI_COMM_WORLD);
+     // // // string mystringstr(buf);
+     // // // if(pSetting->store_patches_tmp_on_drive){
+     // // //         paths->dir_tmp_patches = paths->dir_tmp + "/patches/" + mystringstr;// + "_" + dSetting->jobID;
+     // // //         if(my_rank==0){
+     // // //                 string tmpp(paths->dir_tmp);
+     // // //                 tmpp += "/patches";
+     // // //                 mkdir(paths->dir_tmp.c_str(), 0777);
+     // // //                 chmod(paths->dir_tmp.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+     // // //                 mkdir(tmpp.c_str(), 0777);
+     // // //                 chmod(tmpp.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+     // // //                 mkdir(paths->dir_tmp_patches.c_str(), 0777);
+     // // //                 chmod(paths->dir_tmp_patches.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+     // // //         }
+     // // // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// // Choose a sparse image fusion methods
+	// //fSetting->fMethod             = JSparseFI;
+	// //                            = SparseFI
+	// //                         or = JSparseFI
+	// //                         or = JSparseFIHM
+	// if(strcmp(argv[4],"JSparseFIHM") == 0){
+	// 	fSetting->fMethod             = JSparseFIHM;
+	//     // use new method for calculating Z based on step-wise least squares optimization (bool)
+	//     //fSetting->useNewMethodForCalculatingZ = true;
+	// //}else if(strcmp(argv[4],"JSparseFI") == 0){  <- old implementation of J-SparesFI
+	// //	fSetting->fMethod             = JSparseFI;
+	// }else if(strcmp(argv[4],"GroupedJSparseFI") == 0){
+	// 	fSetting->fMethod             = GroupedJSparseFI; // <- new implementation of J-SparseFI for WorldView-2
+	//     // use new method for calculating Z based on step-wise least squares optimization (bool)
+	//     fSetting->useNewMethodForCalculatingZ = false;
+	// }else if(strcmp(argv[4],"SparseFI") == 0){
+	// 	fSetting->fMethod             = SparseFI;
+	//     // use new method for calculating Z based on step-wise least squares optimization (bool)
+	//     fSetting->useNewMethodForCalculatingZ = false;
+	// }else{
+	// 	cerr << "ERROR: UNKNOWN Fusion Method";
+	// 	exit(2);
+	// }
+
+
+
 
 
 
