@@ -1,6 +1,6 @@
 /*#############################################################################
 ##                                                                           ##
-##    File:        main.cpp                                           ##
+##    File:        main.cpp                                                  ##
 ##                                                                           ##
 ##    Author:      Claas Grohnfeldt                                          ##
 ##                                                                           ##
@@ -11,14 +11,16 @@
 ##    Contact:     Claas Grohnfeldt                                          ##
 ##                 E-mail: claas.grohnfeldt@gmail.com                        ##
 ##                                                                           ##
-##    Version:     1.2.2 (11/2018)                                           ##
+##    Version:     1.2.3 (12/2018)                                           ##
 ##                                                                           ##
-##    Last modification: November 9, 2018                                    ##
+##    Last modification: December 22, 2018                                   ##
 ##                                                                           ##
 ##    Copyright:   Claas Grohnfeldt                                          ##
 ##                                                                           ##
-##    Description: Main file for the image fusion methods SparseFI,          ##
-##                 J-SparseFI, and J-SparseFI-HM.                            ##
+##    Description: Main file for the "sparse image fusion" project software  ##
+##                 suite, which is based on an implementation of the         ##
+##                 J-SparseFI-HM (Jointly Sparse Fusion of Hyper- and Multi- ##
+##                 spectral Imagery).                                        ##
 ##                                                                           ##
 ##    Input:       ---                                                       ##
 ##                                                                           ##
@@ -28,7 +30,6 @@
 
 #include "main.h"
 #include "nnls.h"
-
 
 using namespace std;
 using namespace Eigen;
@@ -52,19 +53,20 @@ int main(int argc, char* argv[]) {
   	//==================================================================//
   	//                         Get user settings                        //
   	//==================================================================//
+	  SpEOPaths paths;
       SpEODataIOSetting dSetting;
       SpEOFusionSetting fSetting;
       SpEOOutputSetting oSetting;
       SpEOSolverSetting sSetting;
       SpEOParallelSetting pSetting;
 
-      getUserSettings(&dSetting, &fSetting, &oSetting, &sSetting, &pSetting, argc, argv);
+      getUserSettings(&paths, &dSetting, &fSetting, &oSetting, &sSetting, &pSetting, argc, argv);
       
-    //==================================================================//
-	//                         Get data set paths                       //
-	//==================================================================//
-	  SpEOPaths paths;
-	  getPaths(&paths,&dSetting,&pSetting,argc, argv);
+ //    //==================================================================//
+	// //                         Get data set paths                       //
+	// //==================================================================//
+	//   SpEOPaths paths;
+	//   getPaths(&paths,&dSetting,&pSetting,argc, argv);
 
     //==================================================================//
   	//          Initialize report and broadcast output file name        //
@@ -99,23 +101,7 @@ int main(int argc, char* argv[]) {
 	  ImZ_init   = new SpEODataset(HR, imFlag_Z_init);
 	  ImX->dataRead(     paths.fname_ImX,      &report);
 	  ImY->dataRead(     paths.fname_ImY,      &report);
-
-	  switch(fSetting.ImZ_init_type){
-		  case 0:{
-			  fSetting.lambdaZ_ABC_in_1st_iter=0;
-			  ImZ_init->dataRead(paths.fname_ImZ_ref, &report);
-			  break;
-		  }case 1:{
-			  ImZ_init->dataRead(paths.fname_ImZ_init_ImY_US, &report);
-			  break;
-		  }case 2:{
-			  ImZ_init->dataRead(paths.fname_ImZ_init_rec, &report);
-			  break;
-		  }case 3:{
-			  ImZ_init->dataRead(paths.fname_ImZ_ref, &report);
-			  break;
-		  }
-	  }
+	  ImZ_init->dataRead(paths.fname_ImZ_init, &report);
 
 	//=======================================================================//
 	//  possibly correct ImY and ImX to selected spectral and spatial subset //
@@ -155,14 +141,14 @@ int main(int argc, char* argv[]) {
 	  SpEOMatrixD SubspaceTransformMat(ImY->get_NCh(),fSetting.subspace_dim);
 	  if(fSetting.subspace_transform_type == "none"){
 	     SubspaceTransformMat =  SpEOMatrixD::Identity(ImY->get_NCh(),ImY->get_NCh());
-	  }else if(fSetting.subspace_transform_type == "VCA"){
+	  /*}else if(fSetting.subspace_transform_type == "VCA"){
 	     if(fSetting.fullImOptOnSubspace){
 	             std::string fname_SubspaceTransformMat = paths.fname_SubspaceTransformMat;
 	             if (my_rank==0) cout << "read subspace transformation matrix from file: " << endl << fname_SubspaceTransformMat << endl;
 	     	  int stat_CSV_read = read_CSV(&SubspaceTransformMat, fname_SubspaceTransformMat.c_str(),',',0);
 	             if(stat_CSV_read==-1){
                             if(my_rank==0){
-                   	        cout << "["<< my_rank << "] ERROR: The file '" << fname_SubspaceTransformMat.c_str() << "' does not exist" << endl;
+                   	        cout << "["<< my_rank << "] ERROR: The fi{le '" << fname_SubspaceTransformMat.c_str() << "' does not exist" << endl;
 	                    }
                             MPI_Barrier(MPI_COMM_WORLD);
                             if(my_rank==0){
@@ -175,7 +161,7 @@ int main(int argc, char* argv[]) {
 		     SpEOMatrixD SVD_mat_U = svd.matrixU();
 		     fSetting.subspace_dim = SubspaceTransformMat.cols();
 		     SubspaceTransformMat = SVD_mat_U.leftCols(fSetting.subspace_dim);
-	     }
+	     }*/
 	  }else if(fSetting.subspace_transform_type == "SVD"){
 	     SpEOMatrixD ImY_2D    = SpEOMatrixD::Zero(ImY->get_NCh(),   ImY->get_sizeU()   *ImY->get_sizeV());
 	     transform_SpEODataset_to_2D(ImY    ,ImY_2D    );
@@ -275,7 +261,7 @@ int main(int argc, char* argv[]) {
 	//                  Calculate decision matrix C                     //
 	//     according to the spectral grouping concept based on SRFs     //
 	//==================================================================//
-	  if(!fSetting.use_estimated_SRFs){
+	/*  if(!fSetting.use_estimated_SRFs){
 	  //if (paths.fname_SRF != paths.fname_SRF_for_Spectral_Grouping){
 		  if(my_rank==0){
 			  cout << "The path names stored in fname_SRF and fname_SRF_for_Spectral_Grouping are not identical. " <<
@@ -296,7 +282,9 @@ int main(int argc, char* argv[]) {
 		  calcDecisionMat(&SRF, &dSetting, &fSetting, &pSetting, &glPrms);
 	  }
 	  MPI_Barrier(MPI_COMM_WORLD);
-
+	*/
+	 MPI_Barrier(MPI_COMM_WORLD);
+	 //calcDecisionMat(&SRF, &dSetting, &fSetting, &pSetting, &glPrms);
 	 //===================================================================//
 	 //              Create MPI groups and sub-communicators              //
 	 //===================================================================//
@@ -308,6 +296,8 @@ int main(int argc, char* argv[]) {
 	  MPI_Group mpi_group_orig;
 	  MPI_Comm_group(MPI_COMM_WORLD, &mpi_group_orig);
 
+	  glPrms.numPatchGroups = my_processes / pSetting.numProcPerPatch;
+	  
 	  //################
 	  //## comm_busy  ##
 	  //################
@@ -315,6 +305,7 @@ int main(int argc, char* argv[]) {
 #ifdef _OPENMP
 	  int numProcBusy = glPrms.numPatchGroups;
 #else
+	  
 	  int numProcBusy = pSetting.numProcPerPatch * min(glPrms.numPatchGroups, glPrms.NP_sub);
 #endif
 	  int ranges_busy[1][3] = {{0,numProcBusy-1,1}};
@@ -398,9 +389,6 @@ int main(int argc, char* argv[]) {
 			  for(iChZ=0; iChZ<ImZ->get_NCh(); iChZ++){
 				  ImZ->get_rasterBands()[iChZ]->bandDataMatD = ImZ_init->get_rasterBands()[iChZ]->bandDataMatD;
 			  }
-			  glPrms.timeMainLoop = 0;
-			  glPrms.timeDictSelect = 0;
-			  glPrms.timeDictSelect_avg = 0;
 		  }
 
 		  // for stopping criteria:
@@ -428,101 +416,107 @@ int main(int argc, char* argv[]) {
 			  }
 			  if (!fSetting.doFullImOptWithoutPatRec){
 
-				  if(fSetting.fMethod == GroupedJSparseFI){
-					  //*************************************************
-					  // currently only experimental version for the WorldView-2 pan-sharpening case and manual spectral grouping
-					  // -----------------------------------------------
-					  // (1) calculate main groups using the Joint Sparsity Model (JSM) and the
-					  //     original Pan image for the generation of the coupled dictionaries
-					  //     (in the WV-2 case there are the two main channel groups 1~4 and 5)
-					  // (2) calculate outer channel groups using reconstruction results from
-					  //     neighboring channels (as Pan image) for dictionary generatation
-					  //************************************************
-					  // check compatibility of input to the J-SparseFI algorithm (currently called 'GroupedJSparseFI')
-					  checkInputForJSpFI(glPrms, fSetting, pSetting);
-					  // save original parameters that need to be adapted to the individual groups
-					  // ---------------->
-					  int NChY_orig          = glPrms.NChY;
-					  int NChZ_orig          = glPrms.NChZ;
-					  int Nc_vec_0_orig      = glPrms.Nc_vec[0];
-					  int Nc_orig            = fSetting.Nc;
-					  int chBundleFirst_orig = dSetting.chBundleFirst;
-					  int chBundleLast_orig  = dSetting.chBundleLast;
-					  SpEOMatrixD SRF_orig   = SRF;
-					  // <----------------
+				 //  if(fSetting.fMethod == GroupedJSparseFI){
+					//   //*************************************************
+					//   // currently only experimental version for the WorldView-2 pan-sharpening case and manual spectral grouping
+					//   // -----------------------------------------------
+					//   // (1) calculate main groups using the Joint Sparsity Model (JSM) and the
+					//   //     original Pan image for the generation of the coupled dictionaries
+					//   //     (in the WV-2 case there are the two main channel groups 1~4 and 5)
+					//   // (2) calculate outer channel groups using reconstruction results from
+					//   //     neighboring channels (as Pan image) for dictionary generatation
+					//   //************************************************
+					//   // check compatibility of input to the J-SparseFI algorithm (currently called 'GroupedJSparseFI')
+					//   checkInputForJSpFI(glPrms, fSetting, pSetting);
+					//   // save original parameters that need to be adapted to the individual groups
+					//   // ---------------->
+					//   int NChY_orig          = glPrms.NChY;
+					//   int NChZ_orig          = glPrms.NChZ;
+					//   int Nc_vec_0_orig      = glPrms.Nc_vec[0];
+					//   int Nc_orig            = fSetting.Nc;
+					//   int chBundleFirst_orig = dSetting.chBundleFirst;
+					//   int chBundleLast_orig  = dSetting.chBundleLast;
+					//   SpEOMatrixD SRF_orig   = SRF;
+					//   // <----------------
 
-					  SpEODataset *ImX_tmp, *ImX_LR_tmp, *ImY_tmp, *ImZ_tmp;
-					  int firstBandY, lastBandY, panBand;
-					  ImX_tmp    = new SpEODataset(HR, imFlag_X);
-					  ImX_LR_tmp = new SpEODataset(LR, imFlag_X_LR);
-					  ImY_tmp    = new SpEODataset(LR, imFlag_Y);
-					  ImZ_tmp    = new SpEODataset(HR, imFlag_Z);
+					//   SpEODataset *ImX_tmp, *ImX_LR_tmp, *ImY_tmp, *ImZ_tmp;
+					//   int firstBandY, lastBandY, panBand;
+					//   ImX_tmp    = new SpEODataset(HR, imFlag_X);
+					//   ImX_LR_tmp = new SpEODataset(LR, imFlag_X_LR);
+					//   ImY_tmp    = new SpEODataset(LR, imFlag_Y);
+					//   ImZ_tmp    = new SpEODataset(HR, imFlag_Z);
 
-		//			  // calculate Gauss filter for low-pass filtering the 'pan' images
-		//			  SpEOMatrixD gauss_filter;
-		//			  int filter_size = 2*glPrms.fDS - glPrms.fDS%2;
-		//			  create_Gaussian_filter(gauss_filter, filter_size);
-		//			  SpEOMatrixD filter_coeff;
-		//			  calc_filter_boundary_coeff(filter_coeff, gauss_filter, glPrms.fDS);
+		//	// 		  // calculate Gauss filter for low-pass filtering the 'pan' images
+		//	// 		  SpEOMatrixD gauss_filter;
+		//	// 		  int filter_size = 2*glPrms.fDS - glPrms.fDS%2;
+		//	// 		  create_Gaussian_filter(gauss_filter, filter_size);
+		//	// 		  SpEOMatrixD filter_coeff;
+		//	// 		  calc_filter_boundary_coeff(filter_coeff, gauss_filter, glPrms.fDS);
 
-					  //## main group, channels 1~4 #################
+					//   //## main group, channels 1~4 #################
 
-					  firstBandY = 1;
-					  lastBandY  = 4;
-					  panBand    = -1; // use original panchromatic image for the generation of the coupled dictionaries
-					  prepGroupCalcForJSpFI( firstBandY, lastBandY, panBand, glPrms, fSetting, dSetting, SRF_orig, SRF, filter_coeff, gauss_filter,
-											 ImX,     ImX_LR,     ImY,     ImZ,
-											 ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp);
-					  JSparseFIHM_alg(SubspaceTransformMat,AbundanceMat,iterMain, fSetting.iterMain, &paths, &dSetting, &fSetting, &oSetting, &sSetting, &pSetting, &glPrms, ImX_tmp, ImX_LR_tmp,                      ImY_tmp, ImZ_tmp, &SRF, comm_busy, group_busy, ImZ_init, report);
-					  ImZ->fill_band_data(ImZ_tmp,firstBandY,lastBandY);
-					  // restore original parameters
-					  glPrms.NChY=NChY_orig; glPrms.NChZ=NChZ_orig; glPrms.Nc_vec[0]=Nc_vec_0_orig;fSetting.Nc=Nc_orig; dSetting.chBundleFirst=chBundleFirst_orig; dSetting.chBundleLast=chBundleLast_orig; SRF=SRF_orig;
+					//   firstBandY = 1;
+					//   lastBandY  = 4;
+					//   panBand    = -1; // use original panchromatic image for the generation of the coupled dictionaries
+					//   prepGroupCalcForJSpFI( firstBandY, lastBandY, panBand, glPrms, fSetting, dSetting, SRF_orig, SRF, filter_coeff, gauss_filter,
+					// 						 ImX,     ImX_LR,     ImY,     ImZ,
+					// 						 ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp);
+					//   JSparseFIHM_alg(SubspaceTransformMat,AbundanceMat,iterMain, fSetting.iterMain, &paths, &dSetting, &fSetting, &oSetting, &sSetting, &pSetting, &glPrms, ImX_tmp, ImX_LR_tmp,                      ImY_tmp, ImZ_tmp, &SRF, comm_busy, group_busy, ImZ_init, report);
+					//   ImZ->fill_band_data(ImZ_tmp,firstBandY,lastBandY);
+					//   // restore original parameters
+					//   glPrms.NChY=NChY_orig; glPrms.NChZ=NChZ_orig; glPrms.Nc_vec[0]=Nc_vec_0_orig;fSetting.Nc=Nc_orig; dSetting.chBundleFirst=chBundleFirst_orig; dSetting.chBundleLast=chBundleLast_orig; SRF=SRF_orig;
 
-					  //## main group, channel 5 #################
-					  firstBandY = 5;
-					  lastBandY  = 5;
-					  panBand    = -1; // use original panchromatic image for the generation of the coupled dictionaries
-					  prepGroupCalcForJSpFI( firstBandY, lastBandY, panBand, glPrms, fSetting, dSetting, SRF_orig, SRF, filter_coeff, gauss_filter,
-											 ImX,     ImX_LR,     ImY,     ImZ,
-											 ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp);
+					//   //## main group, channel 5 #################
+					//   firstBandY = 5;
+					//   lastBandY  = 5;
+					//   panBand    = -1; // use original panchromatic image for the generation of the coupled dictionaries
+					//   prepGroupCalcForJSpFI( firstBandY, lastBandY, panBand, glPrms, fSetting, dSetting, SRF_orig, SRF, filter_coeff, gauss_filter,
+					// 						 ImX,     ImX_LR,     ImY,     ImZ,
+					// 						 ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp);
 
-					  JSparseFIHM_alg(SubspaceTransformMat,AbundanceMat,iterMain, fSetting.iterMain, &paths, &dSetting, &fSetting, &oSetting, &sSetting, &pSetting, &glPrms, ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp, &SRF, comm_busy, group_busy, ImZ_init, report);
-					  ImZ->fill_band_data(ImZ_tmp,firstBandY,lastBandY);
-					  // restore original parameters
-					  glPrms.NChY=NChY_orig; glPrms.NChZ=NChZ_orig; glPrms.Nc_vec[0]=Nc_vec_0_orig;fSetting.Nc=Nc_orig; dSetting.chBundleFirst=chBundleFirst_orig; dSetting.chBundleLast=chBundleLast_orig; SRF=SRF_orig;
+					//   JSparseFIHM_alg(SubspaceTransformMat,AbundanceMat,iterMain, fSetting.iterMain, &paths, &dSetting, &fSetting, &oSetting, &sSetting, &pSetting, &glPrms, ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp, &SRF, comm_busy, group_busy, ImZ_init, report);
+					//   ImZ->fill_band_data(ImZ_tmp,firstBandY,lastBandY);
+					//   // restore original parameters
+					//   glPrms.NChY=NChY_orig; glPrms.NChZ=NChZ_orig; glPrms.Nc_vec[0]=Nc_vec_0_orig;fSetting.Nc=Nc_orig; dSetting.chBundleFirst=chBundleFirst_orig; dSetting.chBundleLast=chBundleLast_orig; SRF=SRF_orig;
 
-					  //## side group, channel 0 #################
-					  firstBandY = 0;
-					  lastBandY  = 0;
-					  panBand    = 1; // use original panchromatic image for the generation of the coupled dictionaries
-					  prepGroupCalcForJSpFI( firstBandY, lastBandY, panBand, glPrms, fSetting, dSetting, SRF_orig, SRF, filter_coeff, gauss_filter,
-											 ImX,     ImX_LR,     ImY,     ImZ,
-											 ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp);
-					  JSparseFIHM_alg(SubspaceTransformMat,AbundanceMat,iterMain, fSetting.iterMain, &paths, &dSetting, &fSetting, &oSetting, &sSetting, &pSetting, &glPrms, ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp, &SRF, comm_busy, group_busy, ImZ_init, report);
-					  ImZ->fill_band_data(ImZ_tmp,firstBandY,lastBandY);
-					  // restore original parameters
-					  glPrms.NChY=NChY_orig; glPrms.NChZ=NChZ_orig; glPrms.Nc_vec[0]=Nc_vec_0_orig;fSetting.Nc=Nc_orig; dSetting.chBundleFirst=chBundleFirst_orig; dSetting.chBundleLast=chBundleLast_orig; SRF=SRF_orig;
+					//   //## side group, channel 0 #################
+					//   firstBandY = 0;
+					//   lastBandY  = 0;
+					//   panBand    = 1; // use original panchromatic image for the generation of the coupled dictionaries
+					//   prepGroupCalcForJSpFI( firstBandY, lastBandY, panBand, glPrms, fSetting, dSetting, SRF_orig, SRF, filter_coeff, gauss_filter,
+					// 						 ImX,     ImX_LR,     ImY,     ImZ,
+					// 						 ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp);
+					//   JSparseFIHM_alg(SubspaceTransformMat,AbundanceMat,iterMain, fSetting.iterMain, &paths, &dSetting, &fSetting, &oSetting, &sSetting, &pSetting, &glPrms, ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp, &SRF, comm_busy, group_busy, ImZ_init, report);
+					//   ImZ->fill_band_data(ImZ_tmp,firstBandY,lastBandY);
+					//   // restore original parameters
+					//   glPrms.NChY=NChY_orig; glPrms.NChZ=NChZ_orig; glPrms.Nc_vec[0]=Nc_vec_0_orig;fSetting.Nc=Nc_orig; dSetting.chBundleFirst=chBundleFirst_orig; dSetting.chBundleLast=chBundleLast_orig; SRF=SRF_orig;
 
-					  //## side group, channels 6~7 #################
-					  firstBandY = 6;
-					  lastBandY  = 7;
-					  panBand    = 5; // use original panchromatic image for the generation of the coupled dictionaries
-					  prepGroupCalcForJSpFI( firstBandY, lastBandY, panBand, glPrms, fSetting, dSetting, SRF_orig, SRF, filter_coeff, gauss_filter,
-											 ImX,     ImX_LR,     ImY,     ImZ,
-											 ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp);
-					  JSparseFIHM_alg(SubspaceTransformMat,AbundanceMat,iterMain, fSetting.iterMain, &paths, &dSetting, &fSetting, &oSetting, &sSetting, &pSetting, &glPrms, ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp, &SRF, comm_busy, group_busy, ImZ_init, report);
-					  ImZ->fill_band_data(ImZ_tmp,firstBandY,lastBandY);
-					  // restore original parameters
-					  glPrms.NChY=NChY_orig; glPrms.NChZ=NChZ_orig; glPrms.Nc_vec[0]=Nc_vec_0_orig;fSetting.Nc=Nc_orig; dSetting.chBundleFirst=chBundleFirst_orig; dSetting.chBundleLast=chBundleLast_orig; SRF=SRF_orig;
+					//   //## side group, channels 6~7 #################
+					//   firstBandY = 6;
+					//   lastBandY  = 7;
+					//   panBand    = 5; // use original panchromatic image for the generation of the coupled dictionaries
+					//   prepGroupCalcForJSpFI( firstBandY, lastBandY, panBand, glPrms, fSetting, dSetting, SRF_orig, SRF, filter_coeff, gauss_filter,
+					// 						 ImX,     ImX_LR,     ImY,     ImZ,
+					// 						 ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp);
+					//   JSparseFIHM_alg(SubspaceTransformMat,AbundanceMat,iterMain, fSetting.iterMain, &paths, &dSetting, &fSetting, &oSetting, &sSetting, &pSetting, &glPrms, ImX_tmp, ImX_LR_tmp, ImY_tmp, ImZ_tmp, &SRF, comm_busy, group_busy, ImZ_init, report);
+					//   ImZ->fill_band_data(ImZ_tmp,firstBandY,lastBandY);
+					//   // restore original parameters
+					//   glPrms.NChY=NChY_orig; 
+					//   glPrms.NChZ=NChZ_orig; 
+					//   //glPrms.Nc_vec[0]=Nc_vec_0_orig;
+					//   fSetting.Nc=Nc_orig; 
+					//   dSetting.chBundleFirst=chBundleFirst_orig; 
+					//   dSetting.chBundleLast=chBundleLast_orig; 
+					//   SRF=SRF_orig;
 
-					  delete ImX_tmp;
-					  delete ImX_LR_tmp;
-					  delete ImY_tmp;
-					  delete ImZ_tmp;
-				  }else{
+					//   delete ImX_tmp;
+					//   delete ImX_LR_tmp;
+					//   delete ImY_tmp;
+					//   delete ImZ_tmp;
+				  //}else{
 					  JSparseFIHM_alg(SubspaceTransformMat,AbundanceMat,iterMain, fSetting.iterMain, &paths, &dSetting, &fSetting, &oSetting, &sSetting, &pSetting, &glPrms,
 									ImX, ImX_LR, ImY, ImZ, &SRF, comm_busy, group_busy, ImZ_init, report);
-				  }
+				  //}
 							   if(my_rank==0){
 								 //==================================================================//
 								 //                   Assess reconstruction results                  //
@@ -538,7 +532,7 @@ int main(int argc, char* argv[]) {
 									  }
 									  // load high resolution reconstructed image
 									  if(oSetting.writeImageFile && pSetting.store_patches_tmp_on_drive){
-										  ImZ->dataRead(paths.fname_ImZ, &report);
+										  ImZ->dataRead(paths.fname_ImZ_out, &report);
 									  }
 									  // load high resolution reference image
 									  SpEODataset *ImZ_ref;
@@ -582,7 +576,7 @@ int main(int argc, char* argv[]) {
               //========================================================#
 			  //#   Equation (1): improve reconstructed high resolution #
 			  //#   image spatially and spectrally using SRFs           #
-			  //#   and PSFs ( new step: added in Sep/Oct 2015 )        #
+			  //#   and PSFs                                            #
 			  //========================================================>
 			  if (fSetting.LQ_post_opt_im){
 				  full_im_optimization_LS(report, SubspaceTransformMat, AbundanceMat, &glPrms, &fSetting, &sSetting, &dSetting, ImX, ImY, ImZ, &SRF, comm_busy, group_busy);
@@ -605,7 +599,7 @@ int main(int argc, char* argv[]) {
 					       }
 					       // load high resolution reconstructed image
 					       if(oSetting.writeImageFile && pSetting.store_patches_tmp_on_drive){
-					     	  ImZ->dataRead(paths.fname_ImZ, &report);
+					     	  ImZ->dataRead(paths.fname_ImZ_out, &report);
 					       }
 					       // load high resolution reference image
 					       SpEODataset *ImZ_ref;
@@ -660,11 +654,11 @@ int main(int argc, char* argv[]) {
 			//==================================================================//
 			  if(oSetting.writeImageFile){
 				  if(iterMain==0){
-					  paths.fname_ImZ = paths.dir_out+"/"+paths.fname_ImZ;
+					  paths.fname_ImZ_out = paths.dir_out+"/"+paths.fname_ImZ_out;
 				  }
 				  if(pSetting.store_patches_tmp_on_drive){
 					  if(iterMain==0){
-						  paths.fname_ImZ = paths.fname_ImZ+"_iter"+(char)iterMain;
+						  paths.fname_ImZ_out = paths.fname_ImZ_out+"_iter"+(char)iterMain;
 					  }
 					  MPI_Barrier(comm_busy);
 					  double writeTSt = MPI_Wtime();
@@ -674,8 +668,8 @@ int main(int argc, char* argv[]) {
 					  if(my_rank==0){
 						  ImZ->writeENVIHeader(&report, &dSetting, &fSetting, &glPrms, &paths);
 					  }
-					  MPI_Barrier(comm_busy);
-					  glPrms.timeFileWrite = MPI_Wtime() - writeTSt;
+					  //MPI_Barrier(comm_busy);
+					  //glPrms.timeFileWrite = MPI_Wtime() - writeTSt;
 				  }
 			  }
 
@@ -711,7 +705,7 @@ int main(int argc, char* argv[]) {
 				  final_evaluation = true;
 				  // load high resolution reconstructed image
 				  if(oSetting.writeImageFile && pSetting.store_patches_tmp_on_drive){
-					  ImZ->dataRead(paths.fname_ImZ, &report);
+					  ImZ->dataRead(paths.fname_ImZ_out, &report);
 				  }
 				  // load high resolution reference image
 				  SpEODataset *ImZ_ref;
@@ -754,12 +748,12 @@ int main(int argc, char* argv[]) {
 					  }
 				  }else{
 					  if(iterMain==fSetting.iterMain-1 || oSetting.writeImageFileAfterEveryIter){
-						  string fname_ImZ_backup = paths.fname_ImZ;
+						  string fname_ImZ_out_backup = paths.fname_ImZ_out;
 						  if(oSetting.writeImageFileAfterEveryIter){
 							  // modify image out filename intermediately for this iteration
-							  stringstream fname_ImZ_tmp;
-							  fname_ImZ_tmp << paths.fname_ImZ << "_iter" << iterMain << ".dat";
-							  paths.fname_ImZ = fname_ImZ_tmp.str();
+							  stringstream fname_ImZ_out_tmp;
+							  fname_ImZ_out_tmp << paths.fname_ImZ_out << "_iter" << iterMain << ".dat";
+							  paths.fname_ImZ_out = fname_ImZ_out_tmp.str();
 						  }
 						  double writeTSt = MPI_Wtime();
 						  if(my_rank < numProcWrite){
@@ -769,26 +763,26 @@ int main(int argc, char* argv[]) {
 							  ImZ->writeENVIHeader(&report, &dSetting, &fSetting, &glPrms, &paths);
 						  }
 						  MPI_Barrier(comm_write);
-						  glPrms.timeFileWrite = MPI_Wtime() - writeTSt;
+						  //glPrms.timeFileWrite = MPI_Wtime() - writeTSt;
 
 						  if(oSetting.writeImageFileAfterEveryIter){
 							  // restore original file name
-							  paths.fname_ImZ = fname_ImZ_backup;
+							  paths.fname_ImZ_out = fname_ImZ_out_backup;
 						  }
 					  }
 				  }
 			  }
 
-			//==================================================================//
-			//                       Remove temporary files                     //
-			//==================================================================//
-			  if(my_rank==0){
-				  if(pSetting.store_patches_tmp_on_drive && dSetting.delete_tmp_patch_folders){
-					  cout << "delete tmp patch folders and files from disk.." << endl;
-					  remove_dir(paths.dir_tmp_patches.c_str());
-				  }
-			  }
-			  MPI_Barrier(comm_busy);
+			// //==================================================================//
+			// //                       Remove temporary files                     //
+			// //==================================================================//
+			//   if(my_rank==0){
+			// 	  if(pSetting.store_patches_tmp_on_drive && dSetting.delete_tmp_patch_folders){
+			// 		  cout << "delete tmp patch folders and files from disk.." << endl;
+			// 		  remove_dir(paths.dir_tmp_patches.c_str());
+			// 	  }
+			//   }
+			//   MPI_Barrier(comm_busy);
 			  //==================================================================//
 			  //      copy the results of ImZ to ImZ_init for next iteration      //
 			  //==================================================================//
@@ -894,6 +888,7 @@ int main(int argc, char* argv[]) {
 	  delete ImX;
 	  delete ImZ;
 
+	/*
 	  delete[] glPrms.Nm;
 	  delete[] glPrms.Nm2;
 	  for(int ii=0; ii<glPrms.NChX; ii++){
@@ -904,18 +899,19 @@ int main(int argc, char* argv[]) {
 	  }
 	  delete[] glPrms.km;
 	  delete[] glPrms.km2;
+	  */
 	//   MPI_Barrier(MPI_COMM_WORLD);
-	  delete[] glPrms.Nc_vec;
-	  delete[] glPrms.P_lmd_idx_row;
-	  for(int iG=0; iG<glPrms.Ng; iG++){
-		  delete[] glPrms.P_lmd_idx_bl[iG];
-	  }
-	  delete[] glPrms.P_lmd_idx_bl;
-	  delete[] glPrms.P_lmd_vecs;
+	//  delete[] glPrms.Nc_vec;
+	  //delete[] glPrms.P_lmd_idx_row;
+	//   for(int iG=0; iG<glPrms.Ng; iG++){
+	// 	  delete[] glPrms.P_lmd_idx_bl[iG];
+	//   }
+	  //delete[] glPrms.P_lmd_idx_bl;
+	  //delete[] glPrms.P_lmd_vecs;
 
 #ifndef _OPENMP
-	  delete[] glPrms.myChX;
-	  delete[] glPrms.myBundle;
+	  // delete[] glPrms.myChX;
+	  // delete[] glPrms.myBundle;
 #endif
 
 	//==================================================================//
