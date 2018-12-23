@@ -660,8 +660,8 @@ int main(int argc, char* argv[]) {
 					  if(iterMain==0){
 						  paths.fname_ImZ_out = paths.fname_ImZ_out+"_iter"+(char)iterMain;
 					  }
-					  MPI_Barrier(comm_busy);
-					  double writeTSt = MPI_Wtime();
+					  //MPI_Barrier(comm_busy);
+					  //double writeTSt = MPI_Wtime();
 					  if(my_rank < numProcWrite){
 						  ImZ->dataWriteParMPIIO(&report, &dSetting, &fSetting, &pSetting, &glPrms, &paths, comm_write);
 					  }
@@ -755,14 +755,14 @@ int main(int argc, char* argv[]) {
 							  fname_ImZ_out_tmp << paths.fname_ImZ_out << "_iter" << iterMain << ".dat";
 							  paths.fname_ImZ_out = fname_ImZ_out_tmp.str();
 						  }
-						  double writeTSt = MPI_Wtime();
+						  //double writeTSt = MPI_Wtime();
 						  if(my_rank < numProcWrite){
 							  ImZ->dataWrite(&report, &dSetting, &fSetting, &pSetting, &glPrms, &paths, comm_write, ImZ);//ImZ_ref_tmp);
 						  }
 						  if(my_rank==0){
 							  ImZ->writeENVIHeader(&report, &dSetting, &fSetting, &glPrms, &paths);
 						  }
-						  MPI_Barrier(comm_write);
+						  //MPI_Barrier(comm_write);
 						  //glPrms.timeFileWrite = MPI_Wtime() - writeTSt;
 
 						  if(oSetting.writeImageFileAfterEveryIter){

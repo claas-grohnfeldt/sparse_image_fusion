@@ -316,7 +316,6 @@ void SpEODataset::dataWrite(SpEOReport *report, SpEODataIOSetting *dSet, SpEOFus
 				<< "##        - MPI I/O                                      ##" << "\n"
 				<< "##        - ENVI header file                             ##" << "\n"
 				<< "##        - band interleaved by pixel (BIP)              ##" << "\n"
-				<< "##        - 16 bit unsigned integer                      ##" << "\n"
 				<< "###########################################################"
 				<< "\n" << "\n";
 
@@ -328,7 +327,6 @@ void SpEODataset::dataWrite(SpEOReport *report, SpEODataIOSetting *dSet, SpEOFus
 				<< "##        - MPI I/O                                      ##" << "\n"
 				<< "##        - ENVI header file                             ##" << "\n"
 				<< "##        - band interleaved by pixel (BIP)              ##" << "\n"
-				<< "##        - 16 bit unsigned integer                      ##" << "\n"
 				<< "###########################################################"
 				<< "\n" << "\n";
 	}
