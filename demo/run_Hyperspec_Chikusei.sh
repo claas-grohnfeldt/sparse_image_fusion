@@ -264,4 +264,5 @@ $output_image_format_flag $balance_ImX_term_coef"
 #----------------------------------
 # Run program
 #----------------------------------
-$RUN $RUNFLAGS -x LD_LIBRARY_PATH=$LIBRARY_PATH_GDAL $EXE $PROG_ARGS
+export LD_LIBRARY_PATH=$LIBRARY_PATH_GDAL
+$RUN $RUNFLAGS $EXE $PROG_ARGS
