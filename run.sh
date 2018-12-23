@@ -28,7 +28,7 @@ EXE='./bin/sparse_image_fusion'
 #----------------
 # 1: Arbitrary string roughly describing this job (string)
 #----------------
-job_name='SparseFIHM_demo_665211108350_Pavia_University'
+job_name='JSparseFIHM_demo_665211108350_Pavia_University'
 #       =LOADL_JOB_NAME
 
 #----------------------------------
