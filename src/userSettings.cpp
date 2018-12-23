@@ -285,10 +285,6 @@ void getUserSettings(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOFusionSe
 	// Specify whether or not original high resolution MS image is available.
 	// If so, the fusion results will be evaluated.
 	oSetting->prec                = 10;
-
-	//fSetting->pFirst             = 0; // atoi(argv[10]);
-	//fSetting->pLast              = 999999999; // atoi(argv[11]);
-
 	fSetting->Nc                  = 1; // relevant for older version of J-SparseFI-HM
 	fSetting->No                  = 0; // relevant for older version of J-SparseFI-HM
 	fSetting->tol_SRF             = 0.5; // relevant for older version of J-SparseFI-HM
@@ -312,22 +308,10 @@ void getUserSettings(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOFusionSe
 	pSetting->numProcPerPatch    = 1;
 	// patch parallelization strategy: work stealing (true) or fixed work scheduling (false)
 	pSetting->workStealingTurns  = -1;
-	
-    //dSetting->delete_tmp_patch_folders       = true;
-	//dSetting->imageConstructionOnly          = false;
-	//dSetting->contUnfinishedRec              = false;
 
 	// calc. coeff. in full image opt. eq. via SNR calc. of ImX and ImY (bool).
 	// include SNR normalization to compensate for colored (band-dependend) noise (bool)
 	fSetting->SNR_normalization = true;
-
-//	Attention: set in getPaths.cpp!!!
-//	if(dSetting->contUnfinishedRec){
-//		paths->PathToIncompletePatchSetCSV = argv[35];
-//	}
-
-	//dSetting->dir_tmp_patches_additional_num = 0; //atoi(argv[36]);
-
 //  matrix (dictionary) normalization norm: 0: spectral norm, 1: Frobenious norm (bool)
     fSetting->matrixNorm        = true;
     fSetting->addMeanPixelwise  = false;
@@ -336,41 +320,18 @@ void getUserSettings(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOFusionSe
     //#######################################################
 	// Choose a solver for the sparse reconstruction (optimization) problem (currently JPFISTA only)
     sSetting->solver             = JPFISTA;
-    // 39: maximum number of iterations to run the algorithm (int)
+    // maximum number of iterations to run the algorithm (int)
 	sSetting->maxiter_out        = 200000;
-	// 40: tolerance
+	// tolerance
 	sSetting->tol                = 0.000000000001;
- // //    //########################################################
-	// // //# for Least squares post processing on the patch level #
-	// // //########################################################
-	// // // 41: flag used to decide whether or not the least square post-minimization is activated (bool)
-	// // fSetting->LQ_post_opt  = false;
-	// // // 42: regularization parameter trading the relative weighting of the high resolution input patch xHR (double)
-	// // fSetting->lambdaX      = 1.0;
-	// // // 43: regularization parameter trading the relative weighting of the low resolution input patch yLR (double)
-	// // fSetting->lambdaY      = 1.0; 
-	// // // 44: maximum number of iterations in the GS step to solve the least squares problem (int)
-	// // sSetting->maxiter_CGLS = 400;
-	// // // 45: error tolerance (double)
-	// // sSetting->tol_r_CGLS   = 0.000000000001;
-	// // // 46: decides whether or not the coefficients get updates via least squares (bool)
-	// // sSetting->fix_Alpha    = 1;
-	// 47: decides whether or not the mean values of Z are set to the same mean values as Y (i.e. either delta_m remains the initial zero vector or it gets updated via least squares) (bool)
+	// decides whether or not the mean values of Z are set to the same mean values as Y (i.e. either delta_m remains the initial zero vector or it gets updated via least squares) (bool)
 	sSetting->fix_delta_m  = false;
 
-    //58 set lambdaZ_ABC to this number only in the first iteration. A low value can be helpful e.g. if the initial image ImZ_init is not very good/trustworthy (double)
+    //set lambdaZ_ABC to this number only in the first iteration. A low value can be helpful e.g. if the initial image ImZ_init is not very good/trustworthy (double)
 	fSetting->lambdaZ_ABC_in_1st_iter = 1.0;
 
-	//70: e.g. =0 for generic; =1 for SuperMUC-pr45ne and =2 for CG local (int)
-	//dSetting->platformID = 0;
-
-	//75: set the coeff. of |R*Z-X| in full image opt. eq. to NChY/NChX [only relevant if SNR_normalization==1 ] (bool)
-	//fSetting->balance_ImX_term_coef = false;
-
-    //77: use LR (low resolution) patch norm for normalization of corresponding LR and HR patch in coupled dictionaries. If set to 0 the HR nor is used by default. (bool)
+    // use LR (low resolution) patch norm for normalization of corresponding LR and HR patch in coupled dictionaries. If set to 0 the HR nor is used by default. (bool)
 	fSetting->use_LRnorm_for_dic_normalization = true; //
-	//78: load and use a-priori calculated dictionaries. (bool)
-	//fSetting->load_DictHR_and_DictLR = false;
 	
 	fSetting->lambdaZ_ABC = 1.0;
 
@@ -417,97 +378,5 @@ void getUserSettings(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOFusionSe
 		}
 		pSetting->parWrNumProc = tmp;
 	}
-	// if(fSetting->LQ_post_opt && pSetting->numProcPerPatch>1){
-	// 	if(my_rank==0){
-	// 		cerr << endl << "ERROR: The least-squares based post processing step (program argument LQ_post_opt) is set active. This step is only supported for ONE PROCESSOR PER PATCH! However, the program argument numProcPerPatch is set to a number greater than one!" << endl << endl;
-	// 	}
-	// 	MPI_Barrier(MPI_COMM_WORLD);
-	// 	exit(2);
-	// }
-	//if(pSetting->store_patches_tmp_on_drive && dSetting->contUnfinishedRec ){
-	//	if(my_rank==0){
-	//		cerr << endl << "ERROR: The two flags 'store_patches_tmp_on_drive' and 'contUnfinishedRec' are not compatible!" << endl << endl;
-	//	}
-	//	MPI_Barrier(MPI_COMM_WORLD);
-	//	exit(2);
-	//}
-//}
-
-
-	// TO BE REMOVED FROM ENTIRE PROGRAM:
-	 // paths->dir_tmp             = argv[42];
-     // paths->dir_tmp_patches
-	 // pSetting->store_patches_tmp_on_drive
-
-
-
-
-
-     // // // char buf[15]="";
-     // // // if(my_rank==0){
-     // // //         time_t t = time(0);
-     // // //         struct tm  tstruct;
-     // // //         tstruct = *localtime(&t);
-     // // //         strftime(buf, sizeof(buf), "%y%m%d_%H%M%S", &tstruct);
-     // // // }
-     // // // MPI_Bcast(&buf, sizeof(buf), MPI_CHAR, 0,MPI_COMM_WORLD);
-     // // // string mystringstr(buf);
-     // // // if(pSetting->store_patches_tmp_on_drive){
-     // // //         paths->dir_tmp_patches = paths->dir_tmp + "/patches/" + mystringstr;// + "_" + dSetting->jobID;
-     // // //         if(my_rank==0){
-     // // //                 string tmpp(paths->dir_tmp);
-     // // //                 tmpp += "/patches";
-     // // //                 mkdir(paths->dir_tmp.c_str(), 0777);
-     // // //                 chmod(paths->dir_tmp.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-     // // //                 mkdir(tmpp.c_str(), 0777);
-     // // //                 chmod(tmpp.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-     // // //                 mkdir(paths->dir_tmp_patches.c_str(), 0777);
-     // // //                 chmod(paths->dir_tmp_patches.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-     // // //         }
-     // // // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// // Choose a sparse image fusion methods
-	// //fSetting->fMethod             = JSparseFI;
-	// //                            = SparseFI
-	// //                         or = JSparseFI
-	// //                         or = JSparseFIHM
-	// if(strcmp(argv[4],"JSparseFIHM") == 0){
-	// 	fSetting->fMethod             = JSparseFIHM;
-	//     // use new method for calculating Z based on step-wise least squares optimization (bool)
-	//     //fSetting->useNewMethodForCalculatingZ = true;
-	// //}else if(strcmp(argv[4],"JSparseFI") == 0){  <- old implementation of J-SparesFI
-	// //	fSetting->fMethod             = JSparseFI;
-	// }else if(strcmp(argv[4],"GroupedJSparseFI") == 0){
-	// 	fSetting->fMethod             = GroupedJSparseFI; // <- new implementation of J-SparseFI for WorldView-2
-	//     // use new method for calculating Z based on step-wise least squares optimization (bool)
-	//     fSetting->useNewMethodForCalculatingZ = false;
-	// }else if(strcmp(argv[4],"SparseFI") == 0){
-	// 	fSetting->fMethod             = SparseFI;
-	//     // use new method for calculating Z based on step-wise least squares optimization (bool)
-	//     fSetting->useNewMethodForCalculatingZ = false;
-	// }else{
-	// 	cerr << "ERROR: UNKNOWN Fusion Method";
-	// 	exit(2);
-	// }
-
-
-
-
-
-
-
 }
 

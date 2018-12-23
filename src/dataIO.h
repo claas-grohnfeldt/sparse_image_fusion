@@ -25,7 +25,6 @@ struct SpEOSolverSetting;
 struct SpEOParallelSetting;
 struct SpEOPaths;
 struct SpEOGlobalParams;
-//struct SpEOGlobalParams;
 struct SpEOParam;
 struct SpEOAssessmentMetricsStr_Sep;
 struct SpEOAssessmentMetricsStr;
@@ -35,9 +34,7 @@ struct SpEOAssessmentMetrics;
 /*      Pull in the public declarations.                                */
 /* -------------------------------------------------------------------- */
 #include "includes.h"
-// ############# NNLS 160630 >>>>>>>>
 #include "nnls.h"
-// ######################### <<<<<<<<
 
 using namespace Eigen;
 using namespace std;
@@ -132,7 +129,6 @@ typedef Matrix<float, Dynamic, 1> SpEOVectorF;
 typedef Matrix<int, Dynamic, Dynamic, Dynamic, RowMajor> SpEOMatrix3DI;
 typedef Matrix<int, Dynamic, Dynamic, RowMajor> SpEOMatrixI;
 typedef Matrix<int, Dynamic, 1> SpEOVectorI;
-//////////////////////////////////////////////////////////////////////////////
 
 #define LR_ASSESSMENT   	0
 #define HR_ASSESSMENT   	1
@@ -158,26 +154,18 @@ private:
 	std::string fname;
 
 protected:
-	//const char *byteOrder;
-//	const char *imFormat;
 	string imFormat;
-//	const char *imFormatLong;
 	string imFormatLong;
-//	const char *projectionRef;
 	string projectionRef;
-
-//	char **papszMetadata;
 
 	SpEODataFormat dataFormat; // SpEODouble or SpEOFloat
 	
 	long sizeU;
 	long sizeV;
 	short NCh;
-	//unsigned short bitDepth; // e.g. bitDepth == 8 if the range if pixel values equals [0,255]
 
 	SpEOResolution eResolution;
 	SpEOImFlag imFlag;
-//	SpEORasterBand **rasterBands;
 
 public:
 	// moved here from protected part, because the post-optimization needs to overwrite the data of ImZ
@@ -186,8 +174,6 @@ public:
     SpEORasterBand** get_rasterBands(void){return rasterBands;};
 	void set_fname(std::string fnm){fname = fnm;};
 	void set_fname(const char *fnm){fname = fnm;};
-//	void set_metadata(char **metadata){papszMetadata = metadata;};
-//	char **get_metadata(void){return papszMetadata;};//
 	string get_imFormat(void){return imFormat;};//
 	string get_imFormatLong(void){return imFormatLong;};//
 	string get_projectionRef(void){return projectionRef;};//
@@ -200,7 +186,6 @@ public:
 	double *get_geoTransform(void){return geoTransform;};
 	const char *get_fname(void){return fname.c_str();};//
 	void dataRead(std::string fnm, SpEOReport *report);
-//	void dataWrite(const char *new_fname,SpEOReport *report);
 	void dataWrite(SpEOReport *report, SpEODataIOSetting *dSet, SpEOFusionSetting *fSet, SpEOParallelSetting *pSet, SpEOGlobalParams *glPrms, SpEOPaths *paths, MPI_Comm comm_write, SpEODataset *ImZ_ref_tmp);
 
 	void writeENVIHeader(SpEOReport *report, SpEODataIOSetting *dSet, SpEOFusionSetting *fSetting, SpEOGlobalParams *glPrms, SpEOPaths *paths);
@@ -218,12 +203,6 @@ public:
 	void copyMetaInfoFromDatasets(SpEODataset *sourceImSpatial, SpEODataset *sourceImSpectral, SpEODataset *sourceImFormat, SpEODataFormat dataFormat);
 	void fill_band_data(SpEODataset *sourceIm, int firstBand, int lastBand);
         void shift_image_bandwise(double *&Im_shift);
-	//void fillArrayFromMat();
-//	SpEODataset(std::string fnm, SpEOResolution eRes)
-//	{
-//		eResolution = eRes;
-//		dataRead(fnm);
-//	};
 	SpEODataset(SpEOResolution eRes, SpEOImFlag myImFlag){
 		eResolution = eRes;
 		imFlag = myImFlag;
@@ -249,27 +228,15 @@ private:
 	friend void cutRelevantInput(SpEOResolution eRes, SpEOImFlag imFlag, SpEODataset *Im, SpEODataIOSetting *dSet, SpEOGlobalParams *glPrms, bool cutOffLRBoundaryPixels);
 	friend void lowPassFilter_and_downSample(SpEODataset *Im,SpEODataset *Im_LR, SpEODataFormat input_format, SpEODataFormat output_format, SpEOGlobalParams &glPrms);
 	  protected:
-	  //public:
-	    //SpEODataset  *poDS;
-	    //SpEODataType bandDataType;
 	    int          nBand; /* 1 based */
 	    double	     minMaxVal[2];
-	    //int          nRasterVSize;
-	    //int          nRasterUSize;
-	    //SpEODataType eDataType;
 	    string dataType;
-//	    const char *dataType;
 	    string colorInterp;
-//	    const char *colorInterp;
-
-	    //float *bandData; // this is where the data of the entire band is stored as 1D array. Maybe later, this will be replaced by using rasterBlocks only.
-//	    SpEOMatrixF bandDataMat; // this is also where the data of the entire band is stored as 1D array. Maybe later, this will be replaced by using rasterBlocks only.
 	    SpEOMatrixF bandDataMat; // this is also where the data of the entire band is stored as 1D array. Maybe later, this will be replaced by using rasterBlocks only.
 
 public: 
 	    // moved here from private part, because the content of ImZ needs to be overwritten after post-optimization
 	    SpEOMatrixD bandDataMatD; // only used for ImZ, i.e. for the reconstructed high resolution image
-	    //float *get_bandData(void){return bandData;};
 	    SpEOMatrixF *get_bandDataMat(void){return &bandDataMat;};
 	    SpEOMatrixD *get_bandDataMatD(void){return &bandDataMatD;};
 	    SpEODataType get_bandDataType(void){return bandDataType;};
@@ -279,16 +246,6 @@ public:
 	    double *get_minMaxVal(void){return minMaxVal;};
 	    string get_dataType(void){return dataType;};
 	    string get_colorInterp(void){return colorInterp;};
-//	    SpEORasterBand(){};
-//		~SpEORasterBand(){
-//			//delete [] bandData;
-////			delete const_cast<char*> (dataType);
-////			delete [] dataType;
-//			//delete const_cast<char*> (colorInterp);
-////			delete [] dataType;
-////			delete [] colorInterp;
-//		};
-
 	    ~SpEORasterBand();
 };
 
@@ -304,8 +261,6 @@ public:
 	int NCh;
 	SpEOMatrixF* dictMat;
 	SpEODataset* correspDataset;
-//public:
-  //SpEODictionary(SpEODataset *corrDS);
   SpEODictionary(SpEODataset *corrDS, SpEOFusionSetting *fSetting); // for pan images
   SpEODictionary(SpEODataset *corrDS){correspDataset = corrDS;}; // for pan images
   SpEODictionary(){}; // for resulting MS HR image
@@ -345,28 +300,13 @@ public:
 	double lambdaY;			// regularization parameter trading the relative weighting of the low resolution input patch yLR (double)
 	double lambdaX_im;		// regularization parameter trading the relative weighting of the high resolution input image I_X (double)
 	double lambdaY_im;		// regularization parameter trading the relative weighting of the low resolution input image I_Y (double)
-	//
-//	short *rgbChannelNo;	//
 	int NDP;				// number of nearest patches = number of atoms in dynamic dictionaries
-//	short fDS;				// down-sampling factor = resolution ration between HR and LR input image
-//	int maxIter;			// maximum number of iterations. To be set to one, because it is the only valid number at the moment.
-//	int pFirst;             // for tests and to write coefficients of specific patches, the user can specify a subset of patches he wants to be reconstructed. ...
-//	int pLast;              // ... Therefore, he specifies the limits pFirst and pLast.
 	bool evaluate;           // 1: evaluation will be done immetiately after the reconstruction during the same job; 0: evaluation will have to be done in a separate after processing step
 	bool evaluate_ImZ_init;  // evaluate the initial image InZ_init
 	int dictselect; 		// Select between NNP(0) and Nonlocal(1) dictionary selection
-	//  TMP >>>>>>
-	//  37: matrix (dictionary) normalization norm: 0: spectral norm, 1: Frobenious norm (bool)
 	bool matrixNorm;
 	bool addMeanPixelwise;
-	//  <<<<<< TMP
-	//bool LQ_post_opt;       // flag used to decide whether or not the least square post-minimization (of any individual patch) is activated (bool)
 	bool LQ_post_opt_im;    // flag used to decide whether or not the least square post-minimization (of the final image) is activated (bool)
-	//bool useSimulatedImXforDictLearn; // for all spectral groups: flag used to decide if the high resolution monochromatic image which is used
-	                                  // for dictionary selection/learning is created as a correlation-based linear combination of the available
-	                                  // channels in ImX (if 'true'), or if one of the available channels in ImX (selection according to SRF integrals)
-	                                  // is used as it is (if 'false').
-	//bool useNewMethodForCalculatingZ;
 	double lambdaX_ABC;
 	double lambdaY_ABC;
 	double lambdaZ_ABC;
@@ -374,10 +314,8 @@ public:
 	int ImZ_init_type;
 	int iterMain;  // number of iterations/alternations between patchwise calculation of ImZ and the post-refinement of ImZ via full image optimization.
 	bool doFullImOptWithoutPatRec;
-
 	double Nc_max;  // maximum size of spectral group above groups will be double-checked and perhaps split into subgoups (int)
 	double theta;  // minimum cross-correlation within spectral goups (double)
-
 	int set_neg_to_0;   // = 0  => set negative values to zero only at the very end, before writing the final image
 						// = 1  => set negative values to zero only after patch reconstruction
 						// = 2  => set negative values to zero only after full image optimization
@@ -393,26 +331,18 @@ public:
 	bool SNR_normalization;       // calc. coeff. in full image opt. eq. via SNR calc. of ImX and ImY
 	bool balance_ImX_term_coef;   // set the coeff. of |R*Z-X| in full image opt. eq. to NChY/NChX [only relevant if SNR_normalization==1]
 	bool use_LRnorm_for_dic_normalization; // 
-	//bool load_DictHR_and_DictLR;
 };
 
 struct SpEODataIOSetting
 {
 public:
 	string jobName;
-	//string jobID;
 	int chBundleFirst;//
 	int chBundleLast;
 	int uLFirst;                        // low resolution vertival pixel coordinate from where the reconstruction should start (default: 0) (int)
 	int uLLast;                         // low resolution vertival pixel coordinate from where the reconstruction should end (default: 9999999) (int)
 	int vLFirst;                        // low resolution horizontal pixel coordinate from where the reconstruction should start (default: 0) (int)
 	int vLLast;                         // low resolution horizontal pixel coordinate from where the reconstruction should end (default: 9999999) (int)
-	//bool delete_tmp_patch_folders;      // delete tmp patch folders after the fusion process?
-	//int dir_tmp_patches_additional_num; // number of additional directories that contain previously processed tmp patches needed to reconstruct full image
-	//bool imageConstructionOnly;         // Construct the image exclusively from previously processed TMP patches. No patch processing will be done, which makes most of the parameters set above inaffective (bool)
-	                                    //   TMP patches must be located in the directories given as last arguments in this list
-	//bool contUnfinishedRec;             // continue unfinished reconstruction
-	//int platformID;                     // e.g. =1 for SuperMUC or =2 for CG local
     bool saveAsDouble;
 };
 
@@ -434,10 +364,8 @@ struct SpEOSolverSetting
 {
 public:
 	SpEOSparseSolver solver;//
-	//int maxiter_in; 	// inner loop (8 is fine)
 	int maxiter_out; 	// outer loop
 	double tol; 		// tolerance
-	//double weight;		//
 	// for Least squares post processing on the patch level
 	int maxiter_CGLS;   // maximum number of iterations in the GS step to solve the least squares problem
 	double tol_r_CGLS;  // error tolerance
@@ -455,7 +383,6 @@ public:
 	int numProcGrp;        // number of (MPI) processes in each group, i.e. number of processes jointly working on one patch
 	int numProcPerPatch;
 	int workStealingTurns; // switch between two patch reconstruction parallelization strategies.
-//	bool parallelWriting;  // data will be written to the resulting file in parallel using MPI IO. This requires almost no memory!!! 0: only root process writes. This version requires twice as much memory an number of the sice
 	bool store_patches_tmp_on_drive; // store the reconstructed patches temporarily on hard drive to avoid having the entire resonstructed image in the memory. (bool)
 	int parWrNumProc;      // maximum number of processors to be used for writing final image in parallel. [only affective if parWr==1] (int)
 };
@@ -470,18 +397,8 @@ public:
 	std::string fname_ImZ_init;
 	std::string fname_ImZ_out;
 	std::string fname_SRF; // Name of .csv file containing APRIORI GIVEN spectral response functions of multispectral sensor with values rastered to the centers of the spectral response function of the hyperspectral sensor
-//	std::string fname_SRF_estimated; // Name of .csv file containing the ESTIMATED spectral response functions of multispectral sensor with values rastered to the centers of the spectral response function of the hyperspectral sensor
-//	std::string fname_SRF_for_Spectral_Grouping; // Name of .csv file containing (possibly modified) spectral response functions of multispectral sensor with values rastered to the centers of the spectral response function of the hyperspectral sensor
-//	const char *fname_SRF; // Name of .csv file containing spectral response functions of multispectral sensor with values rastered to the centers of the spectral response function of the hyperspectral sensor
 	std::string dir_tmp;
 	std::string dir_tmp_patches;
-//	int dir_tmp_patches_additional_num;
-//	std::string *dir_tmp_patches_additional; // additional directories that contain previously processed tmp patches needed to reconstruct full image
-//	std::string PathToIncompletePatchSetCSV; // path to .csv file that contains the list of linear patch IDs (iP numbers) which remain to be processed in oder to finish incomplete reconstruction
-	                                         // [applicable ONLY IF (contUnfinishedRec==TRUE)] (string)
-//        std::string fname_SubspaceTransformMat; // e.g. Endmember matrix as VCA output
-//	std::string fname_DictHR; // pre-calculated high resolution dictionary
-//	std::string fname_DictLR; // pre-calculated low resolution dictionary
 };
 
 struct SpEOGlobalParams
@@ -503,49 +420,10 @@ public:
 	int vPLast;					// horizontal index of last patch the reconstructed image region
 	short fDS;					// down-sampling factor = resolution ration between HR and LR input image
 	int NP;                     // total number of patches (in one band) (= numPatchesY * numPatchesX)
-//	int usedPatches;			//
 	SpEOVectorI idxPUH;         //
 	SpEOVectorI idxPVH;         //
 	int* idxChY;
 	SpEOMatrixD ***SparseCoeffs;// originally: SpEOMatrixD *SparseCoeffs;
-	// SpEOMatrixD decMat_C;		// [Only relevant for J-SparseFI-HM] Decision matrix. depends on (1) spectral response function, (2) Nc, and (3) No
-	// SpEOVectorD decMat_C_IT_ChX;   // Index Table (ChX) for non-zero entries of decMat_C
-	// SpEOVectorD decMat_C_IT_Bundle;// Index Table (Bundle) for non-zero entries of decMat_C
-	//int Ng;						// [Only relevant for J-SparseFI-HM] Number of groups of hyperspectral channels that are jointly sharpened
-	//int *Nc_vec;     			// [Only relevant for J-SparseFI-HM] Vector of length Ng; Numbers of HS channels in channel groups (in case of Spectral Grouping,
-	                            // all values in Nc_vec are identical and equal to the Nc value specified by the user in fSettings)
-	//int sum_Nc_vec;     		// sum of all values stored in Nc_vec
-	//SpEOMatrixI* P_lmd_idx_row; // for every row (each corresponding to one HS channel iChY) these matrices contain the relevant corresponding block indexes (first row) and the corresponding entry indexes relative to the corresponding block's origin each starting at 0.
-	//int **P_lmd_idx_bl;          // For every block (1,...,Ng) this array contains the absolute (total) row- and column index in the actual sparse matrix P_lmd. Row indexes are stored in the first row and the corresponding column indexes are stored in the second row.
-	// SpEOVectorD* P_lmd_vecs;    // vectors containing the non-trivial entries along the diagonal in the corresponding blocks (= spectral groups) in P_lmd
-//	int * Nc_start_pos;         // vector containing the index of the first HS channel in each group
-//	                            // (in case of Spectral Grouping, all groups (possibly except for the last group) are equally spaced, i.e. Nc_start_pos is linearly increasing)
-//	SpEOMatrixF P_lmd;          // Matrix to conduct (possibly weighted) spectral averaging of the hyperspectral spectral bands that correspond to multiple spectral groups
-//	SpEOVectorI *P_lmd_idx;     // NChZ vectors of indexes which indicate the non-trivial column entries in row j=1,...,NChZ in matrix P_lmd
-//	int *Nm;					/* [Only relevant for J-SparseFI-HM] Number of non-zero entries of C in row m=1,...,NChX (NChX = number of bands of X)
-//								 *   Nm[1] , ... , Nm[NChX] */
-//	int *Nm2;					/* [Only relevant for J-SparseFI-HM] Number of non-zero entries of C in bundle b=1,...,Ng (Ng = number of groups of HS bands)
-//								 *   Nm2[1] , ... , Nm2[Ng] */
-//	int **km;					/* [Only relevant for J-SparseFI-HM] Column indices of non-zero entries of C in row m=1,...,NChX (NChX = number of bands of X)
-//								 *   km[1][1]  , ... , km[1][Nm[1]]
-//								 *      ...    , ... ,    ...
-//								 *   km[NChX][1] , ... , km[NChX][Nm[NChX]] */
-//	int **km2;					/* [Only relevant for J-SparseFI-HM] Column indices of non-zero entries of C in row m=1,...,NChX (NChX = number of bands of X)
-//								 *   km2[1][1]  , ... , km2[1][Nm2[1]]
-//								 *      ...     , ... ,    ...
-//								 *   km2[Ng][1] , ... , km2[Ng][Nm2[Ng]] */
-	// double timeMainLoop;		//
-	// double timeFileWrite;
-	// double timeTotal;
-	// double timeDictSelect;
-	// double timeDictSelect_avg;
-	// int numProcPerPatch;     // moved to SpEOParallelSetting
-	//int numProbPerPatch;
-#ifndef _OPENMP
-	//int *myChX;					// varies for different processes
-	//int *myBundle;
-	//int myNumProbPerPatch;
-#endif
 	int numPatchGroups;
 	int NP_sub;
 	int sizeUL;
@@ -557,10 +435,6 @@ public:
 	int sizeUH_red;
 	int sizeVH_red;
 	string myProcName;          // name of the processor/node the current process my_rank belongs to
-
-//	int myJobInPatch;
-
-	// more to come..
 };
 
 
@@ -623,7 +497,6 @@ struct SpEOParam
     public:
         int NCh; // number of channels
         int prec; // user-defined number precision
-//        int maxIter; // number of iterations of the J-SparseFI algorithm
     };
 
 
@@ -644,26 +517,18 @@ class CSVRow
 void cutRelevantInput(SpEODataset *ImX, SpEODataset *ImY, SpEODataIOSetting *dSet);
 void cutRelevantInput(SpEODataset *ImZ, SpEOImFlag imFlag, SpEODataIOSetting *dSet, SpEOGlobalParams *glPrms, bool cutOffLRBoundaryPixels);
 
-//void read_CSV(char *CSVHead, SpEOMatrixF *Mat, const char *fname_CSV, char delimiter, int skipLns);
 int read_CSV(SpEOMatrixD *Mat, const char *fname_CSV, char delimiter, int skipLns);
 int read_CSV(SpEOMatrixF *Mat, const char *fname_CSV, char delimiter, int skipLns);
 int read_CSV(SpEOMatrixI *Mat, const char *fname_CSV, char delimiter, int skipLns);
-//void read_SRF(SpEOGlobalParams *glPrms, SpEOMatrixF *Mat, string fname_CSV, char delimiter, bool normalize_SRF);
 void read_SRF(SpEOGlobalParams *glPrms, SpEOMatrixD *Mat, string fname_CSV, char delimiter, bool normalize_SRF);
-//void read_SRF(SpEOMatrixF *Mat, const char *fname_CSV, char delimiter);
 void write_Mat_to_CSV(SpEOMatrixF *Mat, const char *fname_CSV);
 void write_Mat_to_CSV(SpEOMatrixD *Mat, const char *fname_CSV);
-
 void calcDecisionMat(SpEOMatrixD *SRF, SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, SpEOParallelSetting *pSet, SpEOGlobalParams *glPrms);
-
-//void createImFromTMPFiles(SpEOPaths *paths, SpEOFusionSetting *fSetting, SpEOGlobalParams *glPrms, SpEODataset *ImZ);
-
 void printOneAsTwoDimArray(int nVSz, int nUSz, float *oneDimArray,int numRows,int numCols, int *rows,int *cols);
 void convertOneToTwoDimArrayAndPrint(int nVSz, int nUSz, float *oneDimArray);
 string createStr(int number, string Str);
 string double2str(double num, int prec);
 string int2str(int number);
-//void createTable(SpEOAssessmentMetricsStr *assessmStr, SpEOAssessmentMetricsStr_Sep *assessmStrSep, SpEOFusionSetting *fSetting, SpEOGlobalParams *glPrms, int *maxDigits, int type, ofstream& reportFile, string reportFileName);
 void createTable(SpEOAssessmentMetricsStr *assessmStr, SpEOAssessmentMetricsStr_Sep *assessmStrSep, SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, SpEOGlobalParams *glPrms, int *maxDigits, int type, SpEOReport *report);
 int remove_dir(const char *path);
 void save_dSetting(SpEOPaths *paths, SpEODataIOSetting *fSetting);
@@ -675,20 +540,10 @@ void save_glPrms(SpEOPaths *paths, SpEOGlobalParams *glPrms);
 void save_fusion_setup(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOFusionSetting *fSetting, SpEOParallelSetting *pSetting, SpEOSolverSetting *sSetting, SpEOOutputSetting *oSetting, SpEOGlobalParams *glPrms);
 void save_evalResults(SpEOPaths *paths, SpEOGlobalParams *glPrms, SpEOFusionSetting *fSetting, SpEOAssessmentMetrics *assMetrics_HR, int iterMain, int numIterMain, bool beforeFullImOpt, bool doFullImOptWithoutPatRec, bool init_image_eval, bool final_evaluation);
 void sample_error(int error, char *string);
-
-/////////////////////// dictionary selection  //////////////////////
 void dictSelectFunc(SpEOMatrixF *patchCompSubsetfloat, SpEODataset *ImX_LR, SpEODataset *ImX, SpEODataset *ImY, SpEOFusionSetting *fSet, SpEOGlobalParams *glPrms, int NP, int iP, int uP, int vP, SpEOVectorI *idxPUH, SpEOVectorI *idxPVH, SpEOVectorI *idxPUL, SpEOVectorI *idxPVL, SpEOMatrixD *SRF, SpEOMatrixF *patchComp, int my_rank, int ipp, int &NDP);
 void dictSelectFunc(SpEOMatrixD *patchCompSubsetfloat, SpEODataset *ImX_LR, SpEODataset *ImX, SpEODataset *ImY, SpEOFusionSetting *fSet, SpEOGlobalParams *glPrms, int NP, int iP, int uP, int vP, SpEOVectorI *idxPUH, SpEOVectorI *idxPVH, SpEOVectorI *idxPUL, SpEOVectorI *idxPVL, SpEOMatrixD *SRF, SpEOMatrixD *patchComp, int my_rank, int ipp, int &NDP);
-// Use this function for easy sorting of tables using the std::sort() function
 bool argsort_comp(const argsort_pair& left, const argsort_pair& right);
-////////////////////////////////////////////////////////////////////
-
 void checkInputForJSpFI(SpEOGlobalParams &glPrms, SpEOFusionSetting &fSetting, SpEOParallelSetting &pSetting);
-
-//template<typename Derived>
-//bool is_finite(const Eigen::MatrixBase<Derived>& x);
-//template<typename Derived2>
-//bool is_nan(const Eigen::MatrixBase<Derived2>& x);
 bool is_inf_or_nan(double x);
 bool is_inf_or_nan(float x);
 bool is_inf_or_nan(int x);
@@ -726,28 +581,8 @@ void calc_idxChY_and_Nc_vec(int *idxChY, int *Nc_vec, int Ng, SpEOMatrixD &CCmat
 void calc_refined_CCmins(double &CCmin1, double &CCmin2, double &CCmin3, SpEOMatrixD &CCmat_grp, double CCmin, int Nc_max);
 void grp_sngl_bnd_grps_with_high_corr_nbrs(int **Nc_vec_grp, int **idxChY_grp, int *Ng_grp, int iG_lrg, SpEOMatrixD &CCmat);
 
-
-// ############# NNLS 160630 >>>>>>>>
-//template <typename MatrixType>
-//bool testNNLS(const MatrixType &A,
-//                const Matrix<typename MatrixType::Scalar, MatrixType::RowsAtCompileTime, 1> &b,
-//                const Matrix<typename MatrixType::Scalar, MatrixType::ColsAtCompileTime, 1> &x,
-//                double eps);
-//bool case_1();
-//bool case_2();
-//bool case_3();
-//bool case_4();
-//bool case_5();
-//bool case_6();
 int NNLS_testing_CG();
-// ########################## <<<<<<<<<<
 void transform_SpEODataset_to_2D(SpEODataset *Im ,SpEOMatrixD &Im_2D);
 bool estimate_SRFs_and_ImX_shift(SpEOMatrixD &SRF, double *&ImX_shift, SpEOMatrixD &ImY_2D, SpEOMatrixD &ImX_LR_2D, int my_rank);
-
-
-
-
-
-
 
 #endif /* DATAIO_H_ */

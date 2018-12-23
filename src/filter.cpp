@@ -41,19 +41,6 @@ void create_Gaussian_filter(SpEOMatrixD &filter, int filter_size) {
     return;
 }
 
-//w=params.fDS;
-//        k = 2.7725887/w^2;
-//        if mod(w,2)==0
-//            [X, Y] = meshgrid(-(2*w-1)/2:1:(2*w-1)/2, -(2*w-1)/2:1:(2*w-1)/2);
-//            kernel = exp(-(X.^2+Y.^2)*k);
-//            kernel = kernel/sum(kernel(:)); % Normalized Gaussian distribution within wxw size window
-//        else
-//            [X, Y] = meshgrid(-(w-1):1:w-1, -(w-1):1:w-1);
-//            kernel = exp(-(X.^2+Y.^2)*k);
-//            kernel = kernel/sum(kernel(:)); % Normalized Gaussian distribution within (2w-1)x(2w-1) size window
-//        end
-
-
 void apply_filter(SpEOMatrixD &HRp, SpEOMatrixD filter, int fDS) { // only square filters
   int i,j;
 
@@ -66,7 +53,7 @@ void apply_filter(SpEOMatrixD &HRp, SpEOMatrixD filter, int fDS) { // only squar
   if (filter_size%2 == 0) {
     int radius = filter_size/2;
     int start_index;
-    if (fDS%4 == 0) { // to be equivalent with Claas method
+    if (fDS%4 == 0) {
       start_index = -1;
     }
     else {
@@ -114,7 +101,7 @@ void apply_filter_adjoint(SpEOMatrixD &HRp, SpEOMatrixD filter, int fDS) { // on
     
     int radius = filter_size/2;
     int start_index;
-    if (fDS%4 == 0) { // to be equivalent with Claas method
+    if (fDS%4 == 0) {
       start_index = -1;
     }
     else {
@@ -145,7 +132,6 @@ void apply_filter_adjoint(SpEOMatrixD &HRp, SpEOMatrixD filter, int fDS) { // on
 	int tm = max(-j, -radius);
 	int bm = min(radius, N_j-(j+1));
 	HRp(i,j) = (HRp_tmp.block(i+lm,j+tm,rm-lm+1,bm-tm+1).cwiseProduct(filter.block(radius+lm,radius+tm,rm-lm+1,bm-tm+1))).sum();
-	//HRp_tmp.block(i+lm,j+tm,rm-lm+1,bm-tm+1) += HRp(i,j)*filter.block(radius+lm,radius+tm,rm-lm+1,bm-tm+1);
       }
     } 
   }

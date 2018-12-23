@@ -1,5 +1,4 @@
-/** Solution of an MPI global counter adapted from
- *  Jonathan Dursi
+/** Solution of an MPI global counter adapted from Jonathan Dursi
  *  Source: http://stackoverflow.com/questions/4948788/creating-a-counter-that-stays-synchronized-across-mpi-processes
  **/
 

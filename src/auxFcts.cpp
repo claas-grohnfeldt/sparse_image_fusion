@@ -133,7 +133,6 @@ void calcGlobalParams(SpEOGlobalParams *glPrms,
 	int uP;
 	for(uP=0; uP<glPrms->NPU-1; uP++){
 		idxPUH(uP) = glPrms->fDS*a*uP;
-//		idxPUL(uP) = a*uP;
 	}
 	int pszH  = fSetting->patchsize*glPrms->fDS;
 	idxPVH(glPrms->NPV-1) = ImX->get_sizeV()-pszH;
@@ -141,7 +140,6 @@ void calcGlobalParams(SpEOGlobalParams *glPrms,
 	int vP;
 	for(vP=0; vP<glPrms->NPV-1; vP++){
 		idxPVH(vP) = glPrms->fDS*a*vP;
-//		idxPVL(vP) = a*vP;
 	}
 	glPrms->idxPUH = idxPUH;
 	glPrms->idxPVH = idxPVH;
@@ -171,7 +169,6 @@ SpEOVectorI* kNearestIndices(int u0, int v0, int uLim, int vLim, int K) {
 		u += du;
 		v += dv;
 		++segment_passed;
-		//cout << u <<  " " << v << endl;
 		if (segment_passed == segment_length) {
 			// done with current segment
 			segment_passed = 0;
@@ -236,7 +233,6 @@ SpEOMatrixD randn(int m, int N, double mean, double stddev) {
   int i,j;
   for (i=0; i<m; i++) {
     for (j=0; j<N; j++) {
-      //mat(i,j) = distribution(generator);
       mat(i,j) = rand_normal(mean, stddev);
     }
   }
@@ -259,7 +255,6 @@ SpEOVectorI randperm(int N) {
 }
 
 double spec_norm(SpEOMatrixD A) {
-  //SpEOMatrixD S = A*A.transpose(); // use selfadjoint property of spectral norm and use the computationally more efficient way (smaller matrix)
   MatrixXd S = A*A.transpose(); // use selfadjoint property of spectral norm and use the computationally more efficient way (smaller matrix)
 
   // old Eigen Library version (eigen-eigen-2249f9c22fe8)
@@ -285,10 +280,9 @@ double spec_norm(SpEOMatrixD A) {
   if(!es.info()){
 	  complex<double> largest_eival = es.eigenvalues()[0];
   	  largest_eival_real = real(largest_eival);
-  	  //cout << " real(largest_eival) = " << largest_eival_real << endl;
   }else{
 	  largest_eival_real = 0.1;
-	  cout << "     Eigenvalue computation for spectral norm normalization did not converge. Using static value for normalization instead." << endl;
+	  //cout << "     Eigenvalue computation for spectral norm normalization did not converge. Using static value for normalization instead." << endl;
   }
   return sqrt(largest_eival_real);
 }

@@ -114,7 +114,7 @@ void Eq1MVar::SubtractOperatorXvar(Eq1Op op, SpEOMatrixD* m_var,    MPI_Comm eq1
   SpEOMatrixD *m_var = new SpEOMatrixD[EndmemberMat.rows()];
   bool transpose_2D_mat = false;
 
-  multiply_2D_with_3D_mat(m_var,EndmemberMat,m_var_sub,transpose_2D_mat); // added by CG
+  multiply_2D_with_3D_mat(m_var,EndmemberMat,m_var_sub,transpose_2D_mat);
 
   SpEOMatrixD* TMP = new SpEOMatrixD[N_center];
   for (channel_X = 0; channel_X < N_center; channel_X++) {
@@ -1512,7 +1512,6 @@ void FBSSolver(int &iter_need, double &rel_res, SpEOMatrixD &X, SpEOMatrixD Phi,
 		{
 		  told = tnew;
 		  if (((Xtmp - Xnew).cwiseProduct(Xnew - Xnew_old)).sum() >= 0) {// restart
-		    //cout << "FBS SOLVER: FISTA was restarted in iteration " << iterations << endl;
 		    told = 1;
 		  }
 		  tnew = (1+sqrt(1+4*pow(told,2)))/2;
@@ -1936,7 +1935,6 @@ void solve_equation3(int &iter, double &rel_res, SpEOMatrixD &Z, SpEOVectorD m, 
   bool use_starting_value = false;
 
   //compute global stuff
-  //int channels_per_core = 1;
   
   int my_local_rank;
   MPI_Comm_rank(eq1_comm, &my_local_rank);
@@ -1944,7 +1942,6 @@ void solve_equation3(int &iter, double &rel_res, SpEOMatrixD &Z, SpEOVectorD m, 
   int my_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   
-  //int N_l = I_Y->cols()*I_Y->rows();
   int N_l = I_Y[0].cols()*I_Y[0].rows();
   int N_h = I_X[0].cols()*I_X[0].rows();
   int HR_cols = I_Z_tilde[0].cols();
@@ -2086,7 +2083,6 @@ void solve_equation3(int &iter, double &rel_res, SpEOMatrixD &Z, SpEOVectorD m, 
 
 
   void solve_equation1_unmixing(bool use_starting_value, int &iter, double &rel_res, SpEOMatrixD &EndmemberMat, SpEOMatrixD* &AbundanceMat, SpEOMatrixD* &I_Z, SpEOMatrixD R, int filter_size, int fDS, int N_Y, int N_X, SpEOMatrixD* I_Z_tilde, SpEOMatrixD* I_X, SpEOMatrixD* I_Y,                     double lambda_X, double lambda_Y, int maxiter, double tol_r, MPI_Comm eq1_comm, int channels_per_core, bool SNR_normalization, bool balance_ImX_term_coef, SpEOVectorD &LAMBDA_ZY) {
-  //bool use_starting_value = false;
   //compute global stuff
   
   int my_local_rank;
@@ -2097,7 +2093,6 @@ void solve_equation3(int &iter, double &rel_res, SpEOMatrixD &Z, SpEOVectorD m, 
  
   int N_Y_sub = EndmemberMat.cols();
  
-  //int N_l = I_Y->cols()*I_Y->rows();
   int N_l = I_Y[0].cols()*I_Y[0].rows();
   int N_h = I_X[0].cols()*I_X[0].rows();
   int HR_cols = I_Z_tilde[0].cols();
@@ -2128,7 +2123,7 @@ void solve_equation3(int &iter, double &rel_res, SpEOMatrixD &Z, SpEOVectorD m, 
   // compute initial right-hand side
   Eq1MVar b = Eq1MVar(N_Y,N_X,N_Y);
   Eq1MVar d = Eq1MVar(N_Y,N_X,N_Y);
-  for (channel_Y = 0; channel_Y < N_Y; channel_Y++) {//CG channels_per_core becomes N_Y
+  for (channel_Y = 0; channel_Y < N_Y; channel_Y++) {
     b.upper[channel_Y] = coeff1 * I_Z_tilde[channel_Y];
     b.lower[channel_Y] = coeff3 * I_Y[channel_Y];
     // d = right-hand side
@@ -2143,7 +2138,6 @@ void solve_equation3(int &iter, double &rel_res, SpEOMatrixD &Z, SpEOVectorD m, 
   
   // compute initial values for CGLS 
   Eq1SVar x = Eq1SVar(N_Y_sub);
-  //cout << "bp7" << endl;
   for (channel_Y = 0; channel_Y < N_Y_sub; channel_Y++) {
     if (use_starting_value) {
       // x = I_Z_tilde //= I_Z_0
@@ -2235,182 +2229,10 @@ void solve_equation3(int &iter, double &rel_res, SpEOMatrixD &Z, SpEOVectorD m, 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-////void solve_equation1(         int &iter, double &rel_res, SpEOMatrixD* &I_Z,                                                                 SpEOMatrixD R, int filter_size, int fDS, int N_Y, int N_X, SpEOMatrixD* I_Z_tilde, SpEOMatrixD* I_X, SpEOMatrixD* I_Y, SpEOMatrixD* I_Z_0, double lambda_X, double lambda_Y, int maxiter, double tol_r, MPI_Comm eq1_comm, int channels_per_core) {
-//  void solve_equation1_subspace(int &iter, double &rel_res, SpEOMatrixD &AbundanceMat, SpEOMatrixD &AbundanceMat_init, SpEOMatrixD &EndmemberMat, SpEOMatrixD R, int filter_size, int fDS, int N_Y, int N_X, SpEOMatrixD* I_Z_tilde, SpEOMatrixD* I_X, SpEOMatrixD* I_Y,                     double lambda_X, double lambda_Y, int maxiter, double tol_r, MPI_Comm eq1_comm, int channels_per_core) {
-//  bool use_starting_value = true;
-//
-//  //compute global stuff
-//  //int channels_per_core = 1;
-//  
-//  int my_local_rank;
-//  MPI_Comm_rank(eq1_comm, &my_local_rank);
-//  
-//  //int N_l = I_Y->cols()*I_Y->rows();
-//  int N_l = I_Y[0].cols()*I_Y[0].rows();
-//  int N_h = I_X[0].cols()*I_X[0].rows();
-//  int HR_cols = I_Z_tilde[0].cols();
-//  int HR_rows = I_Z_tilde[0].rows();
-//
-//  int channel_Y, channel_X;
-//
-//  double coeff1 = sqrt(0.5/(N_Y*N_h));
-//  double coeff2 = sqrt(0.5*lambda_X/(N_X*N_h));
-//  double coeff3 = sqrt(0.5*lambda_Y/(N_Y*N_l));
-//
-//  // define Gaussian filter
-//  SpEOMatrixD gauss_filter;
-//  create_Gaussian_filter(gauss_filter, filter_size);
-//  SpEOMatrixD filter_coeff;
-//  calc_filter_boundary_coeff(filter_coeff, gauss_filter, fDS);
-//  
-//  // define operator
-//  Eq1Op op = Eq1Op(&R, gauss_filter, filter_coeff, fDS, coeff1, coeff2, coeff3);
-//
-//  // compute initial right-hand side
-//  Eq1MVar b = Eq1MVar(channels_per_core,N_X,channels_per_core);
-//  Eq1MVar d = Eq1MVar(channels_per_core,N_X,channels_per_core);
-//  for (channel_Y = 0; channel_Y < channels_per_core; channel_Y++) {
-//    b.upper[channel_Y] = coeff1 * I_Z_tilde[channel_Y];
-//    b.lower[channel_Y] = coeff3 * I_Y[channel_Y];
-//    // d = right-hand side
-//    d.upper[channel_Y] = b.upper[channel_Y];
-//    d.lower[channel_Y] = b.lower[channel_Y];
-//  }
-//  for (channel_X = 0; channel_X < N_X; channel_X++) {
-//    b.center[channel_X] = coeff2 * I_X[channel_X];
-//    // d = right-hand side
-//    d.center[channel_X] = b.center[channel_X];
-//  }
-//  
-//  // compute initial values for CGLS 
-//  Eq1SVar x = Eq1SVar(channels_per_core);
-//  for (channel_Y = 0; channel_Y < channels_per_core; channel_Y++) {
-//    if (use_starting_value) {
-//      // x = I_Z_tilde //= I_Z_0
-////    x.var[channel_Y] = I_Z_0[channel_Y];
-////    ================================================>
-//      x.var[channel_Y] = I_Z_tilde[channel_Y];
-////    ===================================== becomes
-////    x.var[channel_Ysub] = AbundanceMat[channel_Ysub];
-////    <================================================
-//    }
-//    else {
-//      // x = 0
-////    ================================================>
-//      x.var[channel_Y] = SpEOMatrixD::Zero(HR_rows, HR_cols);
-////    ===================================== becomes
-////   change number of rows 
-////    <================================================
-//    }
-//  }
-//  
-//  Eq1SVar r = Eq1SVar(channels_per_core);
-//  // compute norm(operator.transposed()*d);
-//  r.SetAdjointOperatorXvar(op, &d);
-//  
-//  double r0_norm = sqrt(r.NormSquared(eq1_comm));
-//
-//  if (use_starting_value) { 
-//    // d =  d - operator * x
-////  d.SubtractOperatorXvar(op, I_Z_0, eq1_comm);
-//    d.SubtractOperatorXvar(op, I_Z_tilde, eq1_comm);
-//  }
-//
-//  // compute r = operator.transposed()*d;
-//  r.SetAdjointOperatorXvar(op,&d);
-//  
-//  // p = r
-//  Eq1SVar p = Eq1SVar(channels_per_core);
-//  for (channel_Y = 0; channel_Y < channels_per_core; channel_Y++) {
-//    p.var[channel_Y] = r.var[channel_Y];
-//  }
-//
-//  // t = operator * p;
-//  Eq1MVar t = Eq1MVar(channels_per_core,N_X,channels_per_core);
-//  for (channel_Y = 0; channel_Y < channels_per_core; channel_Y++) {
-//    t.upper[channel_Y] = SpEOMatrixD::Zero((I_Z_tilde[channel_Y]).rows(), (I_Z_tilde[channel_Y]).cols());
-//    t.lower[channel_Y] = SpEOMatrixD::Zero((I_Y[channel_Y]).rows(),(I_Y[channel_Y]).cols());
-//  }
-//  for (channel_X = 0; channel_X < N_X; channel_X++) {
-//    t.center[channel_X] = SpEOMatrixD::Zero((I_X[channel_X]).rows(),(I_X[channel_X]).cols());
-//  }
-//  t.SetOperatorXvar(op, &p, eq1_comm);
-//
-//  // CG loop
-//  double alpha, beta;
-//  double r_norm_squared = r.NormSquared(eq1_comm);
-//  
-//  iter = 0;
-//  while (iter < maxiter && sqrt(r_norm_squared)/r0_norm > tol_r) {
-//    
-//    // alpha = (norm(r)/norm(t))^2
-//    alpha = r_norm_squared/t.NormSquared(eq1_comm);
-//    
-//    // x = x + alpha * p ; d = d - alpha * t
-//    for (channel_Y = 0; channel_Y < channels_per_core; channel_Y++) {
-//      x.var[channel_Y] += alpha*p.var[channel_Y];
-//
-//      d.upper[channel_Y] -= alpha*t.upper[channel_Y];
-//      d.lower[channel_Y] -= alpha*t.lower[channel_Y];
-//    }
-//    for (channel_X = 0; channel_X < N_X; channel_X++) {
-//      d.center[channel_X] -= alpha*t.center[channel_X];
-//    }
-//
-//    // r = operator^T * d
-//    r.SetAdjointOperatorXvar(op,&d);
-//
-//    // beta = (norm(r)/norm(r_old))^2
-//    double r_norm_squared_old = r_norm_squared;
-//    r_norm_squared = r.NormSquared(eq1_comm);
-//    beta = r_norm_squared/r_norm_squared_old;
-//    /*if (my_local_rank == 0) {
-//      cout << "iteration " << iter << " : r_norm_sq, r0_norm = " << r_norm_squared << " , " << r0_norm << " and " << tol_r << " " << alpha << " " << beta << " " << sqrt(r_norm_squared)/r0_norm << endl;
-//    }*/
-//
-//    // p = r + beta * p
-//    for (channel_Y = 0; channel_Y < channels_per_core; channel_Y++) {
-//      p.var[channel_Y] = r.var[channel_Y] + beta*p.var[channel_Y];
-//    }
-//    
-//    // t = operator * p
-//    t.SetOperatorXvar(op, &p, eq1_comm);
-//
-//    iter++;
-//  }
-//
-//  for (channel_Y = 0; channel_Y < channels_per_core; channel_Y++) {
-//    AbundanceMat = x.var[channel_Y];//I_Z[channel_Y] = x.var[channel_Y];
-//  }
-//  rel_res = sqrt(r_norm_squared)/r0_norm;
-//
-//  return;
-//}
-
-
-
-
-
-
-
-
-
 void solve_equation3_grad(SpEOMatrixD &Z, SpEOVectorD m, SpEOVectorD &m_out, SpEOMatrixD *DH, SpEOMatrixD *DL, SpEOVectorD* P_lmd_vecs, SpEOMatrixI* P_lmd_idx_row, int **P_lmd_idx_bl, SpEOMatrixD R, SpEOMatrixD X, SpEOMatrixD* Y, SpEOMatrixD *A, SpEOMatrixD* &A_out, SpEOMatrixD Z0, double lambda_X, double lambda_Y, int N_g, int maxiter, double tol_r, bool fix_Alpha, bool fix_delta_m) {
 
   bool use_starting_value = 1;
 
-//  int i;
   int j,k;
   //compute global stuff
   int N_Y = m.size();
@@ -2524,7 +2346,6 @@ void solve_equation3_grad(SpEOMatrixD &Z, SpEOVectorD m, SpEOVectorD &m_out, SpE
   int iter = 0;
   double diff = (tol_r+1.0)*r_resp;
   while (iter < maxiter && diff/r_resp > tol_r) {
-    //cout << stepsize << " " << diff << " " << r_resp << endl;
     // compute d=Ax-b
     d_upper = coeff1*(x_upper) - B_upper;
     if (!fix_Alpha) {
@@ -2592,7 +2413,6 @@ void solve_equation3_grad(SpEOMatrixD &Z, SpEOVectorD m, SpEOVectorD &m_out, SpE
   }
   m_out = x_lower;
 
-  //cout << "Functional value final: " << pow(d_upper.norm(),2) + pow(d_lower.norm(),2) << " "<< pow(d_upper.norm(),2) << " " << pow(d_lower.norm(),2) << endl;
   cout << "The solution of equation (3) required " << iter << " CGLS-iterations. The final relative residual of CGLS: " << diff/r_resp << endl;
 
   return;
@@ -2605,12 +2425,6 @@ void calcOptMeanDiffLS(int &iter, double &rel_res, SpEOVectorD &delta_m, SpEOVec
   int N_Y = Z->rows();
   int N_X = X->rows();
   int N_h = Z->cols();
-  
-  //int N_l = I_Y[0].cols()*I_Y[0].rows();
-  //int N_h = I_X[0].cols()*I_X[0].rows();
-  //int HR_cols = I_Z_tilde[0].cols();
-  //int HR_rows = I_Z_tilde[0].rows();
-
   double coeff1 = sqrt(lambda_Z/N_Y);
   double coeff2 = sqrt(lambda_X/N_X);
   
@@ -2685,7 +2499,6 @@ void calcOptMeanDiffLS(int &iter, double &rel_res, SpEOVectorD &delta_m, SpEOVec
     double r_norm_squared_old = r_norm_squared;
     r_norm_squared = r.NormSquared();
     beta = r_norm_squared/r_norm_squared_old;
-    //cout << "iteration " << iter << " : r_norm_sq, r0_norm = " << r_norm_squared << " , " << r0_norm << " and " << tol_r << " " << alpha << " " << beta << " " << t_norm_squared << " " << endl;
 
     // p = r + beta * p
     p.var = r.var + beta*p.var;
@@ -2942,8 +2755,6 @@ void calcOptCoeffCurrPatchLS(int &iter, double &rel_res, SpEOVectorD* &a, SpEOVe
   iter = 0;
   while (iter < maxiter && sqrt(r_norm_squared)/r0_norm > tol_r) {
     
-    //cout << sqrt(r_norm_squared)/r0_norm << endl;
-    
     // alpha = (norm(r)/norm(t))^2
     alpha = r_norm_squared/t.NormSquared();
     
@@ -2985,8 +2796,6 @@ void calcOptCoeffCurrPatchLS(int &iter, double &rel_res, SpEOVectorD* &a, SpEOVe
 
 void calcOptCoeffResPFISTA(int* &iter, double* &rel_res, SpEOMatrixD* &A, SpEOMatrixD* A_0, SpEOMatrixD *DH, SpEOMatrixD *DL, SpEOVectorD* m, SpEOVectorD* delta_m, SpEOMatrixD* Z, SpEOMatrixD* Y, int **P_lmd_idx_bl, double lambda_A, double lambda_Y, double lambda_Z, int N_g, FBSsolverOptions opts, bool spectral_normalizer, bool &write_testset, int testnr) {
   int g;
-  //A = new SpEOMatrix[N_g];  
-  //iter = new int[N_g];
   int N_h = DH[0].rows();
   int N_l = DL[0].rows();
   int N_DP = DH[0].cols();
@@ -3019,59 +2828,9 @@ void calcOptCoeffResPFISTA(int* &iter, double* &rel_res, SpEOMatrixD* &A, SpEOMa
     
     // write testset for solver
     string dirout = "/gpfs/work/pr45ne/di72kaq/solvertestsets/datasetJSpFIHMH";
-//    if (write_testset) {
-//      string testnr_str; stringstream testnr_ss; testnr_ss << testnr; testnr_str = testnr_ss.str();
-//      string dirouttestnr = dirout + "/testset" + testnr_str;
-//      int status = mkdir(dirouttestnr.c_str(), 0777);
-//      chmod(dirouttestnr.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-//      cout << "Write Testset " << testnr << endl;
-//
-//      // write y to .csv file
-//      char bufy [80];
-//      //string blubber = dirouttestnr + "/y.csv";
-//      sprintf (bufy, "%s/y.csv", dirouttestnr);
-//      write_Mat_to_CSV(&y, bufy);
-//      cout << "Wrote y " << testnr << endl;
-//
-//      // write data for different P
-//      int subdomain;
-//      int Ndecomp = 128;
-//      int N = D.cols();
-//      int m = D.rows();
-//      for (subdomain = 0; subdomain < Ndecomp; subdomain++) {
-//	int colstart, colN;
-//	if (subdomain < N%Ndecomp) {
-//	  colstart = subdomain*(N/Ndecomp+1);
-//	  colN = N/Ndecomp+1;
-//	}
-//	else {
-//	  colstart = (N%Ndecomp)*(N/Ndecomp+1)+(subdomain-(N%Ndecomp))*(N/Ndecomp);
-//	  colN = N/Ndecomp;
-//	}
-//	SpEOMatrixD A_loc = SpEOMatrixD::Zero(m, colN);
-//	int li;
-//	for (li = 0; li < colN; li++) {
-//	  A_loc.col(li) = D.col(colstart + li);
-//	}
-//
-//	string subdomain_str; stringstream subdomain_ss; subdomain_ss << subdomain; subdomain_str = subdomain_ss.str();
-//	char bufA [80];
-//	sprintf (bufA, "%s/A%s.csv", dirouttestnr,subdomain_str);
-//	write_Mat_to_CSV(&A_loc, bufA);
-//
-//	write_testset = false;
-//	//cout  << "DONE " << endl;
-//      }
-//    }
     SpEOMatrixD timestat;
     SpEOMatrixD btstat;
-    /*
-    double Phity_inf_norm = (D.transpose()*y).rowwise().norm().maxCoeff();
-    cout << "Solver SR Problem with N = " << D.cols() << ", m = " << D.rows() << ", d = " << y.cols() << " alpha = " << coeff0/Phity_inf_norm << endl;
-    */
     FBSSolver(iter[g], rel_res[g], A_out, dictFac * D, dictFac * y, pow(dictFac,2)*coeff0, opts, timestat, btstat);
-    
-    //fista(dictFac * D, dictFac * y, pow(dictFac,2)*coeff0, tol_r, maxiter, A[g].bottomRows(A_0[g].rows()-1), iter[g]);
     A[g].bottomRows(A_0[g].rows()-1) = A_out;
     A[g].row(0) = A_0[g].row(0);
   }

@@ -9,7 +9,7 @@
 #define INCLUDES_H_
 
 // standard headers
-#include <mpi.h> // "mpi.h" ?
+#include <mpi.h>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,7 +25,6 @@
 
 #include <Eigen/SVD>
 
-//#include <random>
 // only needed for solvertest:
 #include <algorithm>
 
@@ -45,10 +44,6 @@
 // for CSV parser:
 #include <iterator>
 #include <vector>
-//#include <iostream>
-//#include <fstream>
-//#include <sstream>
-//#include <string>
 
 // for removing tmp directories
 #include <dirent.h>

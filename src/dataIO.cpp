@@ -119,7 +119,7 @@ void convertOneToTwoDimArrayAndPrint(int nVSz, int nUSz, float *oneDimArray) {
 		for (int iV = 0; iV < 4; iV++) {
 			cout << twoDimArray[iU][iV] << "\t";
 		}
-		cout << "  ...  \t"; // << endl << "   ..." << endl;
+		cout << "  ...  \t";
 		for (int iV = nVSz - 3; iV < nVSz; iV++) {
 			cout << twoDimArray[iU][iV] << "\t";
 		}
@@ -768,17 +768,8 @@ void SpEODataset::read_patch(SpEOPaths *paths, int iL, int &iP, int uP, int &pCn
 	char buf [paths->dir_tmp_patches.length()+42];
 	sprintf (buf, "%s/%06d/patch_u%04d_v%04d_iP%06d.csv", paths->dir_tmp_patches.c_str(), iP, uP, vP, iP);
 	int stat_CSV_read = read_CSV(&myReadMat, buf, ',', 0);
-	/*
-	for(int i=0; stat_CSV_read==-1 && i<dSet->dir_tmp_patches_additional_num; i++){
-		char buf_tmp [paths->dir_tmp_patches_additional[i].length()+50];
-		sprintf (buf_tmp, "%s/%06d/patch_u%04d_v%04d_iP%06d.csv", paths->dir_tmp_patches_additional[i].c_str(), iP, uP, vP, iP);
-		stat_CSV_read = read_CSV(&myReadMat, buf_tmp, ',', 0);
-		cout << "try to open tmp patch file: " << buf_tmp << endl;
-	}
-	*/
 	if(stat_CSV_read==-1){
 			cout << "[" << my_rank << "] ERROR while writing pixel iL=" << iL << ": The .csv file '"<< buf << "' does not exist in any of the specified TMP patch directories!" << endl;
-		//}
 	}else{
 		// cut off negative coefficients
 		myReadMat = (myReadMat.array()>0).select(myReadMat,0);
@@ -873,7 +864,6 @@ void prepGroupCalcForJSpFI( int firstBandY, int lastBandY, int panBand,
 	int firstBand, lastBand;
 	glPrms.NChY            = lastBandY-firstBandY+1;
 	glPrms.NChZ            = glPrms.NChY;
-	//glPrms.Nc_vec[0]       = glPrms.NChY;
 	fSetting.Nc            = glPrms.NChY;
 	dSetting.chBundleFirst = 0;
 	dSetting.chBundleLast  = lastBandY-firstBandY;
@@ -1176,55 +1166,8 @@ void SpEOReport::initialize(SpEOPaths *paths,
 	paths->dir_out += "/" + mydate + "_" + mytime + "_" + dSetting->jobName;
 	mkdir(paths->dir_out.c_str(), 0777);
 	chmod(paths->dir_out.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-
-	// paths->dir_out += "/" + dSetting->jobName;// + "_" + dSetting->jobID;
-	// mkdir(paths->dir_out.c_str(), 0777);
-	// chmod(paths->dir_out.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-
 	stringstream dir_out_tmp;
-	dir_out_tmp << paths->dir_out; //+ "/"         
-/*			<< mytime
-//                      << "_NP" << glPrms->NP 
-//                      << "_pTot" << my_processes 
-//			<< "_ID"    << paths->dataSetID
-//                      << "_ID"    << paths->dataSetID_str  
-//                      << "_psz"   << fSetting->patchsize 
-//			<< "_ovlp"  << fSetting->overlap 
-//                      << "_NDP" << fSetting->NDP 
-//                      << "_lmd" << fSetting->lambda
-//                      << "_alg"  << fSetting->fMethod  
-//                      << "_dS"   << fSetting->dictselect 
-//                      << "_2Step" << fSetting->two_step_estimation 
-//                      << "_Nc"    << fSetting->Nc 
-//                      << "_No" << fSetting->No
-//                      << "_alg"  << fSetting->fMethod  
-//                      << "_dS"   << fSetting->dictselect 
-//			<< "_itr"   << fSetting->iterMain 
-//                      << "_NwCf"  << fSetting->useNewMethodForCalculatingZ 
-//                      << "_ImXSm" << fSetting->useSimulatedImXforDictLearn
-//			<< "_lX"    << fSetting->lambdaX_ABC
-//			<< "_lY"    << fSetting->lambdaY_ABC
-//			<< "_lZ"    << fSetting->lambdaZ_ABC 
-//                      << "_lZ0In1stIter" << fSetting->lambdaZ_ABC_in_1st_iter 
-//                      << "_fllImOpt"<< fSetting->LQ_post_opt_im
-			<< "_lXI"  << fSetting->lambdaX_im
-			<< "_lYI"  << fSetting->lambdaY_im
-			<< "_l"  << fSetting->lambda
-			<< "_lXA"  << fSetting->lambdaX_ABC
-			<< "_lYA"  << fSetting->lambdaY_ABC
-			<< "_init"  << fSetting->ImZ_init_type
-//			<< "_estR"   << fSetting->use_estimated_SRFs
-			<< "_m"     << fSetting->ImX_sim_mode
-			<< "_"      << fSetting->subspace_transform_type
-			<< "_dim"   << fSetting->subspace_dim;
-//			<< "_LQ"  << fSetting->LQ_post_opt
-//			<< "_fA"  << sSetting->fix_Alpha
-//			<< "_fm"  << sSetting->fix_delta_m
-//			<< "_lY"  << fSetting->lambdaY
-//			<< "_lX"  << fSetting->lambdaX; //
-//			<< "_SpecNorm"  << fSetting->matrixNorm 
-//			<< "_pixwiseMean"  << fSetting->addMeanPixelwise; 
-*/
+	dir_out_tmp << paths->dir_out;
 	paths->dir_out = dir_out_tmp.str();
 	mkdir(paths->dir_out.c_str(), 0777);
 	chmod(paths->dir_out.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
@@ -1257,50 +1200,11 @@ void SpEOReport::initialize(SpEOPaths *paths,
 			<< "###                                                                         ###"
 			<< "\n"
 			<< "###                                                                         ###"
-			<< "\n";
-	switch (fSetting->fMethod) {
-	case SparseFI: {
-		this->file
-				<< "###                                 SparseFI                                ###"
-				<< "\n"
-				<< "###             [ Sparse Fusion of Images ] for pan-sharpening              ###"
-				<< "\n";
-		break;
-	}
-	case JSparseFI: {
-		this->file
-				<< "###                                J-SparseFI                               ###"
-				<< "\n"
-				<< "###         [ Jointly Sparse Fusion of Images ] for pan-sharpening          ###"
-				<< "\n";
-		break;
-	}
-	case GroupedJSparseFI: {
-		this->file
-				<< "###                            GroupedJSparseFI                             ###"
-				<< "\n"
-				<< "###         [ Jointly Sparse Fusion of Images ] for pan-sharpening          ###"
-				<< "\n";
-		break;
-	}
-	case JSparseFIHM: {
-		this->file
+			<< "\n"
 				<< "###                               J-SparseFI-HM                             ###"
 				<< "\n"
 				<< "###   [ Jointly Sparse Fusion of Hyperspectral and Multispectral Images ]   ###"
-				<< "\n";
-		break;
-	}
-	case LeastSquares: {
-			this->file
-				<< "###                           Least Squares                                 ###"
 				<< "\n"
-				<< "###                  - Dictionary contains only current patch -             ###"
-				<< "\n";
-			break;
-		}
-	}
-	this->file
 			<< "###                                                                         ###"
 			<< "\n"
 			<< "###                                                                         ###"
@@ -1345,32 +1249,6 @@ void SpEOReport::initialize(SpEOPaths *paths,
 			<< " - file name ImZ:             " << paths->fname_ImZ_out << "\n\n"
 	        << " - use_estimated_SRFs:        " << fSetting->use_estimated_SRFs << "\n"
 			<< " - file name SRF:             " << paths->fname_SRF << "\n";
-/*			
-			<< " - ImZ_init_type = " << fSetting->ImZ_init_type << "(";
-	switch(fSetting->ImZ_init_type){
-		case 0:{
-			this->file << "lambdaZ_ABZ=0 in 1st iter)\n";
-			break;
-		}
-		case 1:{
-			this->file << "upsampled and bilinearly interpolated low resolution image ImY)\n";
-			break;
-		}
-		case 2:{
-			this->file << "rec. result of another algorithm)\n";
-			break;
-		}
-	}
-*/
-	/*
-	if(dSetting->contUnfinishedRec){
-		this->file  << " - file name CSV containing iPs of incomplete set of patches from previous  unfinished reconstruction: " << "\n"
-			<< "                                  " << paths->PathToIncompletePatchSetCSV << "\n"
-			<< " - directories that may containe previously reconstructed TMP patches: " << "\n";
-		for(int i=0; i<dSetting->dir_tmp_patches_additional_num; i++){
-			this->file << "              .. directory no. " << i+1 << ": "<< paths->dir_tmp_patches_additional[i] << "\n";
-		}
-	}*/
 	this->file << " - directory where tmp patches were/are stored : "<< paths->dir_tmp_patches << "\n";
 	this->file 	<< "\n"
 			<< "*========================================*" << "\n"
@@ -1382,9 +1260,6 @@ void SpEOReport::initialize(SpEOPaths *paths,
 			<< " - uLLast:  last vertical low resolution pixel to be processed (before possible correction):    " << dSetting->uLLast << "\n"
 			<< " - vLFirst: first horizontal low resolution pixel to be processed (before possible correction): " << dSetting->vLFirst << "\n"
 			<< " - vLLast:  last horizontal low resolution pixel to be processed (before possible correction):  " << dSetting->vLLast << "\n";
-			//<< " - delete_tmp_patch_folders:                                                                    " << dSetting->delete_tmp_patch_folders << "\n"
-			//<< " - dir_tmp_patches_additional_num: number of additional directories containing relevant tmp patches: " << dSetting->dir_tmp_patches_additional_num << "\n"
-			//<< " - continue unfinished reconstruction?:                                                         " << dSetting->contUnfinishedRec << "\n"
 	this->file << "\n"
 			<< "*========================================*" << "\n"
 			<< "* image fusion parameters                *" << "\n"
@@ -1441,7 +1316,6 @@ void SpEOReport::initialize(SpEOPaths *paths,
 		break;
 	}
 	}
- //this->file << " - Least Sq. post minimiz. for Z via CGLS:  " << fSetting->LQ_post_opt << "\n"
  this->file << "     -> Patch-wise coefficient estimation parameters:\n"
             << "                       - lambda_X_ABC:  " << fSetting->lambdaX_ABC << "\n"
             << "                       - lambda_Y_ABC:  " << fSetting->lambdaY_ABC << "\n"
@@ -1454,13 +1328,6 @@ void SpEOReport::initialize(SpEOPaths *paths,
             << "                       - tol r CGLS_im:    " << sSetting->tol_r_CGLS_im << "\n"
             << "                       - subspace_transformation_type:  " << fSetting->subspace_transform_type << "\n"
             << "                       - subspace_dim:                  " << fSetting->subspace_dim << "\n";
-   //         << "     -> Patch-wise CGLS settings (former 'Eq.3'): ACTIVE=" << fSetting->LQ_post_opt << "\n"
-			//<< "                               - lambda_X:        " << fSetting->lambdaX << "\n"
-			//<< "                               - lambda_Y:        " << fSetting->lambdaY << "\n"
-			//<< "                               - maxiter CGLS:    " << sSetting->maxiter_CGLS << "\n"
-			//<< "                               - tol r CGLS:      " << sSetting->tol_r_CGLS << "\n"
-			//<< "                               - Alphas fixed:    " << sSetting->fix_Alpha << "\n"
-			//<< "                               - delta_m fixed:   " << sSetting->fix_delta_m << "\n";
 
 	this->file
 			<< " - image normalization:                     "
@@ -1558,35 +1425,10 @@ void SpEOReport::initialize(SpEOPaths *paths,
 
 	//  Write to terminal:
 	cout << "\n"<< "#========================================================================#\n"
-				<< "#                                                                        #\n";
-		switch (fSetting->fMethod) {
-			case SparseFI: {
-				cout    << "#                                 SparseFI                               #\n"
-						<< "#             [ Sparse Fusion of Images ] for pansharpening              #\n";
-				break;
-			}
-			case JSparseFI: {
-				cout	<< "#                                J-SparseFI                              #\n"
-						<< "#         [ Jointly Sparse Fusion of Images ] for pansharpening          #\n";
-				break;
-			}
-			case GroupedJSparseFI: {
-				cout	<< "#                              GroupedJSparseFI                          #\n"
-						<< "#         [ Jointly Sparse Fusion of Images ] for pansharpening          #\n";
-				break;
-			}
-			case JSparseFIHM: {
-				cout    << "#                               J-SparseFI-HM                            #\n"
-						<< "#   [ Jointly Sparse Fusion of Hyperspectral and Multispectral Images ]  #\n";
-				break;
-			}
-			case LeastSquares: {
-				cout    << "#                             Least Squares                              #\n"
-						<< "#                - Dictionary contains only current patch -              #\n";
-						break;
-			}
-		}
-		cout    << "#                                                                        #\n"
+				<< "#                                                                        #\n"
+				<< "#                               J-SparseFI-HM                            #\n"
+				<< "#   [ Jointly Sparse Fusion of Hyperspectral and Multispectral Images ]  #\n"
+		 	    << "#                                                                        #\n"
 				<< "#========================================================================#\n\n"
 				<< "starting date: " << datePretty << " " << timePretty
 				<< "\n\n\n"
@@ -1614,24 +1456,8 @@ void SpEOReport::initialize(SpEOPaths *paths,
 				<< " - directory output data:     " << paths->dir_out << "\n"
 				<< " - file name ImZ:             " << paths->fname_ImZ_out << "\n"
 				<< " - use_estimated_SRFs:                    " << fSetting->use_estimated_SRFs << "\n"
-				<< " - file name SRF:                         " << paths->fname_SRF << "\n";
-/*				<< " - ImZ_init_type = " << fSetting->ImZ_init_type << "(";
-		switch(fSetting->ImZ_init_type){
-			case 0:{
-				cout << "lambdaZ_ABZ=0 in 1st iter)\n";
-				break;
-			}
-			case 1:{
-				cout << "upsampled and bilinearly interpolated low resolution image ImY)\n";
-				break;
-			}
-			case 2:{
-				cout << "rec. result of another algorithm)\n";
-				break;
-			}
-		}
-*/
-		cout	<< "\n"
+				<< " - file name SRF:                         " << paths->fname_SRF << "\n"
+				<< "\n"
 				<< "*========================================*" << "\n"
 				<< "* image data I/O parameters              *" << "\n"
 				<< "*========================================*" << "\n"
@@ -1646,30 +1472,8 @@ void SpEOReport::initialize(SpEOPaths *paths,
 				<< "*========================================*" << "\n"
 				<< "* image fusion parameters                *" << "\n"
 				<< "*========================================*" << "\n"
-				<< " - fusion method:                           ";
-		switch (fSetting->fMethod) {
-		case SparseFI: {
-			cout << "SparseFI" << "\n";
-			break;
-		}
-		case JSparseFI: {
-			cout << "J-SparseFI" << "\n";
-			break;
-		}
-		case JSparseFIHM: {
-			cout << "J-SparseFI-HM" << "\n";
-			break;
-		}
-		case LeastSquares: {
-			cout << "Least Squares" << "\n";
-			break;
-		}
-		default: {
-			cout << "unknown" << "\n";
-			break;
-		}
-		}
-		cout    << " - two-step estimation:                     " << fSetting->two_step_estimation << "\n"
+				<< " - fusion method:                           "
+				<< "J-SparseFI-HM" << "\n"
 		        << " - sparse reconstruction solver:            ";
 		switch (sSetting->solver) {
 		case JPFISTA: {
@@ -1725,15 +1529,8 @@ void SpEOReport::initialize(SpEOPaths *paths,
 				<< "                       - lambda_X_im:      " << fSetting->lambdaX_im << "\n"
 				<< "                       - lambda_Y_im:      " << fSetting->lambdaY_im << "\n"
 				<< "                       - maxiter CGLS_im:  " << sSetting->maxiter_CGLS_im << "\n"
-				<< "                       - tol r CGLS_im:    " << sSetting->tol_r_CGLS_im << "\n";
-				//<< "     -> Patch-wise CGLS settings (former 'Eq.3'): ACTIVE=" << fSetting->LQ_post_opt << "\n"
-				//<< "                               - lambda_X:        " << fSetting->lambdaX << "\n"
-				//<< "                               - lambda_Y:        " << fSetting->lambdaY << "\n"
-				//<< "                               - maxiter CGLS:    " << sSetting->maxiter_CGLS << "\n"
-				//<< "                               - tol r CGLS:      " << sSetting->tol_r_CGLS << "\n"
-				//<< "                               - Alphas fixed:    " << sSetting->fix_Alpha << "\n"
-				//<< "                               - delta_m fixed:   " << sSetting->fix_delta_m << "\n"
-		cout	<< "*========================================*" << "\n"
+				<< "                       - tol r CGLS_im:    " << sSetting->tol_r_CGLS_im << "\n"
+				<< "*========================================*" << "\n"
 				<< "* MPI parallelization parameters         *" << "\n"
 				<< "*========================================*" << "\n"
 				<< " - number of processes per group:  " << pSetting->numProcGrp
@@ -1758,27 +1555,8 @@ void SpEOReport::initialize(SpEOPaths *paths,
 
 void SpEOReport::finalize(SpEOGlobalParams *glPrms) {
 
-	// double totalTime = MPI_Wtime() - this->curTimeSec;
-	// //glPrms->timeTotal = totalTime;
-	// this->curTime = get_current_time();
 	this->file.open(this->fileName.c_str(),
 			fstream::in | fstream::out | fstream::app);
-
-	// string datePretty = "20" + this->curTime.substr(0, 2) + "-"
-	// 		+ this->curTime.substr(2, 2) + "-" + this->curTime.substr(4, 2);
-	// string timePretty = this->curTime.substr(7, 2) + ":"
-	// 		+ this->curTime.substr(9, 2) + ":" + this->curTime.substr(11, 2);
-
-	// this->file << "\n"
-			// << "_______________________________________________________________________________\n\n"
-			// << "ending date: " << datePretty << " " << timePretty
-			// << "\n\n"
-			// << "  -> Method needed                           " << totalTime << " seconds in total which of \n"
-			// << "         - the main loop took                " << glPrms->timeMainLoop << " seconds,\n"
-			// << "         - total dictionary selection took   " << glPrms->timeDictSelect << " seconds,\n"
-			// << "         - average dictionary selection took " << glPrms->timeDictSelect_avg << " seconds,\n"
-			// << "         - the data-to-file writing took " << glPrms->timeFileWrite << " seconds."
-			// << "\n\n";
 
 	this->file
 			<< "###############################################################################\n"
@@ -1791,16 +1569,6 @@ void SpEOReport::finalize(SpEOGlobalParams *glPrms) {
 	this->file.close();
 	chmod(this->fileName.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
 
-
-	// cout    << "\n"
-			// << "_______________________________________________________________________________\n\n"
-			// << "ending date: " << datePretty << " " << timePretty
-			// << "\n\n"
-			// << "  -> Method needed                           " << totalTime << " seconds in total which of \n"
-			// << "         - the main loop took                " << glPrms->timeMainLoop << " seconds,\n"
-			// << "         - total dictionary selection took   " << glPrms->timeDictSelect << " seconds,\n"
-			// << "         - average dictionary selection took " << glPrms->timeDictSelect_avg << " seconds,\n"
-			// << "         - the data-to-file writing took " << glPrms->timeFileWrite << " seconds."
 	cout	<< "\n"
 			<< "\n"
 			<< "###############################################################################\n"
@@ -1940,32 +1708,6 @@ void SpEOReport::addGlobalParams(SpEOGlobalParams *glPrms, SpEOFusionSetting *fS
 			<< glPrms->NPU_sub << "\n"
 			<< " - NPV_sub (number of actually processed patches in vertical direction per band):    "
 			<< glPrms->NPV_sub << "\n";
-	/*	
-			<< " - number of bundles of jointly processed bands:   "
-			<< glPrms->Ng << "\n"
-			<< " - number of problems per patch (# nontrivial entries in decision matrix):   "
-			<< glPrms->numProbPerPatch << "\n"
-			<< " - decision matrix C (transposed): \n"
-			<< glPrms->decMat_C.transpose() << "\n" << " - N_m & k_m: \n";
-	for (int iChX = 0; iChX < glPrms->NChX; iChX++) {
-		this->file << "       N_m[" << iChX << "] = " << glPrms->Nm[iChX]
-				<< ", \t k_m[" << iChX << "]:" << "  ";
-		for (int i = 0; i < glPrms->Nm[iChX]; i++) {
-			this->file << glPrms->km[iChX][i] << "\t";
-		}
-		this->file << "\n";
-	}
-	this->file << " - N_m_2 & k_m_2: \n";
-	// cout Nm2 & km2
-	for (int iG = 0; iG < glPrms->Ng; iG++) {
-		this->file << "       N_m_2[" << iG << "] = " << glPrms->Nm2[iG]
-				<< ", \t k_m_2[" << iG << "]:" << "  ";
-		for (int iChX = 0; iChX < glPrms->Nm2[iG]; iChX++) {
-			this->file << glPrms->km2[iG][iChX] << "\t";
-		}
-		this->file << "\n";
-	}
-	*/
 	this->file << "\n";
 
 	this->file.close();
@@ -2464,263 +2206,6 @@ void read_SRF(SpEOGlobalParams *glPrms, SpEOMatrixD *Mat, string fname_CSV, char
 	}
 }
 
-/*
-void calcDecisionMat(SpEOMatrixD *SRF, SpEODataIOSetting *dSet, SpEOFusionSetting *fSet, SpEOParallelSetting *pSet,
-		SpEOGlobalParams *glPrms) {
-    int my_rank; int my_processes;
-    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &my_processes);
-
-	if(my_rank==0){
-		cout<< "\n"
-		<< "###########################################################\n"
-		<< "##                                                       ##\n"
-		<< "##                calculate decision matrix              ##\n"
-		<< "##                                                       ##\n"
-		<< "###########################################################"
-		<< "\n";
-	}
-
-	if(fSet->Nc > glPrms->NChZ){
-		if(my_rank==0){
-			cout << "WARNING: Nc got corrected from Nc=" << fSet->Nc << " to Nc=" << glPrms->NChZ << "==NChZ" << endl;
-		}
-		fSet->Nc = glPrms->NChZ;
-	}
-	if(fSet->Nc == glPrms->NChZ && fSet->No !=0){
-		if(my_rank==0){
-			cout << "NOTICE: Since Nc==NChZ, no spectral overlap will be accounted for. Therefore No does not affect the calculation. It got set from No=" << fSet->No << " to No=0." << endl;
-		}
-		fSet->No = 0;
-	}
-	else if(fSet->No>=fSet->Nc){
-		if(my_rank==0){
-			cout << "WARNING: No got corrected from No=" << fSet->No << " to the maximal overlap of No=" << fSet->Nc-1 << "=Nc-1" << endl;
-		}
-		fSet->No = fSet->Nc-1;
-	}
-	int a = fSet->Nc - fSet->No;
-	glPrms->Ng = ceil(((double) (glPrms->NChZ - fSet->Nc)) / ((double) (a))) + 1;
-	glPrms->decMat_C = SpEOMatrixD::Zero(glPrms->NChX, glPrms->Ng);
-	for (int iChX = 0; iChX < glPrms->NChX; iChX++) {
-		double sum = 0;
-		for (int iG = 0; iG < glPrms->Ng - 1; iG++) {
-			for (int iC = 0; iC < fSet->Nc; iC++) {
-				sum = sum + (double)(*SRF)(iChX, dSet->chBundleFirst + a*iG+iC);
-			}
-			glPrms->decMat_C(iChX, iG) = sum;
-			sum = 0;
-		}
-		for (int iC = 0; iC < fSet->Nc; iC++) {
-			sum = sum + (double)(*SRF)(iChX, dSet->chBundleFirst + glPrms->NChZ - fSet->Nc+iC);
-		}
-		glPrms->decMat_C(iChX, glPrms->Ng - 1) = sum;
-	}
-	// L1-normalize C columnwise
-	for (int iG = 0; iG < glPrms->Ng; iG++) {
-		double manhNorm = glPrms->decMat_C.col(iG).sum();
-		if (manhNorm == 0.0) {
-			glPrms->decMat_C.col(iG) = SpEOVectorD::Constant(glPrms->NChX,	1. / glPrms->NChX);
-		} else {
-			glPrms->decMat_C.col(iG) /= manhNorm;
-		}
-	}
-	// Thresholding below fSet->tol_SRF
-	// &  calculate the number of non-zero coefficients in each row (i.e. along each MS band)
-	glPrms->Nm = new int[glPrms->NChX];
-	for (int iChX = 0; iChX < glPrms->NChX; iChX++) {
-		int nonZeros = 0;
-		for (int iG = 0; iG < glPrms->Ng; iG++) {
-			if (glPrms->decMat_C.col(iG).maxCoeff() < fSet->tol_SRF) {
-				SpEOVectorD tmpp = glPrms->decMat_C.col(iG);
-				SpEOMatrixD::Index maxCoeffIdx;
-				double maxValue = tmpp.maxCoeff(&maxCoeffIdx);
-				glPrms->decMat_C(maxCoeffIdx, iG) = (fSet->tol_SRF+1)/2;
-			}
-			if (glPrms->decMat_C(iChX, iG) < fSet->tol_SRF) {
-				glPrms->decMat_C(iChX, iG) = 0.0;
-			} else {
-				nonZeros++;
-			}
-		}
-		glPrms->Nm[iChX] = nonZeros;
-	}
-	// save the coordinates of all non-zero coefficients in each row (i.e. along the groups in one MS band)
-	glPrms->km = new int*[glPrms->NChX];
-	
-	glPrms->numProbPerPatch = 0;
-	for (int iChX = 0; iChX < glPrms->NChX; iChX++) {
-		glPrms->km[iChX] = new int[glPrms->Nm[iChX]];
-		int cnt = 0;
-		for (int iG = 0; iG < glPrms->Ng; iG++) {
-			if (glPrms->decMat_C(iChX, iG) > 0.0) {
-				glPrms->km[iChX][cnt] = iG;
-				cnt++;
-				glPrms->numProbPerPatch++;
-			}
-		}
-	}
-	if(glPrms->numProbPerPatch < pSet->numProcPerPatch){
-		if(my_rank == 0){
-			cout << endl << "> WARNING: numProcPerPatch was set too great! It got corrected from " << pSet->numProcPerPatch << " to " << glPrms->numProbPerPatch << ", which is the total number of problems per patch <" << endl << endl;
-		}
-		pSet->numProcPerPatch = glPrms->numProbPerPatch;
-	}
-	if(glPrms->numProbPerPatch % pSet->numProcPerPatch!=0){
-		if(my_rank == 0){
-			cout << endl << "> WARNING: the number of processes per patch (" << pSet->numProcPerPatch << ") should ideally be a divisor of the number of problems per patch (" << glPrms->numProbPerPatch << ") <" << endl << endl;
-		}
-	}
-	glPrms->numPatchGroups = my_processes / pSet->numProcPerPatch;
-	if(glPrms->numPatchGroups == 0){
-		if(my_rank == 0){
-			cerr << endl << ">>> ERROR: too few CPUs! Number of processes must be at least equal to (and ideally a multiple of) " << pSet->numProcPerPatch << " <<<" << endl << endl;
-		}
-		MPI_Barrier(MPI_COMM_WORLD);
-		exit(2);
-	}glPrms->numPatchGroups = my_processes / pSet->numProcPerPatch;
-
-	if(my_processes % pSet->numProcPerPatch != 0){
-		if(my_rank == 0){
-		 cout << endl << "WARNING: Total number of processes should be a multiple of " << pSet->numProcPerPatch << " for optimal performance! Currently, there are " << my_processes << " processes in total which of " << my_processes % pSet->numProcPerPatch << " are idling!" << endl << endl;
-		}
-	}
-	// L1-normalize C columnwise
-	for (int iG = 0; iG < glPrms->Ng; iG++) {
-		double manhNorm = glPrms->decMat_C.col(iG).sum();
-		glPrms->decMat_C.col(iG) /= manhNorm;
-	}
-	int *startProc = new int[glPrms->NChX];
-        int sum=0;
-	for(int iChX=0; iChX < glPrms->NChX; iChX++){
-		startProc[iChX] = sum;
-		sum += glPrms->Nm[iChX];
-	}
-	
-	if(my_rank % pSet->numProcPerPatch < glPrms->numProbPerPatch % pSet->numProcPerPatch){
-		glPrms->myNumProbPerPatch = glPrms->numProbPerPatch / pSet->numProcPerPatch + 1;
-	}
-	else {
-		glPrms->myNumProbPerPatch = glPrms->numProbPerPatch / pSet->numProcPerPatch;
-	}
-
-
-	//glPrms->numPatchGroups = my_processes / pSet->numProcPerPatch;
-	glPrms->numPatchGroups = my_processes;// / pSet->numProcPerPatch;
-	
-	glPrms->myChX = new int[glPrms->myNumProbPerPatch];
-	glPrms->myBundle = new int[glPrms->myNumProbPerPatch];
-	for (int ipp=0; ipp < glPrms->myNumProbPerPatch; ipp++) {
-		glPrms->myChX[ipp] = 0;
-		while(startProc[glPrms->myChX[ipp]]+glPrms->Nm[glPrms->myChX[ipp]] <= my_rank % pSet->numProcPerPatch + ipp*pSet->numProcPerPatch){
-			glPrms->myChX[ipp]++;
-		}
-		glPrms->myBundle[ipp] = glPrms->km[glPrms->myChX[ipp]][my_rank % pSet->numProcPerPatch + ipp*pSet->numProcPerPatch - startProc[glPrms->myChX[ipp]]];
-
-	}
-	// calculate Nm2 and km2
-	glPrms->Nm2 = new int[glPrms->Ng];
-	glPrms->km2 = new int*[glPrms->Ng];
-	for (int iG = 0; iG < glPrms->Ng; iG++) {
-		glPrms->Nm2[iG] = 0;
-		for (int iChX = 0; iChX < glPrms->NChX; iChX++) {
-			if (glPrms->decMat_C(iChX, iG) > 0) {
-				glPrms->Nm2[iG]++;
-			}
-		}
-		// km2: save the coordinates of all non-zero coefficients in each column (i.e. along the MS bands in one group)
-		glPrms->km2[iG] = new int[glPrms->Nm2[iG]];
-		int cnt = 0;
-		for (int iChX = 0; iChX < glPrms->NChX; iChX++) {
-			if (glPrms->decMat_C(iChX, iG) > 0) {
-				glPrms->km2[iG][cnt] = iChX;
-				cnt++;
-			}
-		}
-	}
-	
-	if (my_rank == 0) {
-		cout << ".. decision matrix successfully calculated!" << endl; 
-	}
-
-
-	// ###################################
-	// #  Calculate Nc_vec, P_lmd, etc.  #
-	// ###################################
-	int iG, iChZ, iC, ipp;
-	// (in case of Spectral Grouping, all values in Nc_vec are identical and equal to the Nc value specified by the user in fSettings)
-	glPrms->Nc_vec = new int[glPrms->numProbPerPatch];
-	for(ipp=0; ipp<glPrms->numProbPerPatch; ipp++){
-		glPrms->Nc_vec[ipp] = fSet->Nc;
-	}
-	glPrms->P_lmd_vecs = new SpEOVectorD[glPrms->numProbPerPatch];
-	for(ipp=0; ipp<glPrms->numProbPerPatch; ipp++){
-		glPrms->P_lmd_vecs[ipp] = SpEOVectorD::Ones(glPrms->Nc_vec[ipp])*glPrms->decMat_C(glPrms->myChX[ipp], glPrms->myBundle[ipp]);
-	}
-	glPrms->P_lmd_idx_bl = new int*[glPrms->numProbPerPatch];
-	int col_idx=0, row_idx;
-	for(ipp=0; ipp<glPrms->numProbPerPatch-glPrms->Nm2[glPrms->Ng-1]; ipp++){
-		iG = glPrms->myBundle[ipp];
-		glPrms->P_lmd_idx_bl[ipp] = new int[2];
-		// =====> row_idx = index of the first HS channel in the current  group (in the simple case of Spectral Grouping, all groups (possibly except for the last group) are equally spaced, i.e. row_idx is linearly increasing)
-		row_idx = iG*(fSet->Nc - fSet->No);
-		// <=====
-		glPrms->P_lmd_idx_bl[ipp][0] = row_idx;
-		glPrms->P_lmd_idx_bl[ipp][1] = col_idx;
-		col_idx += glPrms->Nc_vec[ipp];
-	}
-	for(ipp=glPrms->numProbPerPatch-glPrms->Nm2[glPrms->Ng-1]; ipp<glPrms->numProbPerPatch; ipp++){
-		glPrms->P_lmd_idx_bl[ipp] = new int[2];
-		row_idx = glPrms->NChZ - glPrms->Nc_vec[ipp];
-		glPrms->P_lmd_idx_bl[ipp][0] = row_idx;
-		glPrms->P_lmd_idx_bl[ipp][1] = col_idx;
-		col_idx += glPrms->Nc_vec[ipp];
-	}
-	glPrms->P_lmd_idx_row = new SpEOMatrixI[glPrms->NChZ];
-	// first the number of non-trivial entries in each row (iChZ=0,...,NChZ-1) needs to be counted
-	SpEOVectorI entries_cnt     = SpEOVectorI::Zero(glPrms->NChZ);
-	SpEOVectorI entries_divider = SpEOVectorI::Zero(glPrms->NChZ);
-	bool incr_entries_divider = false;
-	bool iG_done[glPrms->Ng];
-	for(iG=0; iG<glPrms->Ng; iG++){
-		iG_done[iG]=false;
-	}
-	for(ipp=0; ipp<glPrms->numProbPerPatch; ipp++){
-		iG = glPrms->myBundle[ipp];
-		if(!iG_done[iG]){
-			incr_entries_divider = true;
-			iG_done[iG] = true;
-		}else{
-			incr_entries_divider = false;
-		}
-		for(iC=0; iC<glPrms->Nc_vec[ipp]; iC++){
-			iChZ = glPrms->P_lmd_idx_bl[ipp][0]+iC;
-			if(incr_entries_divider){
-				entries_divider(iChZ)++;
-			}
-			entries_cnt(iChZ)++;
-		}
-	}
-	for(iChZ=0; iChZ<glPrms->NChZ; iChZ++){
-		glPrms->P_lmd_idx_row[iChZ] = SpEOMatrixI::Zero(2,entries_cnt.coeff(iChZ));
-	}
-	SpEOVectorI entries_cnt_tmp = SpEOVectorI::Zero(glPrms->NChZ);
-	for(ipp=0; ipp<glPrms->numProbPerPatch; ipp++){
-		for(iC=0; iC<glPrms->Nc_vec[ipp]; iC++){
-			iChZ = glPrms->P_lmd_idx_bl[ipp][0]+iC;
-				// store block index
-				glPrms->P_lmd_idx_row[iChZ](0,entries_cnt_tmp(iChZ)) = ipp;
-				// store coefficient index relative to corresponding block origin
-				glPrms->P_lmd_idx_row[iChZ](1,entries_cnt_tmp(iChZ)) = iC;
-			// calculate value in P_lmd (here implemented is only simple averaging!! If desired, that can be changed later)
-			glPrms->P_lmd_vecs[ipp](iC) /= entries_divider(iChZ);
-			entries_cnt_tmp(iChZ)++;
-		}
-	}
-	delete[] startProc;
-}
-*/
-
 int remove_dir(const char *path){
    DIR *d = opendir(path);
    size_t path_len = strlen(path);
@@ -2826,14 +2311,12 @@ void save_fSetting(SpEOPaths *paths, SpEOFusionSetting *fSetting){
 		fSetting_file_matlab << "  fSet.dictselect="<< fSetting->dictselect << ";" << endl;
 		fSetting_file_matlab << "  fSet.matrixNorm="<< fSetting->matrixNorm << ";" << endl;
 		fSetting_file_matlab << "  fSet.addMeanPixelwise="<< fSetting->addMeanPixelwise << ";" << endl;
-		//fSetting_file_matlab << "  fSet.LQ_post_opt="<< fSetting->LQ_post_opt << ";" << endl;
 		fSetting_file_matlab << "  fSet.lambdaX="<< fSetting->lambdaX << ";" << endl;
 		fSetting_file_matlab << "  fSet.lambdaY="<< fSetting->lambdaY << ";" << endl;
 		fSetting_file_matlab << "  fSet.LQ_post_opt_im="<< fSetting->LQ_post_opt_im << ";" << endl;
 		fSetting_file_matlab << "  fSet.lambdaX_im="<< fSetting->lambdaX_im << ";" << endl;
 		fSetting_file_matlab << "  fSet.lambdaY_im="<< fSetting->lambdaY_im << ";" << endl;
 		fSetting_file_matlab << "  fSet.iterMain="<< fSetting->iterMain << ";" << endl;
-		//fSetting_file_matlab << "  fSet.ImZ_init_type="<< fSetting->ImZ_init_type << ";" << endl;
 		fSetting_file_matlab << "  fSet.doFullImOptWithoutPatRec="<< fSetting->doFullImOptWithoutPatRec << ";" << endl;
 		fSetting_file_matlab << "  fSet.set_neg_to_0="<< fSetting->set_neg_to_0 << ";" << endl;
 		fSetting_file_matlab << "  fSet.use_estimated_SRFs="<< fSetting->use_estimated_SRFs << ";" << endl;
@@ -2960,10 +2443,6 @@ void save_pSetting(SpEOPaths *paths, SpEOParallelSetting *pSetting){
 	fname_tmp = dir_pSetting + "/" + "workStealingTurns.csv";
 	write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
 
-	// tmp_mat(0,0) = pSetting->numProcPerPatch;
-	// fname_tmp = dir_pSetting + "/" + "numProcPerPatch.csv";
-	// write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
-
 	cout << "done!" << endl;
 }
 
@@ -3028,41 +2507,13 @@ void save_glPrms(SpEOPaths *paths, SpEOGlobalParams *glPrms){
 	fname_tmp = dir_glPrms + "/" + "vPLast.csv";
 	write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
 
-	// tmp_mat(0,0) = glPrms->Ng;
-	// fname_tmp = dir_glPrms + "/" + "Ng.csv";
-	// write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
-
 	tmp_mat(0,0) = glPrms->fDS;
 	fname_tmp = dir_glPrms + "/" + "fDS.csv";
 	write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
 
-	// tmp_mat(0,0) = glPrms->timeMainLoop;
-	// fname_tmp = dir_glPrms + "/" + "timeMainLoop.csv";
-	// write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
-
-	// tmp_mat(0,0) = glPrms->timeFileWrite;
-	// fname_tmp = dir_glPrms + "/" + "timeFileWrite.csv";
-	// write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
-
-	// tmp_mat(0,0) = glPrms->timeDictSelect;
-	// fname_tmp = dir_glPrms + "/" + "timeDictSelect.csv";
-	// write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
-
-	// tmp_mat(0,0) = glPrms->timeDictSelect_avg;
-	// fname_tmp = dir_glPrms + "/" + "timeDictSelect_avg.csv";
-	// write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
-
 	tmp_mat(0,0) = glPrms->numPatchGroups;
 	fname_tmp = dir_glPrms + "/" + "numPatchGroups.csv";
 	write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
-
-	// tmp_mat(0,0) = glPrms->timeTotal;
-	// fname_tmp = dir_glPrms + "/" + "timeTotal.csv";
-	// write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
-
-	// tmp_mat(0,0) = glPrms->numProbPerPatch;
-	// fname_tmp = dir_glPrms + "/" + "numProbPerPatch.csv";
-	// write_Mat_to_CSV(&tmp_mat, fname_tmp.c_str());
 
 	SpEOMatrixD idxPUH_tmp = glPrms->idxPUH.cast<double>();
 	fname_tmp = dir_glPrms + "/" + "idxPUH.csv";
@@ -3071,9 +2522,6 @@ void save_glPrms(SpEOPaths *paths, SpEOGlobalParams *glPrms){
 	SpEOMatrixD idxPVH_tmp = glPrms->idxPVH.cast<double>();
 	fname_tmp = dir_glPrms + "/" + "idxPVH.csv";
 	write_Mat_to_CSV(&idxPUH_tmp, fname_tmp.c_str());
-
-	// fname_tmp = dir_glPrms + "/" + "decMat_C.csv";
-	// write_Mat_to_CSV(&glPrms->decMat_C, fname_tmp.c_str());
 
 	cout << "done!" << endl;
 }
@@ -3115,13 +2563,12 @@ void save_fusion_setup(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOFusion
 					 << "fSet.dictselect="<<fSetting->dictselect << ";" << endl
 					 << "fSet.matrixNorm="<<fSetting->matrixNorm << ";" << endl
 					 << "fSet.addMeanPixelwise="<<fSetting->addMeanPixelwise << ";" << endl
-					 //<< "fSet.LQ_post_opt="<<fSetting->LQ_post_opt << ";" << endl
 					 << "fSet.LQ_post_opt_im="<<fSetting->LQ_post_opt_im << ";" << endl
 					 << "fSet.lambdaX_ABC="<<fSetting->lambdaX_ABC << ";" << endl
 					 << "fSet.lambdaY_ABC="<<fSetting->lambdaY_ABC << ";" << endl
 					 << "fSet.lambdaZ_ABC="<<fSetting->lambdaZ_ABC << ";" << endl
 					 << "fSet.lambdaZ_ABC_in_1st_iter="<<fSetting->lambdaZ_ABC_in_1st_iter << ";" << endl;
-				fusionSetup_file_matlab << //<< "fSet.ImZ_init_type="<<fSetting->ImZ_init_type << ";" << endl
+				fusionSetup_file_matlab << 
 					    "fSet.iterMain="<<fSetting->iterMain << ";" << endl
 					 << "fSet.doFullImOptWithoutPatRec="<<fSetting->doFullImOptWithoutPatRec << ";" << endl
 					 << "fSet.Nc_max="<<fSetting->Nc_max << ";" << endl
@@ -3195,13 +2642,6 @@ void save_fusion_setup(SpEOPaths *paths, SpEODataIOSetting *dSetting, SpEOFusion
 					 << "glPrms.fDS="<<glPrms->fDS << ";" << endl
 					 << "glPrms.NP="<<glPrms->NP << ";" << endl
 					 <<  endl;
-					 // << "glPrms.Ng="<<glPrms->Ng << ";" << endl
-					 // << "glPrms.timeMainLoop="<<glPrms->timeMainLoop << ";" << endl
-					 // << "glPrms.timeFileWrite="<<glPrms->timeFileWrite << ";" << endl
-					 // << "glPrms.timeTotal="<<glPrms->timeTotal << ";" << endl
-					 // << "glPrms.timeDictSelect="<<glPrms->timeDictSelect << ";" << endl
-					 // << "glPrms.timeDictSelect_avg="<<glPrms->timeDictSelect_avg << ";" << endl
-					 // <<  endl;
 		 fusionSetup_file_matlab << "%% paths" << endl 
 					 << endl;
 
@@ -3344,12 +2784,7 @@ void dictSelectFunc(SpEOMatrixF *patchCompSubsetfloat, SpEODataset *ImX_LR, SpEO
 	SpEOMatrixF patchCompOrdered(NP,3);
 	SpEOMatrixF patchCompSubset(NDP,3);
 
-	int iG;
-	//if(fSet->useNewMethodForCalculatingZ){
-	//	iG= glPrms->myChX[ipp];
-	//}else{
-		iG= ipp;
-	//}
+	int iG = ipp;
 
 	switch(fSet->dictselect){
 
@@ -3911,12 +3346,7 @@ void dictSelectFunc(SpEOMatrixD *patchCompSubsetDouble, SpEODataset *ImX_LR, SpE
 	SpEOMatrixD patchCompOrdered(NP,3);
 	SpEOMatrixD patchCompSubset(NDP,3);
 
-	int iG;
-	//if(fSet->useNewMethodForCalculatingZ){
-		iG= ipp;
-	//}else{
-	//	iG= glPrms->myChX[ipp];
-	//}
+	int iG = ipp;
 	switch(fSet->dictselect){
 	case 0:{// Case (1): Nearest Neighbor patches according to the maximum norm of the patch coordinates
 			sortON = false;
@@ -4459,98 +3889,6 @@ void dictSelectFunc(SpEOMatrixD *patchCompSubsetDouble, SpEODataset *ImX_LR, SpE
 bool argsort_comp(const argsort_pair& left, const argsort_pair& right) {
     return left.second < right.second;
 }
-/*
-void checkInputForJSpFI(SpEOGlobalParams &glPrms, SpEOFusionSetting &fSetting, SpEOParallelSetting &pSetting){
-	int my_rank;
-	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-//
-	  if(pSetting.store_patches_tmp_on_drive){
-		  if (my_rank==0){
-			  cerr << endl << "ERROR: For the J-SparseFI regime, the option 'store_patches_tmp_on_drive' has to be set to 0!" << endl << endl;
-		  }
-		  MPI_Barrier(MPI_COMM_WORLD);
-		  exit(2);
-	  }
-	  if (glPrms.NChY<glPrms.NChY_orig) {
-		  if (my_rank==0){
-			  cerr << endl << "ERROR: For the J-SparseFI regime with spectral groups there is currently no option to calculate only a spectral subset!" << endl << endl;
-		  }
-		  MPI_Barrier(MPI_COMM_WORLD);
-		  exit(2);
-	  }
-	  if (glPrms.NChY!=8) {
-		  if (my_rank==0){
-			  cerr << endl << "ERROR: For the moment, the J-SparseFI regime is only possible for 8-band WorldView-2 data!" << endl << endl;
-		  }
-		  MPI_Barrier(MPI_COMM_WORLD);
-		  exit(2);
-	  }
-	  if (glPrms.NChX!=1) {
-		  if (my_rank==0){
-			  cerr << endl << "ERROR: The J-SparseFI regime requires the high resolution image ImX to be a a single channel panchromatic image!" << endl << endl;
-		  }
-		  MPI_Barrier(MPI_COMM_WORLD);
-		  exit(2);
-	  }
-	  if (glPrms.Nc_vec[0]!=glPrms.NChY || fSetting.Nc!=glPrms.NChY) {
-		  if (my_rank==0){
-			  cerr << endl << "ERROR: The J-SparseFI regime it is required to have glPrms.Nc_vec[0]==glPrms.NChY==fSetting.Nc! However, glPrms.NChY=" << glPrms.NChY << ", " << "fSetting.Nc=" << fSetting.Nc << ", and glPrms.Nc_vec[0]=" << glPrms.Nc_vec[0] << endl << endl;
-		  }
-		  MPI_Barrier(MPI_COMM_WORLD);
-		  exit(2);
-	  }
-	  if (fSetting.No!=0) {
-		  if (my_rank==0){
-			  cerr << endl << "ERROR: The J-SparseFI regime does not allow spectral overlap! The argument 'No' has to be set to 0!" << endl << endl;
-		  }
-		  MPI_Barrier(MPI_COMM_WORLD);
-		  exit(2);
-	  }
-	  if (glPrms.decMat_C.rows()!=1 || glPrms.decMat_C.cols()!=1) {
-		  if (my_rank==0){
-			  cerr << endl << "ERROR: The decision matrix C is supposed to contain only a single entry, which is equal to one, but is has the dimension " << glPrms.decMat_C.rows() << "x" << glPrms.decMat_C.cols() << endl << endl;
-		  }
-		  MPI_Barrier(MPI_COMM_WORLD);
-		  exit(2);
-	  }
-	  if (glPrms.Ng!=1) {
-		  if (my_rank==0){
-			  cerr << endl << "ERROR: The J-SparseFI regime requires glPrms.Ng to be equal to 1!" << endl << endl;
-		  }
-		  MPI_Barrier(MPI_COMM_WORLD);
-		  exit(2);
-	  }
-	  if(glPrms.myNumProbPerPatch != 1){
-		  if (my_rank==0){
-			  cerr << endl << "ERROR: glPrms->myNumProbPerPatch is supposed to be equal to 1! However, it is equal to " << glPrms.myNumProbPerPatch << endl << endl;
-		  }
-		  MPI_Barrier(MPI_COMM_WORLD);
-		  exit(2);
-	  }
-	  if(glPrms.myBundle[0] != 0){
-		  if (my_rank==0){
-			  cerr << endl << "ERROR: For any processor, the quantity glPrms.myBundle[0] is supposed to be equal to 0! However, for process ["<< my_rank << "] myBundle = " << glPrms.myBundle[0] << endl << endl;
-		  }
-		  MPI_Barrier(MPI_COMM_WORLD);
-		  exit(2);
-	  }
-	  if(glPrms.myChX[0] != 0){
-		  if (my_rank==0){
-			  cerr << endl << "ERROR: For any processor, the quantity glPrms.myChX[0] is supposed to be equal to 0! However, for process ["<< my_rank << "] myChX = " << glPrms.myChX[0] << endl << endl;
-		  }
-		  MPI_Barrier(MPI_COMM_WORLD);
-		  exit(2);
-	  }
-	  if(pSetting.numProcPerPatch != 1){
-		  if (my_rank==0){
-			  cerr << endl << "ERROR: pSetting.numProcPerPatch has to be set to 1! However, numProcPerPatch==" << pSetting.numProcPerPatch << endl << endl;
-		  }
-		  MPI_Barrier(MPI_COMM_WORLD);
-		  exit(2);
-	  }
-
-}
-*/
 
 bool is_inf_or_nan(double x){
    return !( x-x == x-x);
@@ -4758,13 +4096,8 @@ void calc_ImX_sim(SpEODataset *ImX_sim, SpEODataset *ImX, SpEODataset *ImX_LR, S
 	  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 	  int chBundleFirst_tmp = dSetting->chBundleFirst; dSetting->chBundleFirst = 0;
 	  int chBundleLast_tmp;
-	  //if(fSetting->useNewMethodForCalculatingZ){
 		  chBundleLast_tmp  = dSetting->chBundleLast;  
 		  dSetting->chBundleLast  = Ng-1;
-	  //}else{
-		 // chBundleLast_tmp  = dSetting->chBundleLast;  
-		 // dSetting->chBundleLast  = glPrms->numProbPerPatch-1;
-	  //}
 	  int sizeUH_red_tmp = glPrms->sizeUH_red; glPrms->sizeUH_red = glPrms->sizeUH;
 	  int sizeVH_red_tmp = glPrms->sizeVH_red; glPrms->sizeVH_red = glPrms->sizeVH;
 	  setMetaInfo(ImX_sim, ImY, ImX, dSetting, glPrms);
@@ -4773,7 +4106,6 @@ void calc_ImX_sim(SpEODataset *ImX_sim, SpEODataset *ImX, SpEODataset *ImX_LR, S
 	  dSetting->chBundleFirst = chBundleFirst_tmp;
 	  dSetting->chBundleLast  = chBundleLast_tmp;
 
-	  //if(fSetting->useSimulatedImXforDictLearn){
 		  // get window correct indeces
 		  int winSizeL = fSetting->winSize;
                   int idxWUL = max(0, idxPUL->coeff(uP)-(int)(0.5*(double)(winSizeL-fSetting->patchsize)) );
@@ -5009,14 +4341,6 @@ void calc_ImX_sim(SpEODataset *ImX_sim, SpEODataset *ImX, SpEODataset *ImX_LR, S
 			  }
 			  ImX_sim->get_rasterBands()[iG]->bandDataMatD = ImX_sim_band;
 		  }
-	  // }else{
-		 //  if(my_rank==0){
-			//   cout << "use original (not simulated) ImX for dictionary learning.." << endl;
-		 //  }
-		 //  for(int ipp=0; ipp<glPrms->numProbPerPatch; ipp++){
-			//   ImX_sim->get_rasterBands()[ipp]->bandDataMatD = ImX->get_rasterBands()[glPrms->myChX[ipp]]->get_bandDataMat()->cast<double>();
-		 //  }
-	  // }
 }
 
 void calc_P_matrices(SpEOVectorD* P_lmd_vecs_loc, int **P_lmd_idx_bl_loc, SpEOMatrixI* P_lmd_idx_row_loc, int Ng, int *Nc_vec, int NChZ, int *idxChY,int my_rank){

@@ -1,4 +1,4 @@
-#include <mpi.h> // "mpi.h" ?
+#include <mpi.h>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,7 +55,6 @@ int main(int argc, char* argv[]) {
 #endif
 	int ranges_busy[1][3] = {{0,numProcBusy-1,1}};
 	int rangesIdl_busy[1][3] = {{numProcBusy,my_global_processes-1,1}};
-	//if((my_rank < glPrms.numPatchGroups*pSetting.numProcPerPatch) && (my_rank < pLast_sub*pSetting.numProcPerPatch)){
 	if(my_global_rank < numProcBusy){
 		MPI_Group_range_incl(mpi_group_orig, 1, ranges_busy, &group_busy);
 	}else{
@@ -78,7 +77,7 @@ int main(int argc, char* argv[]) {
 		
 #ifndef _OPENMP
 		// Definition of groups of tasks which work on the same process (similarly to threads in OpenMP)d
-		MPI_Barrier(comm_busy); // can be removed?
+		MPI_Barrier(comm_busy);
 		MPI_Comm comm_patch;
 		MPI_Group group_patch;
 		MPI_Comm_group(comm_busy, &group_patch);

@@ -18,7 +18,6 @@
    compilers. */
 #include <stdio.h>
 #include <math.h>
-//#include "nnls.h"
 #define nnls_max(a,b) ((a) >= (b) ? (a) : (b))
 #define nnls_abs(x) ((x) >= 0 ? (x) : -(x))
 typedef int integer;
@@ -37,10 +36,6 @@ double d_sign(double *a, double *b)
 static integer c__1 = 1;
 static integer c__0 = 0;
 static integer c__2 = 2;
-
-/*#define c__1 1
-#define c__0 0
-#define c__2 2*/
 
 // minor edits by Nicolas Bonneel
 int h12_(integer *mode, integer *lpivot, integer *l1, const integer *m, doublereal *u, integer *iue, doublereal *up, doublereal *c__, integer *ice, const integer *icv, integer *ncv);
