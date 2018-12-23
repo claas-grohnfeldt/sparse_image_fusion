@@ -28,27 +28,26 @@ EXE='./bin/sparse_image_fusion'
 #----------------
 # 1: Arbitrary string roughly describing this job (string)
 #----------------
-job_name='SparseFIHM_demo_665211108350_Pavia_University'
-#       =LOADL_JOB_NAME
+job_name='JSparseFIHM_Aviris_Indian_Pines'
 
 #----------------------------------
 # paths
 #----------------------------------
 
-DIR_DATA_BASE='./data/HS_MS/demo_small_dataset'
+DIR_DATA_BASE='./data/HS_MS/Aviris_Indian_Pines'
 
 #----------------
 # 2: Filename of image with higher spatial resolution (string) 
 #----------------
-filename_ImX="${DIR_DATA_BASE}/InputData/multispectral_highRes/ROSIS_\
-Pavia_University_100x80_Sentinel2_10m_bands_MSHR_SNR35.dat"
+filename_ImX="${DIR_DATA_BASE}/InputData/multispectral_highRes/Aviris\
+_IndianPines_synthesized_WorldView3_MSHR_SNR35.dat"
 
 #----------------
 # 3: Filename of image with lower spatial resolution higher spectral 
 #    resolution (string)
 #----------------
-filename_ImY="${DIR_DATA_BASE}/InputData/hyperspectral_lowRes/ROSIS_P\
-avia_University_100x80_HSLR_fDS4_SNR35.dat"
+filename_ImY="${DIR_DATA_BASE}/InputData/hyperspectral_lowRes/Aviris_\
+IndianPines_synthesized_HSLR_fDS4_SNR35.dat"
 
 #----------------
 # 4: Filename of initial image (string)
@@ -57,8 +56,8 @@ avia_University_100x80_HSLR_fDS4_SNR35.dat"
 #    lization can be optained by bilinearly interpolating ImY - the
 #    lower-resolution input image)
 #----------------
-filename_ImZ_init="${DIR_DATA_BASE}/FusionResults/bilinearly_interpol\
-ated/ROSIS_Pavia_University_100x80_HSLR_fDS4_US_via_bilinear_SNR35.dat"
+filename_ImZ_init="${DIR_DATA_BASE}/FusionResults/CNMF/Aviris_Indian_\
+Pines_FusionResult_CNMF.dat"
 
 #----------------
 # 5: Boolean flag to specify whether or not a high-resolution 
@@ -69,8 +68,8 @@ reference_image_available='1'
 #----------------
 # 6: Filename of image reference ("ground truth") image. (bool)
 #----------------
-filename_ImZ_ref="${DIR_DATA_BASE}/ReferenceData/ROSIS_Pavia_Univeris\
-ty_hyperspectral_highRes_reference_subarea.dat"
+filename_ImZ_ref="${DIR_DATA_BASE}/ReferenceData/Aviris_Indian_Pines_\
+hyperspectral_highRes_reference.dat"
 
 #----------------
 # 7: Boolean flag to specify whether the program should use SRFs that 
@@ -86,8 +85,8 @@ estimate_SRFs_from_data='1'
 #    (required) if the flag 'estimage_SRFs_from_data' is set to '0'.
 #    (bool)
 #----------------
-filename_SRF="${DIR_DATA_BASE}/InputData/SRFs/SRFs_of_QuickBird_sampl\
-ed_to_centers_of_SRFs_of_ROSIS_for_scene_Pavia_Univeristy.csv"
+filename_SRF="${DIR_DATA_BASE}/InputData/SRFs/SRFs_of_WorldView3_samp\
+led_to_centers_of_SRFs_of_Aviris_for_scene_Indian_Pines.csv"
 
 #----------------
 # 9: Arbitrary directory into which the program's output including 
@@ -112,12 +111,12 @@ patch_size='4'
 #     patch_size-1. Usually, the higher the patch overlap, the better 
 #     the fusion results. (int)
 #----------------
-patch_overlap='2'
+patch_overlap='3'
 
 #----------------
 # 12: Number of dictionary atoms/patches (int)
 #----------------
-N_a='900'
+N_a='1000'
 
 #----------------
 # 13: Select coupled LR and HR Pan dictionaries according to:
@@ -135,30 +134,32 @@ N_a='900'
 #          '9': PanHR self uncorrelated basis approximation, including
 #               current patch as first atom
 #----------------
-dictionary_selection_method='8'
+dictionary_selection_method='7'
 
 #----------------
 # 14: Regularization parameter weighting the l_2,1 norm term in the 
 #     joint sparsity optimization problem. (float)
 #----------------
-lambda='1e1'
+lambda='1.0'
 
 #----------------
-# 15: minimum cross-correlation within spectral goups (double)
+# 15: Minimum cross-correlation value within spectral groups. (double)
 #----------------
-theta='0.96'
+theta='0.85'
 
 #----------------
-# 16: maximum size of spectral group above groups will be double-checked and perhaps split into subgoups (int) 
+# 16: Spectral group size threshold above which spectral channel
+#     groups will be double-checked and possibly split into channel
+#     sub-groups. (int)
 #----------------
-N_c='25'
+N_c='30'
 
 #----------------
 # 17-18: regularization parameters for weighing the impact of ImX and
 #        ImY, respectively, to the product (double)
 #----------------
-mu_X='1e0'
-mu_Y='1e0'
+mu_X='0.0316'
+mu_Y='0.1'
 
 #----------------
 # 19: ImX simulation mode flag (int) 
@@ -166,7 +167,7 @@ mu_Y='1e0'
 #          '1': unconstrained least-squares based 
 #          '2': non-negative least-squares based
 #----------------
-ImX_sim_mode='2'
+ImX_sim_mode='0'
 
 #----------------
 # 20: Size of window around patch: For symmetry reasons, it should be
@@ -174,7 +175,7 @@ ImX_sim_mode='2'
 #     patch_size is even. Should be set to a number larger than or
 #     equal to patch_size. (int)
 #----------------
-winSize='6'
+winSize='4'
 
 #----------------------------------
 # Global-non-local processing module
@@ -186,13 +187,13 @@ winSize='6'
 #        and low-resolution input images, I_X and I_Y, respectively.
 #        (double)
 #----------------
-mu_X_prime='1e0'
-mu_Y_prime='1e0'
+mu_X_prime='0.178'
+mu_Y_prime='0.178'
 
 #----------------
 # 23: Subspace dimension
 #----------------
-subspace_dim='10'
+subspace_dim='14'
 
 #----------------------------------
 # Concerning both local-non-local and global processing modules
@@ -213,7 +214,7 @@ processing_module_flag='2'
 #     alternating calculation of ImZ using the local-non-local and 
 #     global processing mdules. (int) 
 #----------------
-iterMain='1'
+iterMain='2'
 
 #----------------------------------
 # Output settings
@@ -228,7 +229,8 @@ iterMain='1'
 perform_quality_assessment_of_fusion_result='1'
 
 #----------------
-# 27: write fused image in file (1: create file and write resulting image in file; 0: to not write image in file (useful for analyses only)) (bool)
+# 27: Boolean flag to specify whether or not the fusion result (super-
+#     resolved image) should bewritten to a file. (bool)
 #----------------
 writeImageFile='1'
 
@@ -243,8 +245,8 @@ output_image_format_flag='1'
 # DEPRICATED
 # 29: scale the coefficient of |R*Z-X| term by a factor of NChY/NChX 
 #     (experimenatal) (bool)
+balance_ImX_term_coef='1'
 # ---------------
-balance_ImX_term_coef='0'
 
 #---------------------------------------------------------------------
 # User settings end here. Don't modify beyond this line.
@@ -263,20 +265,3 @@ $output_image_format_flag $balance_ImX_term_coef"
 # Run program
 #----------------------------------
 $RUN $RUNFLAGS -x LD_LIBRARY_PATH=$LIBRARY_PATH_GDAL $EXE $PROG_ARGS
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
