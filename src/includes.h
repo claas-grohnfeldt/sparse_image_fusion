@@ -9,19 +9,19 @@
 #define INCLUDES_H_
 
 // standard headers
+#include <math.h>
 #include <mpi.h>
-#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <iomanip>
-#include <time.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
 #include <unistd.h>
-#include <string>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <sstream>
-#include <math.h>
+#include <string>
 
 #include <Eigen/SVD>
 
@@ -29,17 +29,16 @@
 #include <algorithm>
 
 //// GDAL headers
+#include "cpl_conv.h"    // for CPLMalloc()
+#include "cpl_string.h"  // for creating & copying files (writing output images)
 #include "gdal_priv.h"
-#include "cpl_conv.h"   // for CPLMalloc()
-#include "cpl_string.h" // for creating & copying files (writing output images)
 // .. and:
-#include <ogr_spatialref.h> // for creating GDALDataset -> geotiff image we need 'OGRSpatialReferenc'
+#include <ogr_spatialref.h>  // for creating GDALDataset -> geotiff image we need 'OGRSpatialReferenc'
 
 // Eigen headers
-#include <Eigen/Dense>
 #include <Eigen/Core>
+#include <Eigen/Dense>
 #include <Eigen/Geometry>
-
 
 // for CSV parser:
 #include <iterator>

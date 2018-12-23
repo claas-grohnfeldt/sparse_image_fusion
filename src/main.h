@@ -11,17 +11,16 @@
 // project headers
 #include "includes.h"
 
-#include "dataIO.h"
+#include "JSparseFIHM_alg.h"
 #include "auxFcts.h"
+#include "dataIO.h"
 #include "eval_alg.h"
 #include "userSettings.h"
-#include "JSparseFIHM_alg.h"
 
 #include "JS.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-
 
 #endif /* MAIN_H_ */
