@@ -16,7 +16,7 @@
 #----------------
 # User specific settings
 #----------------
-#@ initialdir = $(home)/JSparseFIHM/sparse_image_fusion
+#@ initialdir = $(home)/JSparseFIHM/dev/sparse_image_fusion
 #@ output = supermuc_jobs/job_output/job_$(job_name)_$(jobid).out
 #@ error = supermuc_jobs/job_output/job_$(job_name)_$(jobid).err
 #@ notification=always
