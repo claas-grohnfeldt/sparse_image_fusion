@@ -37,3 +37,5 @@ module load gcc/8
 #----------------
 . ./demo/run_HyMap_Rodalquilar.sh $LOADL_TOTAL_TASKS
 
+exit 0
+

@@ -37,3 +37,5 @@ module load gcc/8
 #----------------
 . ./demo/run_Hyperspec_Chikusei.sh $LOADL_TOTAL_TASKS
 
+exit 0
+

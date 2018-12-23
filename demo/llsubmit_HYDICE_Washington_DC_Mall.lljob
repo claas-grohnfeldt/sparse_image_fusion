@@ -37,3 +37,5 @@ module load gcc/8
 #----------------
 . ./demo/run_HYDICE_Washington_DC_Mall.sh $LOADL_TOTAL_TASKS
 
+exit 0
+

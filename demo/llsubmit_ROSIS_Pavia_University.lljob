@@ -37,3 +37,5 @@ module load gcc/8
 #----------------
 . ./demo/run_ROSIS_Pavia_University.sh $LOADL_TOTAL_TASKS
 
+exit 0
+

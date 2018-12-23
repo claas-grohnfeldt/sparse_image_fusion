@@ -37,3 +37,5 @@ module load gcc/8
 #----------------
 . ./demo/run_CASI_Houston_University_muX0d1.sh $LOADL_TOTAL_TASKS
 
+exit 0
+
