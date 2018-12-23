@@ -1,0 +1,39 @@
+#!/bin/bash
+###################################
+# Loadleveler HEADER
+###################################
+#@ job_type = MPICH
+#----------------
+# Job specific settings
+#----------------
+#@ class = micro
+#@ island_count = 1
+#@ node = 12
+#@ total_tasks = 336
+#@ wall_clock_limit = 06:00:00
+#@ job_name = JSparseFIHM_HYDICE_Washington_DC_Mall
+#@ network.MPI = sn_all,not_shared,us
+#----------------
+# User specific settings
+#----------------
+#@ initialdir = $(home)/JSparseFIHM/sparse_image_fusion
+#@ output = supermuc_jobs/job_output/job_$(job_name)_$(jobid).out
+#@ error = supermuc_jobs/job_output/job_$(job_name)_$(jobid).err
+#@ notification=always
+#@ notify_user=claas.grohnfeldt@dlr.de
+#@ queue
+
+###################################
+# setup of environment
+###################################
+. /etc/profile
+. /etc/profile.d/modules.sh
+module unload mpi.ibm
+module load mpi.intel/2018_gcc
+module load gcc/8
+
+#----------------
+# Run script to call program with all its arguments
+#----------------
+. ./demo/run_HYDICE_Washington_DC_Mall.sh $LOADL_TOTAL_TASKS
+
