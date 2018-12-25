@@ -268,19 +268,3 @@ LD_LIBRARY_PATH=$LIBRARY_PATH_GDAL
 $RUN $RUNFLAGS $EXE $PROG_ARGS
 
 exit 0
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
