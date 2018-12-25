@@ -43,7 +43,7 @@ LIB_DIR  = -L $(PATH_LIBRARY_GDAL)
 FLAGS_LD=$(LIB_DIR) $(LIB_GDAL)
 
 # Compiler preferences
-CXX = mpic++
+CXX = mpiCC
 #   = mpiCC   <- on server
 #   = mpic++  <- on PC
 FLAGS_COMP = -O3 -w
