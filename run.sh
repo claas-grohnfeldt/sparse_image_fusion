@@ -28,7 +28,7 @@ EXE='./bin/sparse_image_fusion'
 #----------------
 # 1: Arbitrary string roughly describing this job (string)
 #----------------
-job_name='SparseFIHM_demo_665211108350_Pavia_University'
+job_name='JparseFIHM_Pavia_University_demo_toy_data'
 #       =LOADL_JOB_NAME
 
 #----------------------------------
@@ -117,7 +117,7 @@ patch_overlap='2'
 #----------------
 # 12: Number of dictionary atoms/patches (int)
 #----------------
-N_a='900'
+N_a='200'
 
 #----------------
 # 13: Select coupled LR and HR Pan dictionaries according to:
@@ -213,7 +213,7 @@ processing_module_flag='2'
 #     alternating calculation of ImZ using the local-non-local and 
 #     global processing mdules. (int) 
 #----------------
-iterMain='1'
+iterMain='2'
 
 #----------------------------------
 # Output settings
@@ -262,8 +262,12 @@ $output_image_format_flag $balance_ImX_term_coef"
 #----------------------------------
 # Run program
 #----------------------------------
-$RUN $RUNFLAGS -x LD_LIBRARY_PATH=$LIBRARY_PATH_GDAL $EXE $PROG_ARGS
+#RUN $RUNFLAGS -x LD_LIBRARY_PATH=$LIBRARY_PATH_GDAL $EXE $PROG_ARGS
 
+LD_LIBRARY_PATH=$LIBRARY_PATH_GDAL
+$RUN $RUNFLAGS $EXE $PROG_ARGS
+
+exit 0
 
 
 
